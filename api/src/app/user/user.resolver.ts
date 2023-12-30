@@ -1,0 +1,36 @@
+import { Resolver, Query, Mutation, Args } from '@nestjs/graphql'
+import { User, CreateUserInput, UserId, UpdateUserInput, LoginInput } from './user.schema'
+import { UserService } from './user.service'
+
+@Resolver()
+export class UserResolver {
+  constructor(
+    private userService: UserService,
+  ) {}
+
+  @Query(() => [User])
+  async getUsers() {
+    return this.userService.getUsers()
+  }
+
+  @Query(() => User)
+  async getUser(@Args('input') id:UserId) {
+    return this.userService.getUser(id)
+  }
+
+  @Mutation(() => User)
+  async createUser(@Args('input') user: CreateUserInput) {
+    return this.userService.createUser(user);
+  }
+
+  @Mutation(() => User)
+  async loginUser(@Args('input') loginData: LoginInput) {
+    return this.userService.loginUser(loginData);
+  }
+
+  @Mutation(() => User)
+  async updateUser(@Args('input') id:UserId, @Args('input') user: UpdateUserInput) {
+    return this.userService.updateUser(id, user)
+  }
+
+}
