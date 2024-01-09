@@ -1,9 +1,10 @@
 'use client'
-import { Box, Button, Container, CssBaseline, Grid, Link, TextField, ThemeProvider, Typography, createTheme } from '@mui/material';
+import { Box, Button, Container, CssBaseline, Grid, Link, TextField, ThemeProvider, Typography,  createTheme } from '@mui/material';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
 import { useMutation } from '@apollo/client';
 import { LOGIN_USER } from '../api/user/mutations';
+import { useRouter } from 'next/navigation'
 import ToastMessage from '../component/toast-message/ToastMessage';
 
 /* eslint-disable-next-line */
@@ -29,6 +30,7 @@ export default function Login(props: LoginProps) {
     email: "",
     password: ""
   }
+  const router = useRouter();
 
   const [loginUser, { data, error }] = useMutation(LOGIN_USER);
 
@@ -42,6 +44,11 @@ export default function Login(props: LoginProps) {
         password: values.password,
       },
     });
+
+    if(data?.loginUser?.email){
+      resetForm();
+      router.push("/login");
+    }
     
     setSubmitting(false);
   }
@@ -62,8 +69,10 @@ export default function Login(props: LoginProps) {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            boxShadow: 3,
-            padding: 3
+            padding: 3,
+            borderRadius: "7px",
+            boxShadow:3,
+            bgcolor: "#ffffff"
           }}
         >
           <ToastMessage 
@@ -78,9 +87,13 @@ export default function Login(props: LoginProps) {
             message='Problem while Login. Please try with diffetent credentials.'
           ></ToastMessage>
           
-          <Typography component="h1" variant="h5">
-            Login
-          </Typography>
+          <Box 
+            component="div"
+            sx={{bgcolor: "text.secondary" , width: "90%", textAlign:"center", paddingY:"15px", marginTop: "-60px", borderRadius: "5px"}}>
+            <Typography component="h1" variant="h5" color={"#ffffff"}>
+              Login
+            </Typography>
+          </Box>
           <Box
             component="form"
             noValidate

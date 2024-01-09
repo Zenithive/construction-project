@@ -83,12 +83,14 @@ export default function Signup(props: SignupProps)  {
         <CssBaseline />
         <Box
           sx={{
+            borderRadius: "7px",
             marginTop: 8,
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            boxShadow: 3,
-            padding: 3
+            padding: 3,
+            boxShadow:3,
+            bgcolor: "#ffffff"
           }}
         >
 
@@ -103,14 +105,22 @@ export default function Signup(props: SignupProps)  {
             openFlag={error ? true : false } 
             message='Problem while signup. Please try again'
           ></ToastMessage>
-          
-          <Typography component="h1" variant="h5">
-            Sign up
-          </Typography>
 
-
+          <Box 
+            component="div"
+            sx={{bgcolor: "text.secondary" , width: "90%", textAlign:"center", paddingY:"15px", marginTop: "-60px", borderRadius: "5px"}}>
+              
+            <Typography component="h1" variant="h5" color={"#ffffff"}>
+              Sign up
+            </Typography>
+          </Box>
           
-          <form onSubmit={formik.handleSubmit}>
+          <Box
+            component="form"
+            noValidate
+            onSubmit={formik.handleSubmit}
+            sx={{ mt: 3 }}
+          >
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={6}>
                   <TextField
@@ -196,7 +206,7 @@ export default function Signup(props: SignupProps)  {
                   </Link>
                 </Grid>
               </Grid>
-          </form>
+          </Box>
         </Box>
       </Container>
     </ThemeProvider>
