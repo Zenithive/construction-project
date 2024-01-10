@@ -47,7 +47,7 @@ export default function Login(props: LoginProps) {
 
     if(data?.loginUser?.email){
       resetForm();
-      router.push("/login");
+   router.push("/dashboard");
     }
     
     setSubmitting(false);

@@ -1,6 +1,8 @@
 import { Model } from 'mongoose';
 import {  Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { AppSession } from '../session/session.types';
+//import { Request, Response } from 'express';
 import * as bcrypt from 'bcrypt';
 
 import { User, UserDocument, CreateUserInput, UserId, UpdateUserInput, LoginInput } from './user.schema';
@@ -17,7 +19,7 @@ export class UserService {
     return this.userModel.findOne({ _id: id })
   }
 
-  async loginUser(LoginInput: LoginInput) {
+  async loginUser(session: AppSession,LoginInput: LoginInput) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const userData: User | null = await this.userModel.findOne({ email: LoginInput.email })
     if (!userData) {
@@ -29,7 +31,13 @@ export class UserService {
     if (!isPasswordValid) {
       throw new Error('Invalid password');
     }
-
+    if (!session) {
+      throw new Error('Session not available');
+    }
+    session.user = {
+      id: userData._id,
+      username: userData.email,
+    };
     return userData;
 
   }

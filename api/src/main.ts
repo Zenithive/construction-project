@@ -5,11 +5,18 @@
 
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-
+import session from 'express-session';
 import { AppModule } from './app/app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.use(
+    session({
+      secret: 'F62BD3D2528833573EAA53AC9727C',
+      resave: false,
+      saveUninitialized: false,
+    }),
+  );
   const globalPrefix = 'api';
   app.setGlobalPrefix(globalPrefix);
   app.enableCors();
