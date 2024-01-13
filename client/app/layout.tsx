@@ -7,6 +7,9 @@ import './styles/style.scss';
 import { Provider } from "react-redux";
 import { store } from './reducers/store';
 import { ApolloProvider, InMemoryCache, ApolloClient } from '@apollo/client';
+import { usePathname } from 'next/navigation';
+import { ROUTE } from './constants/route.constant';
+import { Layout } from './component/layout/layout';
 
 // import App from './app/app';
 // import {persistor, store} from './reducers/store';
@@ -25,22 +28,25 @@ export const metadata = {
 };
 
 export default function RootLayout({
-  children,
+  children
 }: {
   children: React.ReactNode;
 }) {
-  
+  const pathName = usePathname()
+
   return (
     <html lang="en">
       <body>
-        <>
       <ApolloProvider client={client}>
         <Provider store={store}>
-
-          {children}
+            { (pathName.includes(ROUTE.LOGIN) || pathName.includes(ROUTE.SIGNUP)) ? 
+              children : 
+              <Layout>
+                {children}
+              </Layout>
+            }
         </Provider>
         </ApolloProvider>
-        </>
         {/* <Provider store={store}>
           <PersistGate loading={null} persistor={persistor}> */}
           {/* </PersistGate>
