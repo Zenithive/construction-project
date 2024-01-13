@@ -1,3 +1,4 @@
+'use client'
 import React, {useState} from 'react';
 import {Box} from '../styles/box';
 import {Sidebar} from './sidebar.styles';
@@ -16,13 +17,20 @@ import {SidebarMenu} from './sidebar-menu';
 import {useSidebarContext} from '../layout/layout-context';
 import {ChangeLogIcon} from '../icons/sidebar/changelog-icon';
 import {usePathname} from 'next/navigation';
-import { ROUTE } from 'client/app/constants/route.constant';
+import { ROUTE } from '../../constants/route.constant';
+import { useAppSelector } from '../../reducers/hook.redux';
+import { selectModule } from '../../reducers/moduleReducer';
+import { MODULES } from '../../constants/modules.constant';
 
 export const SidebarWrapper = () => {
+   const moduleName = useAppSelector(selectModule);
+   const childList = MODULES.find((objName)=> {
+      if(objName.name== moduleName) return objName
+   })?.subModules || [];
+   
    const pathName = usePathname()
    const {collapsed, setCollapsed} = useSidebarContext();
 
-   const [page, setPage] = useState<String>("/cde");
 
    return (
       <Box
@@ -42,17 +50,19 @@ export const SidebarWrapper = () => {
             </Sidebar.Header>
             <Flex
                direction={'column'}
-               justify={'between'}
                css={{height: '100%'}}
             >
                <Sidebar.Body className="body sidebar">
-                  <SidebarItem
-                     title="Home"
-                     icon={<HomeIcon />}
-                     isActive={pathName === `/${ROUTE.DASHBOARD}`}
-                     href={`/${ROUTE.DASHBOARD}`}
-                  />
-                  <SidebarMenu title="Main Menu">
+                  { childList.map((obj, index)=>(
+                     <SidebarItem
+                        title={obj.name}
+                        key={index}
+                        icon={obj.icon}
+                        isActive={pathName === obj.route }
+                        href={obj.route}
+                     />
+                  ))}
+                  {/* <SidebarMenu title="Main Menu">
                      <SidebarItem
                         isActive={pathName === '/accounts'}
                         title="Accounts"
@@ -85,7 +95,7 @@ export const SidebarWrapper = () => {
                         title="Reports"
                         icon={<ReportsIcon />}
                      />
-                  </SidebarMenu>
+                  </SidebarMenu> */}
 
                   {/* <SidebarMenu title="General">
                      <SidebarItem
@@ -105,13 +115,13 @@ export const SidebarWrapper = () => {
                      />
                   </SidebarMenu> */}
 
-                  <SidebarMenu title="Updates">
+                  {/* <SidebarMenu title="Updates">
                      <SidebarItem
                         isActive={pathName === '/changelog'}
                         title="Changelog"
                         icon={<ChangeLogIcon />}
                      />
-                  </SidebarMenu>
+                  </SidebarMenu> */}
                </Sidebar.Body>
                {/* <Sidebar.Footer>
                   <Tooltip content={'Settings'} rounded color="primary">

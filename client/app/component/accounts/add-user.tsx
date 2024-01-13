@@ -12,7 +12,7 @@ export const AddUser = () => {
    };
 
    return (
-      <div>
+      <>
          <Button auto onClick={handler}>
             Add User
          </Button>
@@ -120,6 +120,6 @@ export const AddUser = () => {
                </Button>
             </Modal.Footer>
          </Modal>
-      </div>
+      </>
    );
 };

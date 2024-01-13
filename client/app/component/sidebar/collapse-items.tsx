@@ -1,3 +1,4 @@
+'use client'
 import {Collapse, Text} from '@nextui-org/react';
 import React, {useState} from 'react';
 import {ChevronUpIcon} from '../icons/sidebar/chevron-up-icon';

@@ -1,10 +1,15 @@
+'use client'
 import {Dropdown, Text} from '@nextui-org/react';
 import React, {useState} from 'react';
 import {AcmeIcon} from '../icons/acme-icon';
-import {AcmeLogo} from '../icons/acmelogo';
 import {BottomIcon} from '../icons/sidebar/bottom-icon';
 import {Box} from '../styles/box';
 import {Flex} from '../styles/flex';
+import { useAppDispatch, useAppSelector } from '../../reducers/hook.redux';
+import { addModule, selectModule } from '../../reducers/moduleReducer';
+import { MODULES } from '../../constants/modules.constant';
+import { useRouter } from 'next/navigation';
+
 
 export interface Company {
    name: string;
@@ -13,16 +18,28 @@ export interface Company {
 }
 
 export const CompaniesDropdown = () => {
+   const moduleName = useAppSelector(selectModule)
+   
    const [company, setCompany] = useState<Company>({
-      name: 'CDE',
+      name: moduleName || 'CDE',
       location: '',
       logo: <AcmeIcon />,
    });
+   const router = useRouter();
 
-   const navigateToPage = () => {
-      setTimeout(() => {
-         console.log("Company")
-      });
+   const dispatch = useAppDispatch();
+   const navigateToPage = (index:React.Key) => {
+      const modIndex = parseInt(index.toString());
+      const modObj = MODULES[modIndex];
+      if(modObj){
+         setCompany({
+            name: modObj.name,
+            location: '',
+            logo: <AcmeIcon />,
+         });
+         dispatch(addModule(modObj.name));
+         router.push(modObj.route);
+      }
    }
    return (
       <Dropdown placement="bottom-right" borderWeight={'extrabold'} >
@@ -58,36 +75,7 @@ export const CompaniesDropdown = () => {
             </Box>
          </Dropdown.Trigger>
          <Dropdown.Menu
-            onAction={(e) => {
-               if (e === '1') {
-                  setCompany({
-                     name: 'CDE',
-                     location: '',
-                     logo: <AcmeIcon />,
-                  });
-               }
-               if (e === '2') {
-                  setCompany({
-                     name: 'Field',
-                     location: '',
-                     logo: <AcmeLogo />,
-                  });
-               }
-               if (e === '3') {
-                  setCompany({
-                     name: 'Contract',
-                     location: '',
-                     logo: <AcmeIcon />,
-                  });
-               }
-               if (e === '4') {
-                  setCompany({
-                     name: 'IDP',
-                     location: '',
-                     logo: <AcmeIcon />,
-                  });
-               }
-            }}
+            onAction={navigateToPage}
             aria-label="Avatar Actions"
             css={{
                '$$dropdownMenuWidth': '340px',
@@ -107,15 +95,18 @@ export const CompaniesDropdown = () => {
                },
             }}
          >
-            <Dropdown.Section title="Companies">
-               <Dropdown.Item
-                  key="1"
-                  icon={<AcmeIcon />}
-                  description=""
-               >
-                  CDE
-               </Dropdown.Item>
-               <Dropdown.Item
+            <Dropdown.Section title="Modules">
+               {MODULES.map((objModule,key) => {
+                  return(
+                  <Dropdown.Item
+                     key={key}
+                     icon={<AcmeIcon />}
+                     description=""
+                  >
+                     {objModule.name}
+                  </Dropdown.Item>)
+               })}
+               {/* <Dropdown.Item
                   key="2"
                   icon={<AcmeLogo />}
                   description=""
@@ -135,7 +126,7 @@ export const CompaniesDropdown = () => {
                   description=""
                >
                   IDP
-               </Dropdown.Item>
+               </Dropdown.Item> */}
             </Dropdown.Section>
          </Dropdown.Menu>
       </Dropdown>

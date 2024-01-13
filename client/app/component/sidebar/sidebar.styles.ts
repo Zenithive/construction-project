@@ -60,7 +60,6 @@ export const Header = styled('div', {
 export const Body = styled('div', {
    display: 'flex',
    flexDirection: 'column',
-   gap: '$10',
    mt: '$13',
    px: '$4',
    // pt: '$4',
