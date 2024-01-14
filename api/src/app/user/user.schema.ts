@@ -76,6 +76,18 @@ export class UserId {
 }
 
 @InputType()
+export class Email {
+  @Field(() => ID)
+  email!: string;
+}
+
+@ObjectType()
+export class Token {
+  @Field()
+  token!: string;
+}
+
+@InputType()
 export class LoginInput {
   @Field({ nullable: true })
   email?: string;

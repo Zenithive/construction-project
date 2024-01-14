@@ -1,9 +1,12 @@
 import { Model } from 'mongoose';
 import {  Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+//import { AppSession } from '../auth/session.types';
+//import { Request, Response } from 'express';
 import * as bcrypt from 'bcrypt';
+import * as jwt from 'jsonwebtoken';
 
-import { User, UserDocument, CreateUserInput, UserId, UpdateUserInput, LoginInput } from './user.schema';
+import { User, UserDocument, CreateUserInput, UserId, UpdateUserInput, LoginInput, Email, Token } from './user.schema';
 
 @Injectable()
 export class UserService {
@@ -17,21 +20,23 @@ export class UserService {
     return this.userModel.findOne({ _id: id })
   }
 
-  async loginUser(LoginInput: LoginInput) {
+  async getUserByEmail(email: Email){
+    const user: User | null = await this.userModel.findOne({ email : email })
+    return user;
+  } 
+
+  async loginUser(LoginInput: LoginInput, user: User) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const userData: User | null = await this.userModel.findOne({ email: LoginInput.email })
-    if (!userData) {
-      throw new Error('User not found');
+    const payLoad = {
+      id : user._id,
+      email : user.email,
     }
-
-    const isPasswordValid = await bcrypt.compare(LoginInput.password, userData.password);
-
-    if (!isPasswordValid) {
-      throw new Error('Invalid password');
+    const token = jwt.sign(payLoad,"secretKey",{expiresIn : "2h"});
+    const tokenObj : Token = {
+      token : token
     }
-
-    return userData;
-
+    console.log(token);
+    return tokenObj;
   }
 
   async createUser(user: CreateUserInput) {
