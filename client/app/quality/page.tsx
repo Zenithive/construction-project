@@ -11,7 +11,7 @@ const StyledQuality = styled.div`
 export default function Quality(props: QualityProps) {
   return (
     <StyledQuality>
-      <h1>Welcome to Quality!</h1>
+      <h1>To be developed soon!</h1>
     </StyledQuality>
   );
 }

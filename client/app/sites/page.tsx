@@ -11,7 +11,7 @@ const StyledSites = styled.div`
 export default function Sites(props: SitesProps) {
   return (
     <StyledSites>
-      <h1>Welcome to Sites!</h1>
+      <h1>To be developed soon!</h1>
     </StyledSites>
   );
 }

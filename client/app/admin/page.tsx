@@ -1,5 +1,6 @@
 "use client"
 import styled from 'styled-components';
+import {Accounts} from '../component/accounts/index';
 
 /* eslint-disable-next-line */
 export interface AdminProps {}
@@ -11,7 +12,7 @@ const StyledAdmin = styled.div`
 export default function Admin(props: AdminProps) {
   return (
     <StyledAdmin>
-      <h1>Welcome to Admin!</h1>
+      <Accounts pageTitle="Admin" />
     </StyledAdmin>
   );
 }

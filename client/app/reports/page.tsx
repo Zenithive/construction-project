@@ -11,7 +11,7 @@ const StyledReports = styled.div`
 export default function Reports(props: ReportsProps) {
   return (
     <StyledReports>
-      <h1>Welcome to Reports!</h1>
+      <h1>To be developed soon!</h1>
     </StyledReports>
   );
 }

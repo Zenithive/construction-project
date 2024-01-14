@@ -11,7 +11,7 @@ const StyledTasks = styled.div`
 export default function Tasks(props: TasksProps) {
   return (
     <StyledTasks>
-      <h1>Welcome to Tasks!</h1>
+      <h1>To be developed soon!</h1>
     </StyledTasks>
   );
 }

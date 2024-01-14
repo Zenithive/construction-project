@@ -8,11 +8,18 @@ import AssuredWorkloadIcon from '@mui/icons-material/AssuredWorkload';
 import HandshakeIcon from '@mui/icons-material/Handshake';
 import GradingIcon from '@mui/icons-material/Grading';
 import CloudIcon from '@mui/icons-material/Cloud';
+import DashboardIcon from '@mui/icons-material/Dashboard';
 
 export const PROJECT_MODULES = {
     name: "Projects",
     route: "/projects",
     icon: <WorkspacesIcon />
+};
+
+export const DASHBOARD_MODULES = {
+    name: "Dashboard",
+    route: "/dashboard",
+    icon: <DashboardIcon />
 };
 
 export const FILES_MODULES = {
@@ -70,6 +77,7 @@ export const MODULES = [
         icon: <CloudIcon />,
         subModules: [
             PROJECT_MODULES,
+            DASHBOARD_MODULES,
             FILES_MODULES,
             TASKS_MODULES,
             ADMIN_MODULES,

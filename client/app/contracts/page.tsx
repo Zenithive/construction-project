@@ -11,7 +11,7 @@ const StyledContracts = styled.div`
 export default function Contracts(props: ContractsProps) {
   return (
     <StyledContracts>
-      <h1>Welcome to Contracts!</h1>
+      <h1>To be developed soon!</h1>
     </StyledContracts>
   );
 }
