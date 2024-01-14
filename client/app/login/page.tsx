@@ -38,16 +38,16 @@ export default function Login(props: LoginProps) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const formSubmit = async (values: FormValues,{ setSubmitting, resetForm }:any) => {
     setSubmitting(true);
-    await loginUser({
+    const result = await loginUser({
       variables: {
         email: values.email,
         password: values.password,
       },
     });
-
-    if(data?.loginUser?.email){
-      resetForm();
-      router.push("/login");
+    const userData = result.data?.loginUser;
+    if(userData?.email){
+      resetForm();  
+     router.push("/dashboard");
     }
     
     setSubmitting(false);

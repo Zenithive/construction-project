@@ -6,6 +6,8 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { UserModule } from './user/user.module';
+import { AuthModule } from './auth/auth.module';
+
 import { join } from 'path';
 
 @Module({
@@ -16,7 +18,9 @@ import { join } from 'path';
       sortSchema: true,
     }),
     MongooseModule.forRoot('mongodb://0.0.0.0:27017/rof'),
+    AuthModule,
     UserModule
+    
   ],
   controllers: [AppController],
   providers: [AppService],
