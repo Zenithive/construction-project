@@ -6,6 +6,8 @@ import { useMutation } from '@apollo/client';
 import { LOGIN_USER } from '../api/user/mutations';
 import { useRouter } from 'next/navigation'
 import ToastMessage from '../component/toast-message/ToastMessage';
+import { useAppDispatch } from '../reducers/hook.redux';
+import { addUser } from '../reducers/userReducer';
 
 /* eslint-disable-next-line */
 export interface LoginProps {}
@@ -31,6 +33,7 @@ export default function Login(props: LoginProps) {
     password: ""
   }
   const router = useRouter();
+  const dispatch = useAppDispatch();
 
   const [loginUser, { data, error }] = useMutation(LOGIN_USER);
 
@@ -38,17 +41,22 @@ export default function Login(props: LoginProps) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const formSubmit = async (values: FormValues,{ setSubmitting, resetForm }:any) => {
     setSubmitting(true);
-    const result = await loginUser({
+    const res = await loginUser({
       variables: {
         email: values.email,
         password: values.password,
       },
     });
-    const userData = result.data?.loginUser;
-    if(userData?.email){
-      resetForm();  
-     router.push("/dashboard");
-    }
+
+    setTimeout(() => {
+
+      const userData = res.data?.loginUser;
+      if(userData?.email){
+        resetForm();
+        dispatch(addUser({email: res.data?.loginUser?.email}))
+        router.push("/dashboard");
+      }
+    },500);
     
     setSubmitting(false);
   }
@@ -78,7 +86,7 @@ export default function Login(props: LoginProps) {
           <ToastMessage 
             severity="success" 
             openFlag={data?.loginUser?.email ? true : false } 
-            message='Sign up successfully.'
+            message='Login successfully.'
           ></ToastMessage>
 
           <ToastMessage 
