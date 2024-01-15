@@ -9,7 +9,7 @@ input CreateUserInput {
   firstName: String
   lastName: String
   password: String!
-  startDate: DateTime! = "2024-01-14T20:06:02.997Z"
+  startDate: DateTime! = "2024-01-15T04:19:18.206Z"
   status: String
 }
 
