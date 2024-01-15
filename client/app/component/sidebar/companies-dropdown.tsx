@@ -54,7 +54,7 @@ export const CompaniesDropdown = () => {
                         weight={'medium'}
                         css={{
                            m: 0,
-                           color: '$accents9',
+                           color: '$customForGround',
                            lineHeight: '$lg',
                            mb: '-$5',
                         }}
@@ -65,7 +65,7 @@ export const CompaniesDropdown = () => {
                         span
                         weight={'medium'}
                         size={'$xs'}
-                        css={{color: '$accents8'}}
+                        css={{color: '$customForGround'}}
                      >
                         {company.location}
                      </Text>
@@ -106,27 +106,6 @@ export const CompaniesDropdown = () => {
                      {objModule.name}
                   </Dropdown.Item>)
                })}
-               {/* <Dropdown.Item
-                  key="2"
-                  icon={<AcmeLogo />}
-                  description=""
-               >
-                  Field
-               </Dropdown.Item>
-               <Dropdown.Item
-                  key="3"
-                  icon={<AcmeIcon />}
-                  description=""
-               >
-                  Contract
-               </Dropdown.Item>
-               <Dropdown.Item
-                  key="4"
-                  icon={<AcmeIcon />}
-                  description=""
-               >
-                  IDP
-               </Dropdown.Item> */}
             </Dropdown.Section>
          </Dropdown.Menu>
       </Dropdown>
