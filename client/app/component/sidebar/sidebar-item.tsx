@@ -24,7 +24,7 @@ export const SidebarItem = ({icon, title, isActive, href = ''}: Props) => {
       <NextLink href={href}>
          <Link
             css={{
-               color: '$accents9',
+               color: '$customForGround',
                maxWidth: '100%',
                width: '100%',
             }}
@@ -46,12 +46,13 @@ export const SidebarItem = ({icon, title, isActive, href = ''}: Props) => {
                   },
                   ...(isActive
                      ? {
-                          'bg': '$blue200',
+                          'bg': '$customBlue800',
+                          'color': 'inherit',
                           '& svg path': {
                              fill: '$blue600',
                           },
                        }
-                     : {'&:hover': {bg: '$accents2'}}),
+                     : {'&:hover': {bg: '$accents2', color: "$black"}}),
                }}
                align={'center'}
             >
@@ -61,7 +62,8 @@ export const SidebarItem = ({icon, title, isActive, href = ''}: Props) => {
                   weight={'normal'}
                   size={'$base'}
                   css={{
-                     color: '$accents9',
+                     'color': 'inherit',
+                     "&hover": {color: "$black"}
                   }}
                >
                   {title}

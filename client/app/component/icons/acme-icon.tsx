@@ -11,7 +11,7 @@ export const AcmeIcon = () => {
          xmlns="http://www.w3.org/2000/svg"
          css={{
             '& rect': {
-               fill: '$background',
+               fill: '$black',
                stroke: '$border',
             },
             '& path': {

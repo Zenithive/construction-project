@@ -51,7 +51,7 @@ export const CollapseItems = ({icon, items, title}: Props) => {
                         weight={'normal'}
                         size={'$base'}
                         css={{
-                           color: '$accents9',
+                           color: '$customForGround',
                         }}
                      >
                         {title}
