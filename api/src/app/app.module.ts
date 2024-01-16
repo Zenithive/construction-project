@@ -9,6 +9,7 @@ import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 
 import { join } from 'path';
+import { ProjectModule } from './project/project.module';
 
 @Module({
   imports: [
@@ -19,7 +20,9 @@ import { join } from 'path';
     }),
     MongooseModule.forRoot('mongodb://0.0.0.0:27017/rof'),
     AuthModule,
-    UserModule
+    UserModule,
+    ProjectModule
+
     
   ],
   controllers: [AppController],

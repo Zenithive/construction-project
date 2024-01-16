@@ -77,7 +77,7 @@ export class UserId {
 
 @InputType()
 export class Email {
-  @Field(() => ID)
+  @Field()
   email!: string;
 }
 

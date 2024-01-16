@@ -21,7 +21,8 @@ export class UserService {
   }
 
   async getUserByEmail(email: Email){
-    const user: User | null = await this.userModel.findOne({ email : email })
+    const mail:string = email.email;
+    const user: User | null = await this.userModel.findOne({ email : mail })
     return user;
   } 
 
