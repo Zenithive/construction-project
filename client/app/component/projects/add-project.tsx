@@ -1,8 +1,41 @@
-import {Button, Divider, Input, Modal, Text} from '@nextui-org/react';
+import {Divider, Modal, Text} from '@nextui-org/react';
 import React from 'react';
-import {Flex} from '../styles/flex';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import { useMutation } from '@apollo/client';
+import ToastMessage from '../toast-message/ToastMessage';
+import { Box, Button, Grid, TextField } from '@mui/material';
+import { CREATE_PROJECT } from '../../api/project/mutations';
+
+
+export interface ProjectTypes {
+   projName: string;
+   region: string;
+   status: string;
+   website: string;
+   orgName: string;
+   orgId: string;
+ }
+
+const ProjectSchema = Yup.object().shape({
+   projName: Yup.string().required('Required'),
+   region: Yup.string().required('Required'),
+   status: Yup.string().required('Required'),
+   website: Yup.string().required('Required'),
+   orgName: Yup.string().required("Required"),
+});
 
 export const AddProject = () => {
+   const initValue: ProjectTypes = {
+      projName: "",
+      region: "",
+      website: "",
+      status: "",
+      orgName: "",
+      orgId: "1r"
+    }
+    
+   const [createProject, { data, error }] = useMutation(CREATE_PROJECT);
    const [visible, setVisible] = React.useState(false);
    const handler = () => setVisible(true);
 
@@ -11,11 +44,45 @@ export const AddProject = () => {
       console.log('closed');
    };
 
+   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   const addProject = async (values: ProjectTypes,{ setSubmitting, resetForm }:any) => {
+      setSubmitting(true);
+      const res = await createProject({
+         variables: {
+            id: Math.floor(Math.random() * 10000),
+            projName: values.projName,
+            region: values.region,
+            status: values.status,
+            website: values.website,
+            orgName: values.orgName,
+            orgId: "1r"
+         },
+      });
+
+
+      const projId:string|null = res.data?.createProject?._id;
+      if(projId){
+         resetForm();
+         closeHandler();
+         //dispatch(addUser({token : token}));
+         //router.push("/dashboard");
+      }
+      
+      setSubmitting(false);
+   }
+
+   const formik = useFormik({
+      initialValues: initValue,
+      validationSchema: ProjectSchema,
+      onSubmit: addProject,
+    });
+
    return (
       <>
-         <Button auto onClick={handler}>
+         <Button variant='contained' onClick={handler} style={{borderRadius: 10}}>
             Add Project
          </Button>
+
          <Modal
             closeButton
             aria-labelledby="modal-title"
@@ -27,87 +94,110 @@ export const AddProject = () => {
                <Text id="modal-title" h4>
                   Add new project
                </Text>
+
+               <ToastMessage 
+                  severity="success" 
+                  openFlag={data?.createProject?._id ? true : false } 
+                  message='Project created.'
+               ></ToastMessage>
+
+               <ToastMessage 
+                  severity="error" 
+                  openFlag={error ? true : false } 
+                  message='Problem while creating project.'
+               ></ToastMessage>
             </Modal.Header>
             <Divider css={{my: '$5'}} />
             <Modal.Body css={{py: '$10'}}>
-               <Flex
-                  direction={'column'}
-                  css={{
-                     'flexWrap': 'wrap',
-                     'gap': '$8',
-                     '@lg': {flexWrap: 'nowrap', gap: '$12'},
-                  }}
-               >
-                  <Flex
-                     css={{
-                        'gap': '$10',
-                        'flexWrap': 'wrap',
-                        '@lg': {flexWrap: 'nowrap'},
-                     }}
-                  >
-                     <Input
+            <Box
+               id='add-project-form'
+               component="form"
+               noValidate
+               onSubmit={formik.handleSubmit}
+               sx={{ mt: 3 }}
+            >
+               <Grid container spacing={2}>
+                  <Grid item xs={12}>
+                     <TextField
+                        required
+                        fullWidth
+                        id="projName"
                         label="Project Name"
-                        bordered
-                        clearable
-                        fullWidth
-                        size="lg"
-                        placeholder="Project Name"
+                        name="projName"
+                        autoComplete="projName"
+                        value={formik.values.projName}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        error={formik.touched.projName && Boolean(formik.errors.projName)}
+                        helperText={formik.touched.projName && formik.errors.projName}
                      />
-                  </Flex>
-
-                  <Flex
-                     css={{
-                        'gap': '$10',
-                        'flexWrap': 'wrap',
-                        '@lg': {flexWrap: 'nowrap'},
-                     }}
-                  >
-                     <Input
+                  </Grid>
+                  <Grid item xs={12}>
+                     <TextField
+                        required
+                        fullWidth
+                        name="region"
                         label="Region"
-                        clearable
-                        bordered
-                        fullWidth
-                        size="lg"
-                        placeholder="Region"
+                        id="region"
+                        autoComplete="region"
+                        value={formik.values.region}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        error={formik.touched.region && Boolean(formik.errors.region)}
+                        helperText={formik.touched.region && formik.errors.region}
                      />
-                  </Flex>
-                  <Flex
-                     css={{
-                        'gap': '$10',
-                        'flexWrap': 'wrap',
-                        '@lg': {flexWrap: 'nowrap'},
-                     }}
-                  >
-                     <Input
+                  </Grid>
+                  <Grid item xs={12}>
+                     <TextField
+                        required
+                        fullWidth
+                        name="status"
                         label="Status"
-                        clearable
-                        bordered
-                        fullWidth
-                        size="lg"
-                        placeholder="Status"
+                        id="status"
+                        autoComplete="status"
+                        value={formik.values.status}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        error={formik.touched.status && Boolean(formik.errors.status)}
+                        helperText={formik.touched.status && formik.errors.status}
                      />
-                  </Flex>
-                  <Flex
-                     css={{
-                        'gap': '$10',
-                        'flexWrap': 'wrap',
-                        '@lg': {flexWrap: 'nowrap'},
-                     }}
-                  >
-                     <Input
+                  </Grid>
+                  <Grid item xs={12}>
+                     <TextField
+                        required
+                        fullWidth
+                        name="website"
                         label="Website"
-                        clearable
-                        bordered
-                        fullWidth
-                        size="lg"
-                        placeholder="Website"
+                        id="website"
+                        autoComplete="website"
+                        value={formik.values.website}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        error={formik.touched.website && Boolean(formik.errors.website)}
+                        helperText={formik.touched.website && formik.errors.website}
                      />
-                  </Flex>
-               </Flex>
+                  </Grid>
+                  <Grid item xs={12}>
+                     <TextField
+                        required
+                        fullWidth
+                        name="orgName"
+                        label="Organisation Name"
+                        id="orgName"
+                        autoComplete="orgName"
+                        value={formik.values.orgName}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        error={formik.touched.orgName && Boolean(formik.errors.orgName)}
+                        helperText={formik.touched.orgName && formik.errors.orgName}
+                     />
+                  </Grid>               
+               </Grid>
+          </Box>
             </Modal.Body>
             <Divider css={{my: '$5'}} />
             <Modal.Footer>
-               <Button auto onClick={closeHandler}>
+               <Button style={{borderRadius: 10}} variant="contained" type='submit' form="add-project-form">
                   Add Project
                </Button>
             </Modal.Footer>

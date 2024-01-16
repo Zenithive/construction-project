@@ -5,27 +5,28 @@ import {EditIcon} from '../icons/table/edit-icon';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import {users} from './data';
 import {IconButton, StyledBadge} from './project-list.styled';
+import { ProjectTypes } from './add-project';
 
 interface Props {
-   user: typeof users[number];
+   project: ProjectTypes;
    columnKey: string | React.Key;
 }
 
-export const RenderCell = ({user, columnKey}: Props) => {
+export const RenderCell = ({project, columnKey}: Props) => {
    // @ts-ignore
-   const cellValue = user[columnKey];
+   const cellValue = project[columnKey];
    switch (columnKey) {
-      case 'name':
+      case 'projName':
          return (
             <Col>
                <Row>
                   <Text b size={14} css={{tt: 'capitalize'}}>
-                     {user.name}
+                     {project.projName}
                   </Text>
                </Row>
             </Col>
          );
-      case 'role':
+      case 'region':
          return (
             <Col>
                <Row>
@@ -39,7 +40,7 @@ export const RenderCell = ({user, columnKey}: Props) => {
       case 'status':
          return (
             // @ts-ignore
-            <StyledBadge type={String(user.status)}>{cellValue}</StyledBadge>
+            <StyledBadge type={String(project.status)}>{cellValue}</StyledBadge>
          );
 
       case 'actions':
@@ -59,7 +60,7 @@ export const RenderCell = ({user, columnKey}: Props) => {
                <Col css={{d: 'flex'}}>
                   <Tooltip content="Edit user">
                      <IconButton
-                        onClick={() => console.log('Edit Project', user.id)}
+                        onClick={() => console.log('Edit Project', project.orgId)}
                      >
                         <EditIcon size={20} fill="#979797" />
                      </IconButton>
@@ -69,7 +70,7 @@ export const RenderCell = ({user, columnKey}: Props) => {
                   <Tooltip
                      content="Delete Project"
                      color="error"
-                     onClick={() => console.log('Delete user', user.id)}
+                     onClick={() => console.log('Delete user', project.orgId)}
                   >
                      <IconButton>
                         <DeleteIcon size={20} fill="#FF0080" />

@@ -26,6 +26,14 @@ export class Project {
   @Prop()
   @Field()
   website!: string;
+
+  @Prop()
+  @Field({ nullable: true })
+  orgName!: string;
+
+  @Prop()
+  @Field({ nullable: true })
+  orgId!: string;
 }
 
 @InputType()
@@ -44,6 +52,12 @@ export class CreateProjectInput {
 
   @Field({ nullable: true })
   website!: string;
+
+  @Field()
+  orgId!: string;
+
+  @Field()
+  orgName!: string;
 }
 
 export const ProjectSchema = SchemaFactory.createForClass(Project);

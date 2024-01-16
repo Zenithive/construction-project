@@ -3,8 +3,14 @@ import React from 'react';
 import {Box} from '../styles/box';
 import {columns, users} from './data';
 import {RenderCell} from './render-cell';
+import { GET_PROJECTS } from '../../api/project/queries';
+import { useQuery } from '@apollo/client';
+import { ProjectTypes } from './add-project';
 
 export const ProjectListWrapper = () => {
+   const { data, refetch } = useQuery(GET_PROJECTS);
+
+   console.log("data", data)
    return (
       <Box
          css={{
@@ -35,12 +41,13 @@ export const ProjectListWrapper = () => {
                   </Table.Column>
                )}
             </Table.Header>
-            <Table.Body items={users}>
-               {(item) => (
-                  <Table.Row>
-                     {(columnKey) => (
+            <Table.Body items={data?.getProjects || []}>
+               {(item:ProjectTypes) => (
+                  <Table.Row key={Math.random()}>
+                     {(columnKey:React.Key) => (
                         <Table.Cell>
-                           {RenderCell({user: item, columnKey: columnKey})}
+                           {/* {JSON.stringify(columnKey)} */}
+                           {RenderCell({project: item, columnKey: columnKey})}
                         </Table.Cell>
                      )}
                   </Table.Row>
