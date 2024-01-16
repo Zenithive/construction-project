@@ -50,10 +50,10 @@ export default function Login(props: LoginProps) {
 
     setTimeout(() => {
 
-      const userData = res.data?.loginUser;
-      if(userData?.email){
+      const token:string|null = res.data?.loginUser?.token;
+      if(token){
         resetForm();
-        dispatch(addUser({email: res.data?.loginUser?.email}))
+        dispatch(addUser({token : token}));
         router.push("/dashboard");
       }
     },500);
