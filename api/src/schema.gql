@@ -4,6 +4,8 @@
 
 input CreateProjectInput {
   _id: ID!
+  orgId: String!
+  orgName: String!
   projName: String!
   region: String!
   status: String!
@@ -17,7 +19,7 @@ input CreateUserInput {
   firstName: String
   lastName: String
   password: String!
-  startDate: DateTime! = "2024-01-15T22:32:16.892Z"
+  startDate: DateTime! = "2024-01-16T19:27:13.399Z"
   status: String
 }
 
@@ -44,6 +46,8 @@ type Mutation {
 
 type Project {
   _id: ID!
+  orgId: String
+  orgName: String
   projName: String!
   region: String!
   status: String!

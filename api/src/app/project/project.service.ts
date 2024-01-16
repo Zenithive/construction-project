@@ -12,11 +12,11 @@ export class ProjectService {
       }
 
     async createProject(project: CreateProjectInput){
-        const checkExistingProj = await this.projModel.findOne({ projName: project.projName });
+      const checkExistingProj = await this.projModel.findOne({ projName: project.projName });
 
-    if(checkExistingProj){
-      throw new Error('Project with the same Name Exists');
-    }
-    return this.projModel.create(project);
+      if(checkExistingProj){
+        throw new Error('Project with the same Name Exists');
+      }
+      return this.projModel.create(project);
     }
 }

@@ -23,6 +23,8 @@ const StyledProjects = styled.div`
 `;
 
 export default function Projects(props: ProjectsProps) {
+   
+
   return (
     <Flex
        css={{
