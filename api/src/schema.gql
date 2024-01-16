@@ -2,6 +2,14 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+input CreateProjectInput {
+  _id: ID!
+  projName: String!
+  region: String!
+  status: String!
+  website: String
+}
+
 input CreateUserInput {
   _id: ID!
   email: String!
@@ -9,7 +17,7 @@ input CreateUserInput {
   firstName: String
   lastName: String
   password: String!
-  startDate: DateTime! = "2024-01-15T04:19:18.206Z"
+  startDate: DateTime! = "2024-01-15T22:32:16.892Z"
   status: String
 }
 
@@ -19,7 +27,7 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 scalar DateTime
 
 input Email {
-  email: ID!
+  email: String!
 }
 
 input LoginInput {
@@ -28,12 +36,22 @@ input LoginInput {
 }
 
 type Mutation {
+  createProject(input: CreateProjectInput!): Project!
   createUser(input: CreateUserInput!): User!
   loginUser(input: LoginInput!): Token!
   updateUser(input: UpdateUserInput!): User!
 }
 
+type Project {
+  _id: ID!
+  projName: String!
+  region: String!
+  status: String!
+  website: String!
+}
+
 type Query {
+  getProjects: [Project!]!
   getUser(input: UserId!): User!
   getUserByEmail(input: Email!): User!
   getUsers: [User!]!
