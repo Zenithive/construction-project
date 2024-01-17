@@ -1,5 +1,4 @@
 'use client'
-import { Accounts } from '../component/accounts';
 import { Content } from '../component/home/content';
 
 /* eslint-disable-next-line */

@@ -1,22 +1,15 @@
-import {Button, Input, Text} from '@nextui-org/react';
-import Link from 'next/link';
+import {Button, Input} from '@nextui-org/react';
 import React from 'react';
-import {Breadcrumbs, Crumb, CrumbLink} from '../breadcrumb/breadcrumb.styled';
 import {DotsIcon} from '../icons/accounts/dots-icon';
 import {ExportIcon} from '../icons/accounts/export-icon';
 import {InfoIcon} from '../icons/accounts/info-icon';
 import {TrashIcon} from '../icons/accounts/trash-icon';
-import {HouseIcon} from '../icons/breadcrumb/house-icon';
-import {UsersIcon} from '../icons/breadcrumb/users-icon';
 import {SettingsIcon} from '../icons/sidebar/settings-icon';
 import {Flex} from '../styles/flex';
 import {TableWrapper} from '../table/table';
-import {AddUser} from './add-user';
+import {AddOrganisation} from './add-organisation';
 
-interface AccountProps{
-   pageTitle: string;
-}
-export const Accounts = (props:AccountProps) => {
+export const Organisations = () => {
    return (
       <Flex
          css={{
@@ -30,26 +23,7 @@ export const Accounts = (props:AccountProps) => {
          justify={'center'}
          direction={'column'}
       >
-         <Breadcrumbs>
-            <Crumb>
-               <HouseIcon />
-               <Link href={'/'}>
-                  <CrumbLink href="#">{props.pageTitle}</CrumbLink>
-               </Link>
-               <Text>/</Text>
-            </Crumb>
-
-            <Crumb>
-               <UsersIcon />
-               <CrumbLink href="#">Users</CrumbLink>
-               <Text>/</Text>
-            </Crumb>
-            <Crumb>
-               <CrumbLink href="#">List</CrumbLink>
-            </Crumb>
-         </Breadcrumbs>
-
-         <Text h3>All Accounts</Text>
+        
          <Flex
             css={{gap: '$8'}}
             align={'center'}
@@ -66,7 +40,7 @@ export const Accounts = (props:AccountProps) => {
             >
                <Input
                   css={{width: '100%', maxW: '410px'}}
-                  placeholder="Search users"
+                  placeholder="Search organisation"
                />
                <SettingsIcon />
                <TrashIcon />
@@ -74,7 +48,7 @@ export const Accounts = (props:AccountProps) => {
                <DotsIcon />
             </Flex>
             <Flex direction={'row'} css={{gap: '$6'}} wrap={'wrap'}>
-               <AddUser />
+               <AddOrganisation />
                <Button auto iconRight={<ExportIcon />}>
                   Export to CSV
                </Button>

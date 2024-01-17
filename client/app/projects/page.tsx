@@ -24,6 +24,7 @@ const StyledProjects = styled.div`
 
 export default function Projects(props: ProjectsProps) {
    
+   const [listRefresh, setListRefresh] = React.useState(false);
 
   return (
     <Flex
@@ -79,14 +80,14 @@ export default function Projects(props: ProjectsProps) {
              <DotsIcon />
           </Flex>
           <Flex direction={'row'} css={{gap: '$6'}} wrap={'wrap'}>
-             <AddProject />
+             <AddProject setListRefresh={setListRefresh} />
              <Button auto iconRight={<ExportIcon />}>
                 Export to CSV
              </Button>
           </Flex>
        </Flex>
 
-       <ProjectListWrapper />
+       <ProjectListWrapper listRefresh={listRefresh} />
     </Flex>
  );
 }

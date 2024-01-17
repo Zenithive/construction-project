@@ -1,16 +1,22 @@
 import {Table} from '@nextui-org/react';
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Box} from '../styles/box';
-import {columns, users} from './data';
+import {columns} from './data';
 import {RenderCell} from './render-cell';
 import { GET_PROJECTS } from '../../api/project/queries';
 import { useQuery } from '@apollo/client';
 import { ProjectTypes } from './add-project';
 
-export const ProjectListWrapper = () => {
+export interface ProjectListWrapperProps{
+   listRefresh: boolean;
+}
+export const ProjectListWrapper = ({listRefresh}:ProjectListWrapperProps) => {
    const { data, refetch } = useQuery(GET_PROJECTS);
 
-   console.log("data", data)
+   useEffect(()=>{
+      refetch();
+   }, [listRefresh, refetch]);
+
    return (
       <Box
          css={{
