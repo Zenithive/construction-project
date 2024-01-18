@@ -5,8 +5,9 @@ import { InjectModel } from '@nestjs/mongoose';
 //import { Request, Response } from 'express';
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
+import { v4 as uuidv4 } from 'uuid'; 
 
-import { User, UserDocument, CreateUserInput, UserId, UpdateUserInput, LoginInput, Email, Token } from './user.schema';
+import { User, UserDocument, CreateUserInput, UserId, UpdateUserInput, LoginInput, Email, Token, ReturnUserObj } from './user.schema';
 
 @Injectable()
 export class UserService {
@@ -21,8 +22,8 @@ export class UserService {
   }
 
   async getUserByEmail(email: Email){
-    const mail:string = email.email;
-    const user: User | null = await this.userModel.findOne({ email : mail })
+   // const mail:string = email.email;
+    const user: User | null = await this.userModel.findOne({ email : email })
     return user;
   } 
 
@@ -32,11 +33,19 @@ export class UserService {
       id : user._id,
       email : user.email,
     }
+    console.log(user);
+    const returnUser: ReturnUserObj = {
+      id : user._id,
+      firstName : user.firstName,
+      lastName : user.lastName,
+      email : user.email,
+    }
     const token = jwt.sign(payLoad,"secretKey",{expiresIn : "2h"});
     const tokenObj : Token = {
-      token : token
+      token : token,
+      userObj : returnUser
     }
-    console.log(token);
+    console.log(tokenObj);
     return tokenObj;
   }
 
@@ -49,6 +58,7 @@ export class UserService {
 
     const saltOrRounds = 10;
     user.password = await bcrypt.hash(user.password, saltOrRounds);
+    user._id = uuidv4()
     return this.userModel.create(user);
   }
 
