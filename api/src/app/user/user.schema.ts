@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { ObjectType, Field, ID, InputType } from '@nestjs/graphql';
+import { ObjectType, Field, InputType } from '@nestjs/graphql';
 
 export type UserDocument = User & Document;
 
@@ -47,7 +47,7 @@ export class User {
 
 @InputType()
 export class CreateUserInput {
-  @Field(() => ID)
+  @Field()
   _id!: string;
 
   @Field()
@@ -79,8 +79,8 @@ export class CreateUserInput {
 
 @InputType()
 export class UserId {
-  @Field(() => ID)
-  _id!: number;
+  @Field()
+  _id!: string;
 }
 
 @InputType()
@@ -119,8 +119,8 @@ export class LoginInput {
 
 @InputType()
 export class UpdateUserInput {
-  @Field(() => ID)
-  _id!: number;
+  @Field()
+  _id!: string;
 
   @Field({ nullable: true })
   email?: string;

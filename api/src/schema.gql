@@ -2,25 +2,23 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-input CreateProjectInput {
-  _id: ID!
+input CreateOrgInput {
+  contact: String!
   orgId: String!
   orgName: String!
-  projName: String!
   region: String!
-  status: String!
   website: String
 }
 
 input CreateUserInput {
-  _id: ID!
+  _id: String!
   adminId: String!
   email: String!
   endDate: DateTime
   firstName: String
   lastName: String
   password: String!
-  startDate: DateTime! = "2024-01-17T21:50:58.562Z"
+  startDate: DateTime! = "2024-01-18T04:41:50.848Z"
   status: String
 }
 
@@ -39,16 +37,24 @@ input LoginInput {
 }
 
 type Mutation {
-  createProject(input: CreateProjectInput!): Project!
+  createProject(input: CreateOrgInput!): Org!
   createUser(input: CreateUserInput!): User!
   loginUser(input: LoginInput!): Token!
   updateUser(input: UpdateUserInput!): User!
 }
 
-type Project {
-  _id: ID!
+type Org {
+  contact: String!
   orgId: String
   orgName: String
+  region: String!
+  website: String!
+}
+
+type Project {
+  orgId: String
+  orgName: String
+  projId: String!
   projName: String!
   region: String!
   status: String!
@@ -56,6 +62,7 @@ type Project {
 }
 
 type Query {
+  getAllOrg: [Org!]!
   getProjects: [Project!]!
   getUser(input: UserId!): User!
   getUserByEmail(input: Email!): User!
@@ -76,7 +83,7 @@ type Token {
 }
 
 input UpdateUserInput {
-  _id: ID!
+  _id: String!
   email: String
   endDate: DateTime
   firstName: String
@@ -99,5 +106,5 @@ type User {
 }
 
 input UserId {
-  _id: ID!
+  _id: String!
 }
