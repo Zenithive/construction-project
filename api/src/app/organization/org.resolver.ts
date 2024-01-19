@@ -15,7 +15,7 @@ export class OrgResolver {
   }
   
   @Mutation(() => Org)
-  async createProject(@Args('input') org: CreateOrgInput) {
+  async createOrg(@Args('input') org: CreateOrgInput) {
     return this.orgService.createOrg(org);
   }
 }
