@@ -1,15 +1,15 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { ObjectType, Field, ID, InputType } from '@nestjs/graphql';
+import { ObjectType, Field, InputType } from '@nestjs/graphql';
 
 export type UserDocument = User & Document;
 
 @Schema()
 @ObjectType()
 export class User {
-  @Prop()
-  @Field(() => ID)
-  _id!: number;
+  @Prop({ required: true })
+  @Field()
+  _id!: string;
 
   @Prop({ required: true })
   @Field()
@@ -38,12 +38,17 @@ export class User {
   @Prop()
   @Field({ nullable: true })
   endDate!: Date;
+
+  @Prop()
+  @Field()
+  adminId!: string;
+
 }
 
 @InputType()
 export class CreateUserInput {
-  @Field(() => ID)
-  _id!: number;
+  @Field()
+  _id!: string;
 
   @Field()
   email!: string;
@@ -67,12 +72,15 @@ export class CreateUserInput {
   @Prop()
   @Field({ nullable: true })
   endDate!: Date;
+
+  @Field()
+  adminId!: string;
 }
 
 @InputType()
 export class UserId {
-  @Field(() => ID)
-  _id!: number;
+  @Field()
+  _id!: string;
 }
 
 @InputType()
@@ -82,9 +90,22 @@ export class Email {
 }
 
 @ObjectType()
+export class ReturnUserObj {
+  @Field()
+  id!: string;
+  @Field()
+  firstName!: string;
+  @Field()
+  lastName!: string;
+  @Field()
+  email!: string;
+}
+@ObjectType()
 export class Token {
   @Field()
   token!: string;
+  @Field()
+  userObj!: ReturnUserObj;
 }
 
 @InputType()
@@ -98,8 +119,8 @@ export class LoginInput {
 
 @InputType()
 export class UpdateUserInput {
-  @Field(() => ID)
-  _id!: number;
+  @Field()
+  _id!: string;
 
   @Field({ nullable: true })
   email?: string;
