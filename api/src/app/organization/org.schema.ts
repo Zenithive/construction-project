@@ -1,27 +1,20 @@
-import { Prop, Schema, SchemaFactory  } from '@nestjs/mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { ObjectType, Field, InputType} from '@nestjs/graphql';
 
-export type ProjectDocument = Project & Document;
+export type OrgDocument = Org & Document;
 
 @Schema()
 @ObjectType()
-export class Project {
-  @Prop()
-  @Field()
-  projId!: string;
+export class Org {
 
   @Prop({ required: true })
   @Field()
-  projName!: string;
+  contact!: string;
 
   @Prop({ required: true })
   @Field()
   region!: string;
-
-  @Prop({ required: true })
-  @Field()
-  status!: string;
 
   @Prop()
   @Field()
@@ -35,20 +28,15 @@ export class Project {
   @Field({ nullable: true })
   orgId!: string;
 }
+
 
 @InputType()
-export class CreateProjectInput {
+export class CreateOrgInput {
   @Field()
-  projId!: string;
-
-  @Field()
-  projName!: string;
+  contact!: string;
 
   @Field()
   region!: string;
-
-  @Field()
-  status!: string;
 
   @Field({ nullable: true })
   website!: string;
@@ -60,4 +48,4 @@ export class CreateProjectInput {
   orgName!: string;
 }
 
-export const ProjectSchema = SchemaFactory.createForClass(Project);
+export const OrgSchema = SchemaFactory.createForClass(Org);

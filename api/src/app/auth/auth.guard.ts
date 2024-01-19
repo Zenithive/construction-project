@@ -14,7 +14,6 @@ export class AuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean>{
     const ctx = GqlExecutionContext.create(context).getContext();
     const loginInput = ctx.req.body.variables;
-    //console.log(loginInput)
     const user: User| null  = await  this.userService.getUserByEmail(loginInput.email);
     if (!user) {
         throw new Error('User not found');

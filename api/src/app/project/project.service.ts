@@ -2,6 +2,7 @@ import { Model } from 'mongoose';
 import {  Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Project, ProjectDocument, CreateProjectInput } from './project.schema';
+import { v4 as uuidv4 } from 'uuid'; 
 
 @Injectable()
 export class ProjectService {
@@ -17,6 +18,7 @@ export class ProjectService {
       if(checkExistingProj){
         throw new Error('Project with the same Name Exists');
       }
+      project.projId = uuidv4()
       return this.projModel.create(project);
     }
 }
