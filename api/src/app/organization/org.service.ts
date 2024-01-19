@@ -14,7 +14,7 @@ export class OrgService {
       }
 
     async createOrg(org: CreateOrgInput){
-        const checkExistingOrg = await this.orgModel.findOne({ projName: org.orgName });
+        const checkExistingOrg = await this.orgModel.findOne({ orgName: org.orgName });
   
         if(checkExistingOrg){
           throw new Error('Org with the same Name Exists');
