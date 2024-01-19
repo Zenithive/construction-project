@@ -1,5 +1,4 @@
 "use client"
-import styled from 'styled-components';
 import {Button, Input, Text} from '@nextui-org/react';
 import Link from 'next/link';
 import React from 'react';
@@ -17,10 +16,6 @@ import { Breadcrumbs, Crumb, CrumbLink } from '../component/breadcrumb/breadcrum
 
 /* eslint-disable-next-line */
 export interface ProjectsProps {}
-
-const StyledProjects = styled.div`
-  color: pink;
-`;
 
 export default function Projects(props: ProjectsProps) {
    
