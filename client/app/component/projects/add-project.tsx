@@ -54,7 +54,7 @@ export const AddProject = ({setListRefresh}:AddProjectProps) => {
       setSubmitting(true);
       const res = await createProject({
          variables: {
-            id: Math.floor(Math.random() * 10000),
+            projId: "",
             projName: values.projName,
             region: values.region,
             status: values.status,
@@ -65,7 +65,7 @@ export const AddProject = ({setListRefresh}:AddProjectProps) => {
       });
 
 
-      const projId:string|null = res.data?.createProject?._id;
+      const projId:string|null = res.data?.createProject?.projId;
       if(projId){
          resetForm();
          closeHandler();
