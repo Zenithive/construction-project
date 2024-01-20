@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { ObjectType, Field, InputType} from '@nestjs/graphql';
+import { DEFAULT_VALUES } from '../Constants/defaultValues.constant';
 
 export type OrgDocument = Org & Document;
 
@@ -21,12 +22,24 @@ export class Org {
   website!: string;
 
   @Prop()
+  @Field({defaultValue: DEFAULT_VALUES.orgStatus})
+  status!: string;
+
+  @Prop()
   @Field({ nullable: true })
   orgName!: string;
 
   @Prop()
   @Field({ nullable: true })
   orgId!: string;
+
+  @Prop()
+  @Field({defaultValue: new Date()})
+  creationDate!: Date;
+
+  @Prop()
+  @Field({defaultValue: new Date()})
+  updatedDate!: Date;
 }
 
 
@@ -46,6 +59,15 @@ export class CreateOrgInput {
 
   @Field()
   orgName!: string;
+
+  @Field({defaultValue: DEFAULT_VALUES.orgStatus})
+  status!: string;
+
+  @Field({defaultValue: new Date()})
+  creationDate!: Date;
+
+  @Field({defaultValue: new Date()})
+  updatedDate!: Date;
 }
 
 export const OrgSchema = SchemaFactory.createForClass(Org);

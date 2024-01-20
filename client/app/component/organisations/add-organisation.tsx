@@ -4,21 +4,19 @@ import * as Yup from 'yup';
 import { Box, Button, Grid, TextField } from '@mui/material';
 import { useFormik } from 'formik';
 import { useMutation } from '@apollo/client';
-import { CREATE_PROJECT } from '../../api/project/mutations';
+import { CREATE_ORGANISATION } from '../../api/organisation/mutations';
 
 const OrganisationSchema = Yup.object().shape({
-   contacts: Yup.string().email('Invalid email').required('Required'),
+   contact: Yup.string().required('Required'),
    region: Yup.string().required('Required'),
-   status: Yup.string().required('Required'),
    website: Yup.string().required('Required'),
    orgName: Yup.string().required("Required"),
 });
 
 export interface OrganisationTypes {
    region: string;
-   status: string;
    website: string;
-   contacts: string;
+   contact: string;
    orgName: string;
    orgId: string;
  }
@@ -31,40 +29,37 @@ export const AddOrganisation = ({setListRefresh}:AddOrganisationProps) => {
    const initValue: OrganisationTypes = {
       region: "",
       website: "",
-      status: "",
       orgName: "",
-      contacts: "",
+      contact: "",
       orgId: "1r"
     }
 
    const [visible, setVisible] = React.useState(false);
    const handler = () => setVisible(true);
-   const [createProject, { data, error, loading }] = useMutation(CREATE_PROJECT);
+   const [createOrg, { data, error, loading }] = useMutation(CREATE_ORGANISATION);
 
    const closeHandler = () => {
       setVisible(false);
+      formik && formik.resetForm();
       console.log('closed');
    };
 
    // eslint-disable-next-line @typescript-eslint/no-explicit-any
    const addNewOrganisation = async (values: OrganisationTypes,{ setSubmitting, resetForm }:any) => {
       setSubmitting(true);
-      const res = await createProject({
+      const res = await createOrg({
          variables: {
-            id: Math.floor(Math.random() * 10000),
-            contacts: values.contacts,
+            contact: values.contact,
             region: values.region,
-            status: values.status,
             website: values.website,
             orgName: values.orgName,
-            orgId: "1r"
+            orgId: ""
          },
       });
 
 
-      const projId:string|null = res.data?.createProject?._id;
-      if(projId){
-         resetForm();
+      const orgId:string|null = res.data?.createOrg?.orgId;
+      if(orgId){
          closeHandler();
          setListRefresh((flag:boolean)=>!flag);
          //dispatch(addUser({token : token}));
@@ -141,21 +136,6 @@ export const AddOrganisation = ({setListRefresh}:AddOrganisationProps) => {
                      <TextField
                         required
                         fullWidth
-                        name="status"
-                        label="Status"
-                        id="status"
-                        autoComplete="status"
-                        value={formik.values.status}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        error={formik.touched.status && Boolean(formik.errors.status)}
-                        helperText={formik.touched.status && formik.errors.status}
-                     />
-                  </Grid>
-                  <Grid item xs={12}>
-                     <TextField
-                        required
-                        fullWidth
                         name="website"
                         label="Website"
                         id="website"
@@ -171,15 +151,15 @@ export const AddOrganisation = ({setListRefresh}:AddOrganisationProps) => {
                      <TextField
                         required
                         fullWidth
-                        name="contacts"
+                        name="contact"
                         label="Contact"
-                        id="contacts"
-                        autoComplete="contacts"
-                        value={formik.values.contacts}
+                        id="contact"
+                        autoComplete="contact"
+                        value={formik.values.contact}
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
-                        error={formik.touched.contacts && Boolean(formik.errors.contacts)}
-                        helperText={formik.touched.contacts && formik.errors.contacts}
+                        error={formik.touched.contact && Boolean(formik.errors.contact)}
+                        helperText={formik.touched.contact && formik.errors.contact}
                      />
                   </Grid>               
                </Grid>

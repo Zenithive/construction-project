@@ -6,10 +6,12 @@ import {InfoIcon} from '../icons/accounts/info-icon';
 import {TrashIcon} from '../icons/accounts/trash-icon';
 import {SettingsIcon} from '../icons/sidebar/settings-icon';
 import {Flex} from '../styles/flex';
-import {TableWrapper} from '../table/table';
 import {AddOrganisation} from './add-organisation';
+import { OrgsListWrapper } from './orgs.list';
 
 export const Organisations = () => {
+   const [listRefresh, setListRefresh] = React.useState(false);
+
    return (
       <Flex
          css={{
@@ -48,14 +50,14 @@ export const Organisations = () => {
                <DotsIcon />
             </Flex>
             <Flex direction={'row'} css={{gap: '$6'}} wrap={'wrap'}>
-               <AddOrganisation />
+               <AddOrganisation setListRefresh={setListRefresh}/>
                <Button auto iconRight={<ExportIcon />}>
                   Export to CSV
                </Button>
             </Flex>
          </Flex>
 
-         <TableWrapper />
+         <OrgsListWrapper listRefresh={listRefresh}/>
       </Flex>
    );
 };

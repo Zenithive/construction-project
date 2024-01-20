@@ -1,5 +1,9 @@
 export const DEFAULT_VALUES = {
-    //users collections schema
+    //users collections schemas default value
     userStatus: "Active",
-    subscriptionId: 1
+    subscriptionId: 1,
+
+
+    // orgs collections schemas default value
+    orgStatus: "Open",
 }
