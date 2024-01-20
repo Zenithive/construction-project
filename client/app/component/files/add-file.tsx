@@ -28,7 +28,7 @@ export const AddFile = () => {
 
    return (
       <>
-         <Button auto onClick={handler}>
+         <Button variant='contained' onClick={handler} sx={{borderRadius: 3}}>
             Add File
          </Button>
          <Modal
@@ -118,7 +118,7 @@ export const AddFile = () => {
             </Modal.Body>
             <Divider css={{my: '$5'}} />
             <Modal.Footer>
-               <Button auto onClick={closeHandler}>
+               <Button variant='contained' onClick={closeHandler} sx={{borderRadius: 3}}>
                   Upload File
                </Button>
             </Modal.Footer>
