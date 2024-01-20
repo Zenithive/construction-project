@@ -1,21 +1,19 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { ObjectType, Field, InputType } from '@nestjs/graphql';
+import { DEFAULT_VALUES } from '../Constants/defaultValues.constant';
 
 export type UserDocument = User & Document;
 
 @Schema()
 @ObjectType()
 export class User {
-  @Prop({ required: true })
-  @Field()
-  _id!: string;
 
   @Prop({ required: true })
   @Field()
   email!: string;
 
-  @Prop({ required: true })
+  @Prop()
   @Field()
   password!: string;
 
@@ -33,24 +31,37 @@ export class User {
 
   @Prop()
   @Field()
-  startDate!: Date;
-
-  @Prop()
-  @Field({ nullable: true })
-  endDate!: Date;
+  phoneNo!: string;
 
   @Prop()
   @Field()
-  adminId!: string;
+  subscriptionId!: number;
+
+  @Prop()
+  @Field({defaultValue: new Date()})
+  creationDate!: Date;
+
+  @Prop()
+  @Field({defaultValue: new Date()})
+  updatedDate!: Date;
+
+  @Prop()
+  @Field()
+  userId!: string;
+
+  @Prop()
+  @Field({defaultValue: false})
+  emailVerified!: boolean;
+
+  @Prop()
+  @Field({defaultValue: true})
+  isPasswordReset!: boolean;
 
 }
 
 @InputType()
 export class CreateUserInput {
   @Field()
-  _id!: string;
-
-  @Field()
   email!: string;
 
   @Field()
@@ -62,19 +73,65 @@ export class CreateUserInput {
   @Field({ nullable: true })
   firstName!: string;
 
-  @Field({ nullable: true })
+  @Field({ nullable: true, defaultValue: DEFAULT_VALUES.userStatus })
   status!: string;
 
-  @Prop()
-  @Field()
-  startDate: Date = new Date();
+  @Field({defaultValue: new Date()})
+  creationDate!: Date;
 
-  @Prop()
+  @Field({ defaultValue: new Date() })
+  updatedDate!: Date;
+
+  @Field({ defaultValue: DEFAULT_VALUES.subscriptionId })
+  subscriptionId!: number;
+
+  @Field({ defaultValue: false })
+  emailVerified!: boolean;
+
+  @Field({ defaultValue: false })
+  isPasswordReset!: boolean;  
+
+  @Field()
+  userId!: string;
+}
+
+@InputType()
+export class CreateUserByAdmin {
   @Field({ nullable: true })
-  endDate!: Date;
+  email!: string;
+
+  @Field({defaultValue:""})
+  password!: string;
+
+  @Field({ nullable: true })
+  lastName!: string;
+
+  @Field({ nullable: true })
+  firstName!: string;
+
+  @Field({defaultValue: DEFAULT_VALUES.userStatus})
+  status!: string;
+
+  @Field({ nullable: true })
+  phoneNo!: string;
+
+  @Field({ defaultValue: DEFAULT_VALUES.subscriptionId, nullable: true })
+  subscriptionId!: number;
+
+  @Field({defaultValue: new Date()})
+  creationDate!: Date;
+
+  @Field({defaultValue: new Date()})
+  updatedDate!: Date;
 
   @Field()
-  adminId!: string;
+  userId!: string;
+
+  @Field({defaultValue: false})
+  emailVerified!: boolean;
+
+  @Field({defaultValue: true})
+  isPasswordReset!: boolean;
 }
 
 @InputType()

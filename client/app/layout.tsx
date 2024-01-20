@@ -2,8 +2,6 @@
 import './global.css';
 import './styles/style.scss';
 
-// import { Provider } from 'react-redux';
-// import { PersistGate } from 'redux-persist/integration/react';
 import { Provider } from "react-redux";
 import { store } from './reducers/store';
 import { ApolloProvider, InMemoryCache, ApolloClient } from '@apollo/client';

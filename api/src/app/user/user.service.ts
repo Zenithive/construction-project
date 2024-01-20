@@ -7,7 +7,7 @@ import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
 import { v4 as uuidv4 } from 'uuid'; 
 
-import { User, UserDocument, CreateUserInput, UserId, UpdateUserInput, LoginInput, Email, Token, ReturnUserObj } from './user.schema';
+import { User, UserDocument, CreateUserInput, UserId, UpdateUserInput, LoginInput, Email, Token, ReturnUserObj, CreateUserByAdmin } from './user.schema';
 
 @Injectable()
 export class UserService {
@@ -30,20 +30,18 @@ export class UserService {
   async loginUser(LoginInput: LoginInput, user: User) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const payLoad = {
-      id : user._id,
       email : user.email,
     }
     console.log(user);
-    const returnUser: ReturnUserObj = {
-      id : user._id,
-      firstName : user.firstName,
-      lastName : user.lastName,
-      email : user.email,
-    }
     const token = jwt.sign(payLoad,"secretKey",{expiresIn : "2h"});
     const tokenObj : Token = {
       token : token,
-      userObj : returnUser
+      userObj : {
+        id : "",
+        firstName : user.firstName,
+        lastName : user.lastName,
+        email : user.email,
+      }
     }
     console.log(tokenObj);
     return tokenObj;
@@ -58,7 +56,18 @@ export class UserService {
 
     const saltOrRounds = 10;
     user.password = await bcrypt.hash(user.password, saltOrRounds);
-    user._id = uuidv4()
+    user.userId = uuidv4()
+    return this.userModel.create(user);
+  }
+
+  async createUserByAdmin(user: CreateUserByAdmin) {
+    const checkExistingUser = await this.userModel.findOne({ email: user.email });
+
+    if(checkExistingUser){
+      throw new Error('User with the same username or email already exists');
+    }
+    
+    user.userId = uuidv4()
     return this.userModel.create(user);
   }
 

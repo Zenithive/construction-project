@@ -20,16 +20,33 @@ input CreateProjectInput {
   website: String
 }
 
-input CreateUserInput {
-  _id: String!
-  adminId: String!
-  email: String!
-  endDate: DateTime
+input CreateUserByAdmin {
+  creationDate: DateTime! = "2024-01-20T16:59:55.923Z"
+  email: String
+  emailVerified: Boolean! = false
   firstName: String
+  isPasswordReset: Boolean! = true
+  lastName: String
+  password: String! = ""
+  phoneNo: String
+  status: String! = "Active"
+  subscriptionId: Float = 1
+  updatedDate: DateTime! = "2024-01-20T16:59:55.923Z"
+  userId: String!
+}
+
+input CreateUserInput {
+  creationDate: DateTime! = "2024-01-20T16:59:55.923Z"
+  email: String!
+  emailVerified: Boolean! = false
+  firstName: String
+  isPasswordReset: Boolean! = false
   lastName: String
   password: String!
-  startDate: DateTime! = "2024-01-19T18:31:09.972Z"
-  status: String
+  status: String = "Active"
+  subscriptionId: Float! = 1
+  updatedDate: DateTime! = "2024-01-20T16:59:55.923Z"
+  userId: String!
 }
 
 """
@@ -50,6 +67,7 @@ type Mutation {
   createOrg(input: CreateOrgInput!): Org!
   createProject(input: CreateProjectInput!): Project!
   createUser(input: CreateUserInput!): User!
+  createUserByAdmin(input: CreateUserByAdmin!): User!
   loginUser(input: LoginInput!): Token!
   updateUser(input: UpdateUserInput!): User!
 }
@@ -105,15 +123,18 @@ input UpdateUserInput {
 }
 
 type User {
-  _id: String!
-  adminId: String!
+  creationDate: DateTime!
   email: String!
-  endDate: DateTime
+  emailVerified: Boolean!
   firstName: String!
+  isPasswordReset: Boolean!
   lastName: String!
   password: String!
-  startDate: DateTime!
+  phoneNo: String!
   status: String!
+  subscriptionId: Float!
+  updatedDate: DateTime!
+  userId: String!
 }
 
 input UserId {
