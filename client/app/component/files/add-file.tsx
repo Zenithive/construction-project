@@ -28,9 +28,10 @@ export const AddFile = () => {
 
    return (
       <>
-         <Button variant='contained' onClick={handler} sx={{borderRadius: 3}}>
-            Add File
+         <Button component="label" onClick={handler} sx={{borderRadius: 3}} variant="contained" startIcon={<CloudUploadIcon />}>
+            Upload file
          </Button>
+
          <Modal
             closeButton
             aria-labelledby="modal-title"
