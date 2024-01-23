@@ -1,5 +1,4 @@
 "use client"
-import styled from 'styled-components';
 import {Button, Input, Text} from '@nextui-org/react';
 import Link from 'next/link';
 import React from 'react';
@@ -18,12 +17,9 @@ import { Breadcrumbs, Crumb, CrumbLink } from '../component/breadcrumb/breadcrum
 /* eslint-disable-next-line */
 export interface ProjectsProps {}
 
-const StyledProjects = styled.div`
-  color: pink;
-`;
-
 export default function Projects(props: ProjectsProps) {
    
+   const [listRefresh, setListRefresh] = React.useState(false);
 
   return (
     <Flex
@@ -79,14 +75,14 @@ export default function Projects(props: ProjectsProps) {
              <DotsIcon />
           </Flex>
           <Flex direction={'row'} css={{gap: '$6'}} wrap={'wrap'}>
-             <AddProject />
+             <AddProject setListRefresh={setListRefresh} />
              <Button auto iconRight={<ExportIcon />}>
                 Export to CSV
              </Button>
           </Flex>
        </Flex>
 
-       <ProjectListWrapper />
+       <ProjectListWrapper listRefresh={listRefresh} />
     </Flex>
  );
 }

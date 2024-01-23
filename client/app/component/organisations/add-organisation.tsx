@@ -1,73 +1,65 @@
 import {Divider, Modal, Text} from '@nextui-org/react';
 import React from 'react';
-import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { useMutation } from '@apollo/client';
-import ToastMessage from '../toast-message/ToastMessage';
 import { Box, Button, Grid, TextField } from '@mui/material';
-import { CREATE_PROJECT } from '../../api/project/mutations';
+import { useFormik } from 'formik';
+import { useMutation } from '@apollo/client';
+import { CREATE_ORGANISATION } from '../../api/organisation/mutations';
 
-
-export interface ProjectTypes {
-   projName: string;
-   region: string;
-   status: string;
-   website: string;
-   orgName: string;
-   orgId: string;
- }
-
-export interface AddProjectProps {
-   setListRefresh: React.Dispatch<React.SetStateAction<boolean>>
- }
-
-
-const ProjectSchema = Yup.object().shape({
-   projName: Yup.string().required('Required'),
+const OrganisationSchema = Yup.object().shape({
+   contact: Yup.string().required('Required'),
    region: Yup.string().required('Required'),
-   status: Yup.string().required('Required'),
    website: Yup.string().required('Required'),
    orgName: Yup.string().required("Required"),
 });
 
-export const AddProject = ({setListRefresh}:AddProjectProps) => {
-   const initValue: ProjectTypes = {
-      projName: "",
+export interface OrganisationTypes {
+   region: string;
+   website: string;
+   contact: string;
+   orgName: string;
+   orgId: string;
+ }
+
+ export interface AddOrganisationProps {
+   setListRefresh: React.Dispatch<React.SetStateAction<boolean>>
+ }
+
+export const AddOrganisation = ({setListRefresh}:AddOrganisationProps) => {
+   const initValue: OrganisationTypes = {
       region: "",
       website: "",
-      status: "",
       orgName: "",
+      contact: "",
       orgId: "1r"
     }
-    
-   const [createProject, { data, error, loading }] = useMutation(CREATE_PROJECT);
+
    const [visible, setVisible] = React.useState(false);
    const handler = () => setVisible(true);
+   const [createOrg, { data, error, loading }] = useMutation(CREATE_ORGANISATION);
 
    const closeHandler = () => {
       setVisible(false);
+      formik && formik.resetForm();
       console.log('closed');
    };
 
    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-   const addProject = async (values: ProjectTypes,{ setSubmitting, resetForm }:any) => {
+   const addNewOrganisation = async (values: OrganisationTypes,{ setSubmitting, resetForm }:any) => {
       setSubmitting(true);
-      const res = await createProject({
+      const res = await createOrg({
          variables: {
-            projId: "",
-            projName: values.projName,
+            contact: values.contact,
             region: values.region,
-            status: values.status,
             website: values.website,
             orgName: values.orgName,
-            orgId: "1r"
+            orgId: ""
          },
       });
 
 
-      const projId:string|null = res.data?.createProject?.projId;
-      if(projId){
-         resetForm();
+      const orgId:string|null = res.data?.createOrg?.orgId;
+      if(orgId){
          closeHandler();
          setListRefresh((flag:boolean)=>!flag);
          //dispatch(addUser({token : token}));
@@ -79,16 +71,15 @@ export const AddProject = ({setListRefresh}:AddProjectProps) => {
 
    const formik = useFormik({
       initialValues: initValue,
-      validationSchema: ProjectSchema,
-      onSubmit: addProject,
+      validationSchema: OrganisationSchema,
+      onSubmit: addNewOrganisation,
     });
 
    return (
       <>
          <Button variant='contained' onClick={handler} style={{borderRadius: 10}}>
-            Add Project
+            Add Organisation
          </Button>
-
          <Modal
             closeButton
             aria-labelledby="modal-title"
@@ -98,25 +89,13 @@ export const AddProject = ({setListRefresh}:AddProjectProps) => {
          >
             <Modal.Header css={{justifyContent: 'start'}}>
                <Text id="modal-title" h4>
-                  Add new project
+                  Add new organisation
                </Text>
-
-               <ToastMessage 
-                  severity="success" 
-                  openFlag={data?.createProject?._id ? true : false } 
-                  message='Project created.'
-               ></ToastMessage>
-
-               <ToastMessage 
-                  severity="error" 
-                  openFlag={error ? true : false } 
-                  message='Problem while creating project.'
-               ></ToastMessage>
             </Modal.Header>
             <Divider css={{my: '$5'}} />
             <Modal.Body css={{py: '$10'}}>
             <Box
-               id='add-project-form'
+               id='add-org-form'
                component="form"
                noValidate
                onSubmit={formik.handleSubmit}
@@ -127,15 +106,15 @@ export const AddProject = ({setListRefresh}:AddProjectProps) => {
                      <TextField
                         required
                         fullWidth
-                        id="projName"
-                        label="Project Name"
-                        name="projName"
-                        autoComplete="projName"
-                        value={formik.values.projName}
+                        id="orgName"
+                        label="Organisation Name"
+                        name="orgName"
+                        autoComplete="orgName"
+                        value={formik.values.orgName}
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
-                        error={formik.touched.projName && Boolean(formik.errors.projName)}
-                        helperText={formik.touched.projName && formik.errors.projName}
+                        error={formik.touched.orgName && Boolean(formik.errors.orgName)}
+                        helperText={formik.touched.orgName && formik.errors.orgName}
                      />
                   </Grid>
                   <Grid item xs={12}>
@@ -157,21 +136,6 @@ export const AddProject = ({setListRefresh}:AddProjectProps) => {
                      <TextField
                         required
                         fullWidth
-                        name="status"
-                        label="Status"
-                        id="status"
-                        autoComplete="status"
-                        value={formik.values.status}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        error={formik.touched.status && Boolean(formik.errors.status)}
-                        helperText={formik.touched.status && formik.errors.status}
-                     />
-                  </Grid>
-                  <Grid item xs={12}>
-                     <TextField
-                        required
-                        fullWidth
                         name="website"
                         label="Website"
                         id="website"
@@ -187,15 +151,15 @@ export const AddProject = ({setListRefresh}:AddProjectProps) => {
                      <TextField
                         required
                         fullWidth
-                        name="orgName"
-                        label="Organisation Name"
-                        id="orgName"
-                        autoComplete="orgName"
-                        value={formik.values.orgName}
+                        name="contact"
+                        label="Contact"
+                        id="contact"
+                        autoComplete="contact"
+                        value={formik.values.contact}
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
-                        error={formik.touched.orgName && Boolean(formik.errors.orgName)}
-                        helperText={formik.touched.orgName && formik.errors.orgName}
+                        error={formik.touched.contact && Boolean(formik.errors.contact)}
+                        helperText={formik.touched.contact && formik.errors.contact}
                      />
                   </Grid>               
                </Grid>
@@ -203,8 +167,8 @@ export const AddProject = ({setListRefresh}:AddProjectProps) => {
             </Modal.Body>
             <Divider css={{my: '$5'}} />
             <Modal.Footer>
-               <Button disabled={loading} style={{borderRadius: 10}} variant="contained" type='submit' form="add-project-form">
-                  Add Project
+               <Button disabled={loading} style={{borderRadius: 10}} variant="contained" type='submit' form="add-org-form">
+                  Add Organisation
                </Button>
             </Modal.Footer>
          </Modal>

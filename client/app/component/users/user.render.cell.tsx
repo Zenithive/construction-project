@@ -1,45 +1,39 @@
 import {Col, Row, Text, Tooltip} from '@nextui-org/react';
 import React from 'react';
+import { Badge, Box } from '@mui/material';
+import MailIcon from '@mui/icons-material/Mail';
 import {DeleteIcon} from '../icons/table/delete-icon';
 import {EditIcon} from '../icons/table/edit-icon';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import {IconButton, StyledBadge} from './project-list.styled';
-import { ProjectTypes } from './add-project';
+import {EyeIcon} from '../icons/table/eye-icon';
+import {IconButton, StyledBadge} from './users.styled';
+import { UserTypes } from './add-user';
 
 interface Props {
-   project: ProjectTypes;
+   user: UserTypes;
    columnKey: string | React.Key;
 }
 
-export const RenderCell = ({project, columnKey}: Props) => {
+export const RenderCell = ({user, columnKey}: Props) => {
    // @ts-ignore
-   const cellValue = project[columnKey];
+   const cellValue = user[columnKey];
    switch (columnKey) {
-      case 'projName':
+      case 'name':
          return (
-            <Col>
-               <Row>
-                  <Text b size={14} css={{tt: 'capitalize'}}>
-                     {project.projName}
-                  </Text>
-               </Row>
-            </Col>
+            // <User squared src={user.avatar} name={cellValue} css={{p: 0}}>
+            //    {user.email}
+            // </User>
+            <Text>{`${user.firstName} ${user.lastName}`}</Text>
+            
          );
-      case 'region':
+      case 'email':
          return (
-            <Col>
-               <Row>
-                  <Text b size={14} css={{tt: 'capitalize'}}>
-                     {cellValue}
-                  </Text>
-               </Row>
-               
-            </Col>
+            <Text>{`${user.email}`}</Text>
          );
       case 'status':
          return (
-            // @ts-ignore
-            <StyledBadge type={String(project.status)}>{cellValue}</StyledBadge>
+            <Box component="div" style={{alignItems:"center"}}>
+               <Badge badgeContent={cellValue} color="primary"></Badge>
+            </Box>
          );
 
       case 'actions':
@@ -51,15 +45,17 @@ export const RenderCell = ({project, columnKey}: Props) => {
             >
                <Col css={{d: 'flex'}}>
                   <Tooltip content="Details">
-                     <IconButton aria-label="Example">
-                        <MoreVertIcon sx={{ color: "#979797" }} />
+                     <IconButton
+                        onClick={() => console.log('View user', user.email)}
+                     >
+                        <EyeIcon size={20} fill="#979797" />
                      </IconButton>
                   </Tooltip>
                </Col>
                <Col css={{d: 'flex'}}>
                   <Tooltip content="Edit user">
                      <IconButton
-                        onClick={() => console.log('Edit Project', project.orgId)}
+                        onClick={() => console.log('Edit user', user.email)}
                      >
                         <EditIcon size={20} fill="#979797" />
                      </IconButton>
@@ -67,9 +63,9 @@ export const RenderCell = ({project, columnKey}: Props) => {
                </Col>
                <Col css={{d: 'flex'}}>
                   <Tooltip
-                     content="Delete Project"
+                     content="Delete user"
                      color="error"
-                     onClick={() => console.log('Delete user', project.orgId)}
+                     onClick={() => console.log('Delete user', user.email)}
                   >
                      <IconButton>
                         <DeleteIcon size={20} fill="#FF0080" />

@@ -1,19 +1,14 @@
-import {Avatar, Dropdown, Navbar, Text} from '@nextui-org/react';
+import {Dropdown, Navbar, Text} from '@nextui-org/react';
 import React from 'react';
 import {DarkModeSwitch} from './darkmodeswitch';
+import { Avatar } from '@mui/material';
 
 export const UserDropdown = () => {
    return (
       <Dropdown placement="bottom-right">
          <Navbar.Item>
             <Dropdown.Trigger>
-               <Avatar
-                  bordered
-                  as="button"
-                  color="secondary"
-                  size="md"
-                  src="https://i.pravatar.cc/150?u=a042581f4e29026704d"
-               />
+               <Avatar>HA</Avatar>
             </Dropdown.Trigger>
          </Navbar.Item>
          <Dropdown.Menu

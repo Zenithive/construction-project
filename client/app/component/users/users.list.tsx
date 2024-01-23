@@ -1,22 +1,23 @@
 import {Table} from '@nextui-org/react';
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 import {Box} from '../styles/box';
-import {columns} from './data';
-import {RenderCell} from './render-cell';
-import { GET_PROJECTS } from '../../api/project/queries';
+import {USER_COLUMNS} from './users.data';
+import {RenderCell} from './user.render.cell';
 import { useQuery } from '@apollo/client';
-import { ProjectTypes } from './add-project';
+import { GET_USERS } from '../../api/user/queries';
 
-export interface ProjectListWrapperProps{
+export interface UserLiserWrapperProps{
    listRefresh: boolean;
 }
-export const ProjectListWrapper = ({listRefresh}:ProjectListWrapperProps) => {
-   const { data, refetch } = useQuery(GET_PROJECTS);
+
+export const UserLiserWrapper = ({listRefresh}:UserLiserWrapperProps) => {
+
+   const { data, refetch } = useQuery(GET_USERS);
 
    useEffect(()=>{
       refetch();
    }, [listRefresh, refetch]);
-
+   
    return (
       <Box
          css={{
@@ -36,7 +37,7 @@ export const ProjectListWrapper = ({listRefresh}:ProjectListWrapperProps) => {
             }}
             selectionMode="multiple"
          >
-            <Table.Header columns={columns}>
+            <Table.Header columns={USER_COLUMNS}>
                {(column) => (
                   <Table.Column
                      key={column.uid}
@@ -47,13 +48,12 @@ export const ProjectListWrapper = ({listRefresh}:ProjectListWrapperProps) => {
                   </Table.Column>
                )}
             </Table.Header>
-            <Table.Body items={data?.getProjects || []}>
-               {(item:ProjectTypes) => (
+            <Table.Body items={data?.getUsers || []}>
+               {(item) => (
                   <Table.Row key={Math.random()}>
                      {(columnKey:React.Key) => (
                         <Table.Cell>
-                           {/* {JSON.stringify(columnKey)} */}
-                           {RenderCell({project: item, columnKey: columnKey})}
+                           {RenderCell({user: item, columnKey: columnKey})}
                         </Table.Cell>
                      )}
                   </Table.Row>

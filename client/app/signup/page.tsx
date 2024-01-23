@@ -55,12 +55,11 @@ export default function Signup(props: SignupProps)  {
 
    await createUser({
       variables: {
-        id: "",
+        userId: "",
         email: values.email,
         password: values.password,
         lastName: values.lastName,
         firstName: values.firstName,
-        admin : "admin1"
       }
     });
 

@@ -1,17 +1,17 @@
 import {Table} from '@nextui-org/react';
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 import {Box} from '../styles/box';
-import {columns} from './data';
-import {RenderCell} from './render-cell';
-import { GET_PROJECTS } from '../../api/project/queries';
+import {columns} from './orgs.data';
+import {RenderCell} from './orgs.render.cell';
 import { useQuery } from '@apollo/client';
-import { ProjectTypes } from './add-project';
+import { GET_ORGANISATIONS } from '../../api/organisation/queries';
 
-export interface ProjectListWrapperProps{
+export interface OrgsListWrapperProps{
    listRefresh: boolean;
 }
-export const ProjectListWrapper = ({listRefresh}:ProjectListWrapperProps) => {
-   const { data, refetch } = useQuery(GET_PROJECTS);
+
+export const OrgsListWrapper = ({listRefresh}:OrgsListWrapperProps) => {
+   const { data, refetch } = useQuery(GET_ORGANISATIONS);
 
    useEffect(()=>{
       refetch();
@@ -47,13 +47,12 @@ export const ProjectListWrapper = ({listRefresh}:ProjectListWrapperProps) => {
                   </Table.Column>
                )}
             </Table.Header>
-            <Table.Body items={data?.getProjects || []}>
-               {(item:ProjectTypes) => (
+            <Table.Body items={data?.getAllOrg || []}>
+               {(item) => (
                   <Table.Row key={Math.random()}>
                      {(columnKey:React.Key) => (
                         <Table.Cell>
-                           {/* {JSON.stringify(columnKey)} */}
-                           {RenderCell({project: item, columnKey: columnKey})}
+                           {RenderCell({user: item, columnKey: columnKey})}
                         </Table.Cell>
                      )}
                   </Table.Row>

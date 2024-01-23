@@ -4,9 +4,12 @@
 
 input CreateOrgInput {
   contact: String!
+  creationDate: DateTime! = "2024-01-20T18:17:47.835Z"
   orgId: String!
   orgName: String!
   region: String!
+  status: String! = "Open"
+  updatedDate: DateTime! = "2024-01-20T18:17:47.835Z"
   website: String
 }
 
@@ -20,16 +23,33 @@ input CreateProjectInput {
   website: String
 }
 
-input CreateUserInput {
-  _id: String!
-  adminId: String!
-  email: String!
-  endDate: DateTime
+input CreateUserByAdmin {
+  creationDate: DateTime! = "2024-01-20T18:17:47.725Z"
+  email: String
+  emailVerified: Boolean! = false
   firstName: String
+  isPasswordReset: Boolean! = true
+  lastName: String
+  password: String! = ""
+  phoneNo: String
+  status: String! = "Active"
+  subscriptionId: Float = 1
+  updatedDate: DateTime! = "2024-01-20T18:17:47.725Z"
+  userId: String!
+}
+
+input CreateUserInput {
+  creationDate: DateTime! = "2024-01-20T18:17:47.725Z"
+  email: String!
+  emailVerified: Boolean! = false
+  firstName: String
+  isPasswordReset: Boolean! = false
   lastName: String
   password: String!
-  startDate: DateTime! = "2024-01-20T05:51:11.460Z"
-  status: String
+  status: String = "Active"
+  subscriptionId: Float! = 1
+  updatedDate: DateTime! = "2024-01-20T18:17:47.725Z"
+  userId: String!
 }
 
 """
@@ -50,15 +70,19 @@ type Mutation {
   createOrg(input: CreateOrgInput!): Org!
   createProject(input: CreateProjectInput!): Project!
   createUser(input: CreateUserInput!): User!
+  createUserByAdmin(input: CreateUserByAdmin!): User!
   loginUser(input: LoginInput!): Token!
   updateUser(input: UpdateUserInput!): User!
 }
 
 type Org {
   contact: String!
+  creationDate: DateTime!
   orgId: String
   orgName: String
   region: String!
+  status: String!
+  updatedDate: DateTime!
   website: String!
 }
 
@@ -105,15 +129,18 @@ input UpdateUserInput {
 }
 
 type User {
-  _id: String!
-  adminId: String!
+  creationDate: DateTime!
   email: String!
-  endDate: DateTime
+  emailVerified: Boolean!
   firstName: String!
+  isPasswordReset: Boolean!
   lastName: String!
   password: String!
-  startDate: DateTime!
+  phoneNo: String!
   status: String!
+  subscriptionId: Float!
+  updatedDate: DateTime!
+  userId: String!
 }
 
 input UserId {

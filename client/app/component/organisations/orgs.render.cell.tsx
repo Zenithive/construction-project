@@ -2,44 +2,31 @@ import {Col, Row, Text, Tooltip} from '@nextui-org/react';
 import React from 'react';
 import {DeleteIcon} from '../icons/table/delete-icon';
 import {EditIcon} from '../icons/table/edit-icon';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import {IconButton, StyledBadge} from './project-list.styled';
-import { ProjectTypes } from './add-project';
+import {EyeIcon} from '../icons/table/eye-icon';
+import {IconButton, StyledBadge} from './orgs.styled';
+import { OrganisationTypes } from './add-organisation';
 
 interface Props {
-   project: ProjectTypes;
+   user: OrganisationTypes;
    columnKey: string | React.Key;
 }
 
-export const RenderCell = ({project, columnKey}: Props) => {
+export const RenderCell = ({user, columnKey}: Props) => {
    // @ts-ignore
-   const cellValue = project[columnKey];
+   const cellValue = user[columnKey];
    switch (columnKey) {
-      case 'projName':
+      case 'name':
          return (
-            <Col>
-               <Row>
-                  <Text b size={14} css={{tt: 'capitalize'}}>
-                     {project.projName}
-                  </Text>
-               </Row>
-            </Col>
+            <Text>{user.orgName}</Text>
          );
-      case 'region':
+      case 'role':
          return (
-            <Col>
-               <Row>
-                  <Text b size={14} css={{tt: 'capitalize'}}>
-                     {cellValue}
-                  </Text>
-               </Row>
-               
-            </Col>
+            <Text>{user.region}</Text>
          );
       case 'status':
          return (
             // @ts-ignore
-            <StyledBadge type={String(project.status)}>{cellValue}</StyledBadge>
+            <StyledBadge type={String(user.status)}>{cellValue}</StyledBadge>
          );
 
       case 'actions':
@@ -51,15 +38,17 @@ export const RenderCell = ({project, columnKey}: Props) => {
             >
                <Col css={{d: 'flex'}}>
                   <Tooltip content="Details">
-                     <IconButton aria-label="Example">
-                        <MoreVertIcon sx={{ color: "#979797" }} />
+                     <IconButton
+                        onClick={() => console.log('View user', user.orgId)}
+                     >
+                        <EyeIcon size={20} fill="#979797" />
                      </IconButton>
                   </Tooltip>
                </Col>
                <Col css={{d: 'flex'}}>
                   <Tooltip content="Edit user">
                      <IconButton
-                        onClick={() => console.log('Edit Project', project.orgId)}
+                        onClick={() => console.log('Edit user', user.orgId)}
                      >
                         <EditIcon size={20} fill="#979797" />
                      </IconButton>
@@ -67,9 +56,9 @@ export const RenderCell = ({project, columnKey}: Props) => {
                </Col>
                <Col css={{d: 'flex'}}>
                   <Tooltip
-                     content="Delete Project"
+                     content="Delete user"
                      color="error"
-                     onClick={() => console.log('Delete user', project.orgId)}
+                     onClick={() => console.log('Delete user', user.orgId)}
                   >
                      <IconButton>
                         <DeleteIcon size={20} fill="#FF0080" />

@@ -1,10 +1,8 @@
 import { gql } from "@apollo/client";
 
-export const GET_PROJECTS = gql`
-  query GetProjects {
-    getProjects {
-      projId
-      projName
+export const GET_ORGANISATIONS = gql`
+  query GetAllOrg {
+    getAllOrg {
       region
       status
       website
