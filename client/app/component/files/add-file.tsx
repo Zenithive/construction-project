@@ -26,10 +26,18 @@ export const AddFile = () => {
       console.log('closed');
    };
 
+   const openViewer = () => {
+      
+   }
+
    return (
       <>
          <Button component="label" onClick={handler} sx={{borderRadius: 3}} variant="contained" startIcon={<CloudUploadIcon />}>
             Upload file
+         </Button>
+
+         <Button component="label" onClick={openViewer} sx={{borderRadius: 3}} variant="contained">
+            View file
          </Button>
 
          <Modal

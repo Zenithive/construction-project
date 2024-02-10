@@ -37,7 +37,7 @@ export default function RootLayout({
       <body>
       <ApolloProvider client={client}>
         <Provider store={store}>
-            { (pathName.includes(ROUTE.LOGIN) || pathName.includes(ROUTE.SIGNUP)) ? 
+            { (pathName.includes(ROUTE.LOGIN) || pathName.includes(ROUTE.SIGNUP) || pathName.includes(ROUTE.VIEWER)) ? 
               children : 
               <Layout>
                 {children}

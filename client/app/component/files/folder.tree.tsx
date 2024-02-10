@@ -182,7 +182,7 @@ export const FolderTree = () => {
 
         return (
             <TreeItem key={item.id} nodeId={item.id.toString()} label={<BoxWithIcon toggleAddFolder={anotherChangeFlag} id={item.id} label={item.name} />}>
-                {item.childNodes.length ? <TreeListing folderData={item.childNodes} folderHook={useToggleAddFolder} newflag={flag} andChangeFlag={anotherChangeFlag}></TreeListing> : ""}
+                {(item.childNodes.length || flag) ? <TreeListing folderData={item.childNodes} folderHook={useToggleAddFolder} newflag={flag} andChangeFlag={anotherChangeFlag}></TreeListing> : ""}
             </TreeItem>
         )
     }

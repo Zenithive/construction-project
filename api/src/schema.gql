@@ -4,12 +4,12 @@
 
 input CreateOrgInput {
   contact: String!
-  creationDate: DateTime! = "2024-01-20T18:17:47.835Z"
+  creationDate: DateTime! = "2024-02-10T18:34:48.250Z"
   orgId: String!
   orgName: String!
   region: String!
   status: String! = "Open"
-  updatedDate: DateTime! = "2024-01-20T18:17:47.835Z"
+  updatedDate: DateTime! = "2024-02-10T18:34:48.250Z"
   website: String
 }
 
@@ -24,7 +24,7 @@ input CreateProjectInput {
 }
 
 input CreateUserByAdmin {
-  creationDate: DateTime! = "2024-01-20T18:17:47.725Z"
+  creationDate: DateTime! = "2024-02-10T18:34:48.004Z"
   email: String
   emailVerified: Boolean! = false
   firstName: String
@@ -34,12 +34,12 @@ input CreateUserByAdmin {
   phoneNo: String
   status: String! = "Active"
   subscriptionId: Float = 1
-  updatedDate: DateTime! = "2024-01-20T18:17:47.725Z"
+  updatedDate: DateTime! = "2024-02-10T18:34:48.004Z"
   userId: String!
 }
 
 input CreateUserInput {
-  creationDate: DateTime! = "2024-01-20T18:17:47.725Z"
+  creationDate: DateTime! = "2024-02-10T18:34:48.004Z"
   email: String!
   emailVerified: Boolean! = false
   firstName: String
@@ -48,7 +48,7 @@ input CreateUserInput {
   password: String!
   status: String = "Active"
   subscriptionId: Float! = 1
-  updatedDate: DateTime! = "2024-01-20T18:17:47.725Z"
+  updatedDate: DateTime! = "2024-02-10T18:34:48.004Z"
   userId: String!
 }
 
