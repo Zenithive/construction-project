@@ -8,6 +8,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
+import { FileModule } from './file/file.module';
 
 import { join } from 'path';
 import { ProjectModule } from './project/project.module';
@@ -29,6 +30,7 @@ import { ApsForgeModule } from './aps-forge/aps.forge.module';
     UserModule,
     ProjectModule,
     OrgModule,
+    FileModule,
     ApsForgeModule
   ],
   controllers: [AppController],
