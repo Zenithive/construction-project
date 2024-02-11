@@ -77,7 +77,7 @@ export const AddOrganisation = ({setListRefresh}:AddOrganisationProps) => {
 
    return (
       <>
-         <Button variant='contained' onClick={handler} style={{borderRadius: 10}}>
+         <Button variant='contained' onClick={handler} sx={{borderRadius: 3}}>
             Add Organisation
          </Button>
          <Modal

@@ -26,11 +26,20 @@ export const AddFile = () => {
       console.log('closed');
    };
 
+   const openViewer = () => {
+      
+   }
+
    return (
       <>
-         <Button auto onClick={handler}>
-            Add File
+         <Button component="label" onClick={handler} sx={{borderRadius: 3}} variant="contained" startIcon={<CloudUploadIcon />}>
+            Upload file
          </Button>
+
+         <Button component="label" onClick={openViewer} sx={{borderRadius: 3}} variant="contained">
+            View file
+         </Button>
+
          <Modal
             closeButton
             aria-labelledby="modal-title"
@@ -118,7 +127,7 @@ export const AddFile = () => {
             </Modal.Body>
             <Divider css={{my: '$5'}} />
             <Modal.Footer>
-               <Button auto onClick={closeHandler}>
+               <Button variant='contained' onClick={closeHandler} sx={{borderRadius: 3}}>
                   Upload File
                </Button>
             </Modal.Footer>
