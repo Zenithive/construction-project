@@ -85,7 +85,7 @@ export const AddProject = ({setListRefresh}:AddProjectProps) => {
 
    return (
       <>
-         <Button variant='contained' onClick={handler} style={{borderRadius: 10}}>
+         <Button variant='contained' onClick={handler} sx={{borderRadius: 3}}>
             Add Project
          </Button>
 

@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -11,9 +12,13 @@ import { AuthModule } from './auth/auth.module';
 import { join } from 'path';
 import { ProjectModule } from './project/project.module';
 import { OrgModule } from './organization/org.module';
+import { ApsForgeModule } from './aps-forge/aps.forge.module';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      envFilePath: '.env',
+    }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'api/src/schema.gql'),
@@ -24,6 +29,7 @@ import { OrgModule } from './organization/org.module';
     UserModule,
     ProjectModule,
     OrgModule,
+    ApsForgeModule
   ],
   controllers: [AppController],
   providers: [AppService],

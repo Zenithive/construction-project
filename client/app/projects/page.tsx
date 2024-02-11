@@ -34,23 +34,6 @@ export default function Projects(props: ProjectsProps) {
        justify={'center'}
        direction={'column'}
     >
-       <Breadcrumbs>
-          <Crumb>
-             <HouseIcon />
-             <Link href={'/'}>
-                <CrumbLink href="#">CDE</CrumbLink>
-             </Link>
-             <Text>/</Text>
-          </Crumb>
-
-          <Crumb>
-             <UsersIcon />
-             <CrumbLink href="#">Projects</CrumbLink>
-             <Text>/</Text>
-          </Crumb>
-       </Breadcrumbs>
-
-       <Text h3>All Projects</Text>
        <Flex
           css={{gap: '$8'}}
           align={'center'}

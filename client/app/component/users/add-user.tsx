@@ -86,7 +86,7 @@ export const AddUser = ({setListRefresh}:AddUserProps) => {
 
    return (
       <>
-         <Button variant='contained' onClick={handler} style={{borderRadius: 10}}>
+         <Button variant='contained' onClick={handler} sx={{borderRadius: 3}}>
             Add User
          </Button>
          <Modal

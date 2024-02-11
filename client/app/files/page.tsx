@@ -1,18 +1,17 @@
 "use client"
-import {Button, Input, Text} from '@nextui-org/react';
-import Link from 'next/link';
+import {Button, Input} from '@nextui-org/react';
 import React from 'react';
 import {DotsIcon} from '../component/icons/accounts/dots-icon';
 import {ExportIcon} from '../component/icons/accounts/export-icon';
 import {InfoIcon} from '../component/icons/accounts/info-icon';
 import {TrashIcon} from '../component/icons/accounts/trash-icon';
-import {HouseIcon} from '../component/icons/breadcrumb/house-icon';
-import {UsersIcon} from '../component/icons/breadcrumb/users-icon';
+
 import {SettingsIcon} from '../component/icons/sidebar/settings-icon';
 import {Flex} from '../component/styles/flex';
 import {FilesListWrapper} from '../component/files/files-list';
+import {FolderTree} from '../component/files/folder.tree';
 import {AddFile} from '../component/files/add-file';
-import { Breadcrumbs, Crumb, CrumbLink } from '../component/breadcrumb/breadcrumb.styled';
+import { Box } from '@mui/material';
 
 /* eslint-disable-next-line */
 export interface FilesProps {}
@@ -25,29 +24,13 @@ export default function Files(props: FilesProps) {
           'px': '$6',
           '@sm': {
              mt: '$10',
-             px: '$16',
+             px: '$8',
           },
        }}
        justify={'center'}
        direction={'column'}
     >
-       <Breadcrumbs>
-          <Crumb>
-             <HouseIcon />
-             <Link href={'/'}>
-                <CrumbLink href="#">CDE</CrumbLink>
-             </Link>
-             <Text>/</Text>
-          </Crumb>
-
-          <Crumb>
-             <UsersIcon />
-             <CrumbLink href="#">Files</CrumbLink>
-             <Text>/</Text>
-          </Crumb>
-       </Breadcrumbs>
-
-       <Text h3>All Files</Text>
+       
        <Flex
           css={{gap: '$8'}}
           align={'center'}
@@ -79,7 +62,15 @@ export default function Files(props: FilesProps) {
           </Flex>
        </Flex>
 
-       <FilesListWrapper />
+       <Flex>
+         <Box component="div" sx={{flex: 1}}>
+            <FolderTree />
+         </Box>
+         <Box component="div" sx={{flex: 4}}>
+            <FilesListWrapper />
+         </Box>
+       </Flex>
+
     </Flex>
  );
 }
