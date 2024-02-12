@@ -8,11 +8,7 @@ export type FileDocument = File & Document;
 @ObjectType()
 export class File {
 
-  @Prop({ required: true })
-  @Field()
-  fileId!: string;
-
-  @Prop({ required: true })
+  @Prop()
   @Field()
   revisionId!: string;
 
@@ -26,11 +22,7 @@ export class File {
 
   @Prop()
   @Field()
-  fileExtension!: string;
-
-  @Prop()
-  @Field()
-  filePath!: string;
+  path!: string;
 
   @Prop()
   @Field()
@@ -44,7 +36,30 @@ export class File {
   @Field()
   userId!: string;
 
-  
+  @Prop()
+  @Field()
+  orginatorId!: string;
+
+  @Prop()
+  @Field()
+  extension!: string;
+
+  @Prop()
+  @Field()
+  size!: number;
+
+  @Prop()
+  @Field()
+  status!: string;    
+
+  @Prop()
+  @Field()
+  docRef!: string;
+
+  @Prop()
+  @Field()
+  originalname!: string;
+
 }
 
 @InputType()
@@ -54,7 +69,28 @@ export class UploadFileInput{
     fileName!: string;
 
     @Field()
+    originalname!: string;
+
+    @Field()
     path!: string;
+
+    @Field()
+    orginatorId!: string;
+
+    @Field()
+    extension!: string;
+
+    @Field()
+    size!: number;
+
+    @Field()
+    status!: string;    
+
+    @Field()
+    docRef!: string;
+
+    @Field()
+    revision!: string;
 
     @Field()
     projectId!: string;

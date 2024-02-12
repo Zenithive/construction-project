@@ -14,44 +14,32 @@ export class FileService {
 
 
     async uploadFile(fileObject: UploadFileInput){
-        const checkExistingFile = await this.fileModel.findOne({ fileName : fileObject.fileName });
+        // const checkExistingFile = await this.fileModel.findOne({ fileName : fileObject.fileName });
   
-        if(checkExistingFile){
-            const newRevisionNumber : number = checkExistingFile.revision + 1;
-            const fileUploadObj= new this.fileModel({
-                fileId : checkExistingFile.fileId,
-                revisionId : checkExistingFile.revisionId,
-                revision : newRevisionNumber,
-                fileName : fileObject.fileName,
-                fileExtension : checkExistingFile.fileExtension,
-                filePath : checkExistingFile.filePath,
-                folderId : checkExistingFile.folderId,
-                projectId : fileObject.projectId,
-                userId : fileObject.userId,
-            });
+        // if(checkExistingFile){
+            
+            return await this.fileModel.create(fileObject);
+        // }
 
-            return await fileUploadObj.save();
-        }
+        // else{
+        //     const filePath : string = fileObject.path;
+        //     const fileId : string = uuidv4();
+        //     const revisionId : string = uuidv4();
+        //     const fileExtName : string = path.extname(fileObject.fileName);
+        //     const newFile = new this.fileModel({
+        //         fileId: fileId,
+        //         revisionId: revisionId, 
+        //         revision: 1, 
+        //         fileName: fileObject.fileName,
+        //         fileExtension: fileExtName, 
+        //         filePath: filePath,
+        //         folderId: "1",
+        //         projectId: fileObject.projectId,
+        //         userId: fileObject.userId,
+        //     });
 
-        else{
-            const filePath : string = fileObject.path;
-            const fileId : string = uuidv4();
-            const revisionId : string = uuidv4();
-            const fileExtName : string = path.extname(fileObject.fileName);
-            const newFile = new this.fileModel({
-                fileId: fileId,
-                revisionId: revisionId, 
-                revision: 1, 
-                fileName: fileObject.fileName,
-                fileExtension: fileExtName, 
-                filePath: filePath,
-                folderId: "1",
-                projectId: fileObject.projectId,
-                userId: fileObject.userId,
-            });
-
-            return await newFile.save();
-        }
+        //     return await newFile.save();
+        // }
 
 
       }

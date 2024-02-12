@@ -5,7 +5,7 @@ import * as path from 'path';
 
 export const multerOptions = {
   storage: diskStorage({
-    destination: 'C:/Users/USER/OneDrive/DocumentsTesting-Upload', // Destination folder
+    destination: 'uploadedFiles', // Destination folder
     filename: (req, file, callback) => {
         let filename = req.body.filename;
         const fileExtName = path.extname(file.originalname);

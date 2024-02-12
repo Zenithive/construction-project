@@ -11,7 +11,6 @@ export interface AdminProps {}
 export default function Admin(props: AdminProps) {
   const [currentTab, setCurrentTab] = useState(0 as number);
   const handleChange = (event:SyntheticEvent<Element, Event>, value: number)=>{
-    console.log(value)
     setCurrentTab(value);
   }
   return (

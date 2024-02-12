@@ -3,16 +3,22 @@ import { Controller, Post, UseInterceptors, UploadedFile } from '@nestjs/common'
 import { FileInterceptor } from '@nestjs/platform-express';
 import { multerOptions } from './multer.config';
 
-@Controller('file-upload')
+@Controller('files')
 export class FileUploadController {
-  @Post()
-  @UseInterceptors(FileInterceptor('file', multerOptions))
+
+  @Post("upload")
+  @UseInterceptors(FileInterceptor('fileName', multerOptions))
   uploadFile(@UploadedFile() file: Express.Multer.File) {
+    console.log("fileName", file)
     // You can return the file info or store it and return a reference
+    const {filename} = file;
+    const extension = filename.split(".")[filename.split(".").length-1]
     return { 
-        originalname: file.originalname,
-        filename: file.filename,
+        originalName: file.originalname,
+        fileName: file.filename,
+        extension: extension,
         path: file.path, 
+        size: file.size,
     };
   } 
 }

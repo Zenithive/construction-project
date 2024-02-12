@@ -5,6 +5,7 @@ import {USER_COLUMNS} from './users.data';
 import {RenderCell} from './user.render.cell';
 import { useQuery } from '@apollo/client';
 import { GET_USERS } from '../../api/user/queries';
+import { UserTypes } from './add-user';
 
 export interface UserLiserWrapperProps{
    listRefresh: boolean;
@@ -49,7 +50,7 @@ export const UserLiserWrapper = ({listRefresh}:UserLiserWrapperProps) => {
                )}
             </Table.Header>
             <Table.Body items={data?.getUsers || []}>
-               {(item) => (
+               {(item: UserTypes) => (
                   <Table.Row key={Math.random()}>
                      {(columnKey:React.Key) => (
                         <Table.Cell>

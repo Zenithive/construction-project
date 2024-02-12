@@ -4,12 +4,12 @@
 
 input CreateOrgInput {
   contact: String!
-  creationDate: DateTime! = "2024-02-10T18:34:48.250Z"
+  creationDate: DateTime! = "2024-02-12T19:02:41.709Z"
   orgId: String!
   orgName: String!
   region: String!
   status: String! = "Open"
-  updatedDate: DateTime! = "2024-02-10T18:34:48.250Z"
+  updatedDate: DateTime! = "2024-02-12T19:02:41.709Z"
   website: String
 }
 
@@ -24,7 +24,7 @@ input CreateProjectInput {
 }
 
 input CreateUserByAdmin {
-  creationDate: DateTime! = "2024-02-10T18:34:48.004Z"
+  creationDate: DateTime! = "2024-02-12T19:02:41.457Z"
   email: String
   emailVerified: Boolean! = false
   firstName: String
@@ -34,12 +34,12 @@ input CreateUserByAdmin {
   phoneNo: String
   status: String! = "Active"
   subscriptionId: Float = 1
-  updatedDate: DateTime! = "2024-02-10T18:34:48.004Z"
+  updatedDate: DateTime! = "2024-02-12T19:02:41.457Z"
   userId: String!
 }
 
 input CreateUserInput {
-  creationDate: DateTime! = "2024-02-10T18:34:48.004Z"
+  creationDate: DateTime! = "2024-02-12T19:02:41.457Z"
   email: String!
   emailVerified: Boolean! = false
   firstName: String
@@ -48,7 +48,7 @@ input CreateUserInput {
   password: String!
   status: String = "Active"
   subscriptionId: Float! = 1
-  updatedDate: DateTime! = "2024-02-10T18:34:48.004Z"
+  updatedDate: DateTime! = "2024-02-12T19:02:41.457Z"
   userId: String!
 }
 
@@ -59,6 +59,22 @@ scalar DateTime
 
 input Email {
   email: String!
+}
+
+type File {
+  docRef: String!
+  extension: String!
+  fileName: String!
+  folderId: String!
+  orginatorId: String!
+  originalname: String!
+  path: String!
+  projectId: String!
+  revision: Float!
+  revisionId: String!
+  size: Float!
+  status: String!
+  userId: String!
 }
 
 input LoginInput {
@@ -73,6 +89,7 @@ type Mutation {
   createUserByAdmin(input: CreateUserByAdmin!): User!
   loginUser(input: LoginInput!): Token!
   updateUser(input: UpdateUserInput!): User!
+  uploadFile(input: UploadFileInput!): File!
 }
 
 type Org {
@@ -126,6 +143,20 @@ input UpdateUserInput {
   password: String
   startDate: DateTime
   status: String
+}
+
+input UploadFileInput {
+  docRef: String!
+  extension: String!
+  fileName: String!
+  orginatorId: String!
+  originalname: String!
+  path: String!
+  projectId: String!
+  revision: String!
+  size: Float!
+  status: String!
+  userId: String!
 }
 
 type User {

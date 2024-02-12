@@ -1,44 +1,137 @@
-import {Divider, Input, Modal, Text} from '@nextui-org/react';
+import {Divider, Modal, Text} from '@nextui-org/react';
 import Button from '@mui/material/Button';
-import React from 'react';
-import {Flex} from '../styles/flex';
-import { styled } from '@mui/material/styles';
+import React, { useEffect, useState } from 'react';
+import * as Yup from 'yup';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { UploadFileComponent } from './upload.file.component';
+import ToastMessage from '../toast-message/ToastMessage';
+import { Box, Grid, TextField } from '@mui/material';
+import { useFormik } from 'formik';
+import { useMutation } from '@apollo/client';
+import { SAVE_FILE_DATA } from '../../api/file/mutations';
 
-const VisuallyHiddenInput = styled('input')({
-   clip: 'rect(0 0 0 0)',
-   clipPath: 'inset(50%)',
-   height: 1,
-   overflow: 'hidden',
-   position: 'absolute',
-   bottom: 0,
-   left: 0,
-   whiteSpace: 'nowrap',
-   width: 1,
- });
+const FileObjSchema = Yup.object().shape({
+   fileName: Yup.string().required('Required'),
+   status: Yup.string().required('Required'),
+   docRef: Yup.string().required('Required'),
+   revision: Yup.string().required("Required"),
+});
+
+ export interface FileMetadataType{
+   fileName: string;
+   originalName: string;
+   path: string;
+   size: number;
+   extension: string;
+ }
+
+ export interface FileSchemaType{
+   fileName: string;
+   originalname: string;
+   path: string;
+   orginatorId: string;
+   createdDate?: Date;
+   updatedDate?: Date;
+   extension: string;
+   size: number;
+   status: string;
+   docRef: string;
+   revision: string;
+   userId: string;
+   projectId: string;
+ }
 
 export const AddFile = () => {
+   const initValue:FileSchemaType = {
+      fileName: "",
+      originalname: "",
+      path: "",
+      orginatorId: "",
+      extension: "",
+      size: 0,
+      status: "",
+      docRef: "",
+      revision: "",
+      userId: "a",
+      projectId: "v",
+   }
+   const [saveFileData, { data, error, loading }] = useMutation(SAVE_FILE_DATA);
    const [visible, setVisible] = React.useState(false);
-   const handler = () => setVisible(true);
+   const openFileDataModal = () => setVisible(true);
+   const fileUploadDialogOpen = () => setIsUploadFileOpen(true);
+
+   const [isUploadFileOpen, setIsUploadFileOpen] = useState(false);
+    const [fileData, setFileData] = useState({} as FileMetadataType);
 
    const closeHandler = () => {
       setVisible(false);
-      console.log('closed');
+      formik.resetForm();
    };
+
+   useEffect(()=>{
+      console.log("fileData", fileData)
+      if(fileData && fileData?.fileName){
+         setInitFileData();
+         openFileDataModal();
+      }
+   }, [fileData]);
+
+   const setInitFileData = () => {
+      
+      formik.setFieldValue("fileName", fileData.fileName);
+      formik.setFieldValue("originalname", fileData.originalName || "");
+      formik.setFieldValue("path", fileData.path);
+      formik.setFieldValue("extension", fileData.extension || "");
+      formik.setFieldValue("size", fileData.size);
+   }
 
    const openViewer = () => {
       
    }
 
+   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   const submitForm = async (values: FileSchemaType,{ setSubmitting }:any) => {
+      setSubmitting(true);
+      const res = await saveFileData({
+         variables: {
+            ...values,
+            // fileName: fileData.fileName,
+            // originalname: fileData.originalname || "",
+            // path: fileData.path,
+            // extension: fileData.extension,
+            // size: fileData.size,
+         },
+      });
+
+
+      const fileName:string|null = res.data?.uploadFile?.fileName;
+      if(fileName){
+         closeHandler();
+         // setListRefresh((flag:boolean)=>!flag);
+         //dispatch(addUser({token : token}));
+         //router.push("/dashboard");
+      }
+      
+      setSubmitting(false);
+   }
+
+   const formik = useFormik({
+      initialValues: initValue,
+      validationSchema: FileObjSchema,
+      onSubmit: submitForm,
+   });
+
    return (
       <>
-         <Button component="label" onClick={handler} sx={{borderRadius: 3}} variant="contained" startIcon={<CloudUploadIcon />}>
+         <Button component="label" onClick={fileUploadDialogOpen} sx={{borderRadius: 3}} variant="contained" startIcon={<CloudUploadIcon />}>
             Upload file
          </Button>
 
-         <Button component="label" onClick={openViewer} sx={{borderRadius: 3}} variant="contained">
+         <Button component="label" onClick={openFileDataModal} sx={{borderRadius: 3}} variant="contained">
             View file
          </Button>
+
+         <UploadFileComponent closeSet={setIsUploadFileOpen} open={isUploadFileOpen} fileSet={setFileData} ></UploadFileComponent>
 
          <Modal
             closeButton
@@ -49,86 +142,99 @@ export const AddFile = () => {
          >
             <Modal.Header css={{justifyContent: 'start'}}>
                <Text id="modal-title" h4>
-                  Add new File
+                  Add new project
                </Text>
+
+               <ToastMessage 
+                  severity="success" 
+                  openFlag={data?.createProject?._id ? true : false } 
+                  message='Project created.'
+               ></ToastMessage>
+
+               <ToastMessage 
+                  severity="error" 
+                  openFlag={error ? true : false } 
+                  message='Problem while creating project.'
+               ></ToastMessage>
             </Modal.Header>
             <Divider css={{my: '$5'}} />
             <Modal.Body css={{py: '$10'}}>
-               <Flex
-                  direction={'column'}
-                  css={{
-                     'flexWrap': 'wrap',
-                     'gap': '$8',
-                     '@lg': {flexWrap: 'nowrap', gap: '$12'},
-                  }}
-               >
-                  <Flex
-                     css={{
-                        'gap': '$10',
-                        'flexWrap': 'wrap',
-                        '@lg': {flexWrap: 'nowrap'},
-                     }}
-                  >
-                     <Input
+            <Box
+               id='save-file-form'
+               component="form"
+               noValidate
+               onSubmit={formik.handleSubmit}
+               sx={{ mt: 3 }}
+            >
+               <Grid container spacing={2}>
+                  <Grid item xs={12}>
+                     <TextField
+                        required
+                        fullWidth
+                        id="fileName"
                         label="File Name"
-                        bordered
-                        clearable
-                        fullWidth
-                        size="lg"
-                        placeholder="File Name"
+                        name="fileName"
+                        autoComplete="fileName"
+                        value={formik.values.fileName}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        error={formik.touched.fileName && Boolean(formik.errors.fileName)}
+                        helperText={formik.touched.fileName && formik.errors.fileName}
                      />
-                  </Flex>
-
-                  <Flex
-                     css={{
-                        'gap': '$10',
-                        'flexWrap': 'wrap',
-                        '@lg': {flexWrap: 'nowrap'},
-                     }}
-                  >
-                     <Button component="label" variant="contained" startIcon={<CloudUploadIcon />}>
-                        Upload file
-                        <VisuallyHiddenInput type="file" />
-                     </Button>
-                  </Flex>
-                  <Flex
-                     css={{
-                        'gap': '$10',
-                        'flexWrap': 'wrap',
-                        '@lg': {flexWrap: 'nowrap'},
-                     }}
-                  >
-                     <Input
+                  </Grid>
+                  <Grid item xs={12}>
+                     <TextField
+                        required
+                        fullWidth
+                        name="revision"
+                        label="Revision"
+                        id="revision"
+                        autoComplete="revision"
+                        value={formik.values.revision}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        error={formik.touched.revision && Boolean(formik.errors.revision)}
+                        helperText={formik.touched.revision && formik.errors.revision}
+                     />
+                  </Grid>
+                  <Grid item xs={12}>
+                     <TextField
+                        required
+                        fullWidth
+                        name="docRef"
+                        label="Doc Ref"
+                        id="docRef"
+                        autoComplete="docRef"
+                        value={formik.values.docRef}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        error={formik.touched.docRef && Boolean(formik.errors.docRef)}
+                        helperText={formik.touched.docRef && formik.errors.docRef}
+                     />
+                  </Grid>
+                  <Grid item xs={12}>
+                     <TextField
+                        required
+                        fullWidth
+                        name="status"
                         label="Status"
-                        clearable
-                        bordered
-                        fullWidth
-                        size="lg"
-                        placeholder="Status"
+                        id="status"
+                        autoComplete="status"
+                        value={formik.values.status}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        error={formik.touched.status && Boolean(formik.errors.status)}
+                        helperText={formik.touched.status && formik.errors.status}
                      />
-                  </Flex>
-                  <Flex
-                     css={{
-                        'gap': '$10',
-                        'flexWrap': 'wrap',
-                        '@lg': {flexWrap: 'nowrap'},
-                     }}
-                  >
-                     <Input
-                        label="Doc ref"
-                        clearable
-                        bordered
-                        fullWidth
-                        size="lg"
-                        placeholder="Doc ref"
-                     />
-                  </Flex>
-               </Flex>
+                  </Grid>
+                  
+               </Grid>
+          </Box>
             </Modal.Body>
             <Divider css={{my: '$5'}} />
             <Modal.Footer>
-               <Button variant='contained' onClick={closeHandler} sx={{borderRadius: 3}}>
-                  Upload File
+               <Button disabled={loading} style={{borderRadius: 10}} variant="contained" type='submit' form="save-file-form">
+                  Add File
                </Button>
             </Modal.Footer>
          </Modal>

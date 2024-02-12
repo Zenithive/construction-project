@@ -38,7 +38,7 @@ export const FilesListWrapper = () => {
             <Table.Body items={users}>
                {(item) => (
                   <Table.Row>
-                     {(columnKey) => (
+                     {(columnKey: any) => (
                         <Table.Cell>
                            {RenderCell({user: item, columnKey: columnKey})}
                         </Table.Cell>
@@ -51,7 +51,6 @@ export const FilesListWrapper = () => {
                noMargin
                align="center"
                rowsPerPage={8}
-               onPageChange={(page) => console.log({page})}
             />
          </Table>
       </Box>
