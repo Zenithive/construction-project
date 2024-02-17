@@ -1,26 +1,26 @@
-import {Col, Row, User, Text, Tooltip} from '@nextui-org/react';
+import {Col, Row, Text, Tooltip} from '@nextui-org/react';
 import React from 'react';
 import {DeleteIcon} from '../icons/table/delete-icon';
 import {EditIcon} from '../icons/table/edit-icon';
 import {EyeIcon} from '../icons/table/eye-icon';
-import {users} from './data';
 import {IconButton, StyledBadge} from './file-list.styled';
+import { FileSchemaType } from './add-file';
 
 interface Props {
-   user: typeof users[number];
+   file: FileSchemaType;
    columnKey: string | React.Key;
 }
 
-export const RenderCell = ({user, columnKey}: Props) => {
+export const RenderCell = ({file, columnKey}: Props) => {
    // @ts-ignore
-   const cellValue = user[columnKey];
+   const cellValue = file[columnKey];
    switch (columnKey) {
       case 'name':
          return (
             <Col>
                <Row>
                   <Text b size={14} css={{tt: 'capitalize'}}>
-                     {user.name}
+                     {file.originalname}
                   </Text>
                </Row>
             </Col>
@@ -39,7 +39,7 @@ export const RenderCell = ({user, columnKey}: Props) => {
                      size={13}
                      css={{tt: 'capitalize', color: '$accents7'}}
                   >
-                     {user.team}
+                     {file.docRef}
                   </Text>
                </Row>
             </Col>
@@ -47,7 +47,7 @@ export const RenderCell = ({user, columnKey}: Props) => {
       case 'status':
          return (
             // @ts-ignore
-            <StyledBadge type={String(user.status)}>{cellValue}</StyledBadge>
+            <StyledBadge type={String(file.status)}>{cellValue}</StyledBadge>
          );
 
       case 'actions':
@@ -60,7 +60,7 @@ export const RenderCell = ({user, columnKey}: Props) => {
                <Col css={{d: 'flex'}}>
                   <Tooltip content="Details">
                      <IconButton
-                        onClick={() => console.log('View File', user.id)}
+                        onClick={() => console.log('View File', file)}
                      >
                         <EyeIcon size={20} fill="#979797" />
                      </IconButton>
@@ -69,7 +69,7 @@ export const RenderCell = ({user, columnKey}: Props) => {
                <Col css={{d: 'flex'}}>
                   <Tooltip content="Edit user">
                      <IconButton
-                        onClick={() => console.log('Edit File', user.id)}
+                        onClick={() => console.log('Edit File', file)}
                      >
                         <EditIcon size={20} fill="#979797" />
                      </IconButton>
@@ -79,7 +79,7 @@ export const RenderCell = ({user, columnKey}: Props) => {
                   <Tooltip
                      content="Delete user"
                      color="error"
-                     onClick={() => console.log('Delete File', user.id)}
+                     onClick={() => console.log('Delete File', file)}
                   >
                      <IconButton>
                         <DeleteIcon size={20} fill="#FF0080" />

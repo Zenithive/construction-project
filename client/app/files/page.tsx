@@ -17,6 +17,8 @@ import { Box } from '@mui/material';
 export interface FilesProps {}
 
 export default function Files(props: FilesProps) {
+   const [listRefresh, setListRefresh] = React.useState(false);
+
   return (
     <Flex
        css={{
@@ -55,7 +57,7 @@ export default function Files(props: FilesProps) {
              <DotsIcon />
           </Flex>
           <Flex direction={'row'} css={{gap: '$6'}} wrap={'wrap'}>
-             <AddFile />
+             <AddFile setListRefresh={setListRefresh} />
              <Button auto iconRight={<ExportIcon />}>
                 Export to CSV
              </Button>
@@ -67,7 +69,7 @@ export default function Files(props: FilesProps) {
             <FolderTree />
          </Box>
          <Box component="div" sx={{flex: 4}}>
-            <FilesListWrapper />
+            <FilesListWrapper listRefresh={listRefresh} />
          </Box>
        </Flex>
 

@@ -41,7 +41,6 @@ export const AddOrganisation = ({setListRefresh}:AddOrganisationProps) => {
    const closeHandler = () => {
       setVisible(false);
       formik && formik.resetForm();
-      console.log('closed');
    };
 
    // eslint-disable-next-line @typescript-eslint/no-explicit-any

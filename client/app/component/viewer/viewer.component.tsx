@@ -2,8 +2,9 @@
 
 import { Box } from '@mui/material';
 import axios from 'axios';
+import { CONFIG } from '../../constants/config.constant';
 import { useEffect, useRef, useState } from 'react';
-import { CustomExtension } from './CustomExtension';
+import ToastMessage from '../toast-message/ToastMessage';
 
 
 /* eslint-disable-next-line */
@@ -17,13 +18,15 @@ export interface ViewerCompoentProps {
 export default function ViewerComponent(props: ViewerCompoentProps)  {
     const {urn} = props;
     const loadAutodeskExtensions=['Autodesk.DocumentBrowser', 'Autodesk.VisualClusters'];
-  const Autodesk = typeof window !== "undefined" ? window["Autodesk"] : null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const Autodesk: any = typeof window !== "undefined" ? (window as any)["Autodesk"] : null;
   const viewerRef = useRef(null)
   const [viewer, setViewer] = useState<any>(null)
   const [ accessToken, setAccessToken] = useState("")
+  const [ error, setError] = useState(false)
 
   const getAccessToken = ()=>{
-    axios.get('http://localhost:3000/api/aps/getApsForgeToken').then(response => {
+    axios.get(`${CONFIG.server}aps/getApsForgeToken`).then(response => {
         setAccessToken(response.data.access_token);
     });
   }
@@ -32,16 +35,8 @@ export default function ViewerComponent(props: ViewerCompoentProps)  {
 
   useEffect(() => {
     if(!accessToken) getAccessToken()
-    console.log("urn", urn)
-    console.log("accessToken", accessToken)
-    console.log("viewerRef", viewerRef)
-    console.log("Autodesk", Autodesk)
     if (!urn || !accessToken || !viewerRef || !Autodesk)
         return
-
-    console.log("accessToken is Present:", (accessToken != null));
-    console.log("urn is Present:", (urn != null));
-    console.log("urn:", urn);
 
     // Init viewer
     const options = {
@@ -109,6 +104,11 @@ export default function ViewerComponent(props: ViewerCompoentProps)  {
 
   return (
     <>
+        <ToastMessage 
+            severity="error"
+            openFlag={error ? true : false } 
+            message='Problem while loading the viewer. Please try again or contact support.'
+          ></ToastMessage>
         <Box ref={viewerRef}></Box>
     </>
   );

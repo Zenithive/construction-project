@@ -3,7 +3,9 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "start": "nx run-many --parallel --target=serve --projects=api,client"
+    "start": "nx run-many --parallel --target=serve --projects=api,client",
+    "build-client": "nx build client",
+    "build-api": "nx build api"
   },
   "private": true,
   "devDependencies": {
@@ -36,10 +38,12 @@
     "@types/node": "18.16.9",
     "@types/react": "18.2.33",
     "@types/react-dom": "18.2.14",
+    "@types/redux-logger": "^3.0.13",
     "@types/uuid": "^9.0.7",
     "@typescript-eslint/eslint-plugin": "^6.9.1",
     "@typescript-eslint/parser": "^6.9.1",
     "babel-jest": "^29.4.1",
+    "dotenv": "^16.4.4",
     "eslint": "~8.48.0",
     "eslint-config-next": "13.4.4",
     "eslint-config-prettier": "^9.0.0",
@@ -81,6 +85,7 @@
     "@reduxjs/toolkit": "^2.0.1",
     "@types/express-session": "^1.17.10",
     "@types/jsonwebtoken": "^9.0.5",
+    "ag-grid-react": "^31.0.3",
     "apexcharts": "^3.35.5",
     "apollo-server-express": "^3.13.0",
     "axios": "^1.6.7",

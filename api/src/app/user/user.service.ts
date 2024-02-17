@@ -32,7 +32,6 @@ export class UserService {
     const payLoad = {
       email : user.email,
     }
-    console.log(user);
     const token = jwt.sign(payLoad,"secretKey",{expiresIn : "2h"});
     const tokenObj : Token = {
       token : token,
@@ -43,7 +42,6 @@ export class UserService {
         email : user.email,
       }
     }
-    console.log(tokenObj);
     return tokenObj;
   }
 

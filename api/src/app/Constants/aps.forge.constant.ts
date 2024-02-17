@@ -1,9 +1,6 @@
-console.log(process.env)
-const { APS_CLIENT_ID, APS_CLIENT_SECRET, DATABASE_USER } = process.env;
-console.log(APS_CLIENT_ID, APS_CLIENT_SECRET, DATABASE_USER)
+const { APS_CLIENT_ID, APS_CLIENT_SECRET } = process.env;
 let { APS_BUCKET } = process.env;
 if (!APS_CLIENT_ID || !APS_CLIENT_SECRET) {
-    console.warn('Missing some of the environment variables.');
     process.exit(1);
 }
 

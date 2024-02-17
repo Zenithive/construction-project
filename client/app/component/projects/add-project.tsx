@@ -46,7 +46,6 @@ export const AddProject = ({setListRefresh}:AddProjectProps) => {
 
    const closeHandler = () => {
       setVisible(false);
-      console.log('closed');
    };
 
    // eslint-disable-next-line @typescript-eslint/no-explicit-any

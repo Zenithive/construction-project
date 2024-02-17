@@ -5,6 +5,7 @@ import {columns} from './orgs.data';
 import {RenderCell} from './orgs.render.cell';
 import { useQuery } from '@apollo/client';
 import { GET_ORGANISATIONS } from '../../api/organisation/queries';
+import { OrganisationTypes } from './add-organisation';
 
 export interface OrgsListWrapperProps{
    listRefresh: boolean;
@@ -48,7 +49,7 @@ export const OrgsListWrapper = ({listRefresh}:OrgsListWrapperProps) => {
                )}
             </Table.Header>
             <Table.Body items={data?.getAllOrg || []}>
-               {(item) => (
+               {(item: OrganisationTypes) => (
                   <Table.Row key={Math.random()}>
                      {(columnKey:React.Key) => (
                         <Table.Cell>

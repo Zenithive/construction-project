@@ -64,7 +64,6 @@ export const ProjectListWrapper = ({listRefresh}:ProjectListWrapperProps) => {
                noMargin
                align="center"
                rowsPerPage={8}
-               onPageChange={(page) => console.log({page})}
             />
          </Table>
       </Box>
