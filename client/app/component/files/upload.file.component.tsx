@@ -41,6 +41,7 @@ export const UploadFileComponent = (props: UploadFileProps) => {
 
    useEffect(()=>{
       if(visible !== props.open){
+         formik.resetForm();
          setTmpFile(null);
          setVisible(props.open)
       }
@@ -64,6 +65,7 @@ export const UploadFileComponent = (props: UploadFileProps) => {
          console.log(response);
          response.data && props.fileSet(response.data);
          closeHandler();
+         resetForm();
        });
    }
 

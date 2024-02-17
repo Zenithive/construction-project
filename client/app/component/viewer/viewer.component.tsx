@@ -76,7 +76,6 @@ export default function ViewerComponent(props: ViewerCompoentProps)  {
         }
 
         const onDocumentLoadFailure = (code: any, message: any, errors: any) => {
-            setError(errors ? true : false)
             console.error({ code, message, errors });
         }
 

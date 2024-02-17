@@ -25,15 +25,15 @@ export class FileService {
 
     async uploadFile(fileObject: UploadFileInput){
         const apsFilesObject  = await this.apsForgeService.uploadObject(fileObject.originalname, fileObject.path);
-        console.log("apsFilesObject", apsFilesObject)
+        console.log("apsFilesObject 1", apsFilesObject)
         const apsUrnObj = await this.apsForgeService.translateObject(
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 this.apsForgeService.urnify(apsFilesObject.objectId as any), fileObject.zipEntryPoint
             );
-        console.log("apsFilesObject", apsUrnObj)
+        console.log("apsUrnObj 2", apsUrnObj)
         const nameWihUrnKey = {
             apsObjKey: apsFilesObject.objectId,
-            apsUrnKey: this.apsForgeService.urnify(apsUrnObj.urn)
+            apsUrnKey: apsUrnObj.urn
         }
             
         return await this.fileModel.create({...fileObject, ...nameWihUrnKey});

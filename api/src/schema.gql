@@ -4,12 +4,12 @@
 
 input CreateOrgInput {
   contact: String!
-  creationDate: DateTime! = "2024-02-16T12:24:26.980Z"
+  creationDate: DateTime! = "2024-02-17T04:16:09.833Z"
   orgId: String!
   orgName: String!
   region: String!
   status: String! = "Open"
-  updatedDate: DateTime! = "2024-02-16T12:24:26.980Z"
+  updatedDate: DateTime! = "2024-02-17T04:16:09.833Z"
   website: String
 }
 
@@ -24,7 +24,7 @@ input CreateProjectInput {
 }
 
 input CreateUserByAdmin {
-  creationDate: DateTime! = "2024-02-16T12:24:26.520Z"
+  creationDate: DateTime! = "2024-02-17T04:16:09.201Z"
   email: String
   emailVerified: Boolean! = false
   firstName: String
@@ -34,12 +34,12 @@ input CreateUserByAdmin {
   phoneNo: String
   status: String! = "Active"
   subscriptionId: Float = 1
-  updatedDate: DateTime! = "2024-02-16T12:24:26.520Z"
+  updatedDate: DateTime! = "2024-02-17T04:16:09.201Z"
   userId: String!
 }
 
 input CreateUserInput {
-  creationDate: DateTime! = "2024-02-16T12:24:26.520Z"
+  creationDate: DateTime! = "2024-02-17T04:16:09.200Z"
   email: String!
   emailVerified: Boolean! = false
   firstName: String
@@ -48,7 +48,7 @@ input CreateUserInput {
   password: String!
   status: String = "Active"
   subscriptionId: Float! = 1
-  updatedDate: DateTime! = "2024-02-16T12:24:26.520Z"
+  updatedDate: DateTime! = "2024-02-17T04:16:09.200Z"
   userId: String!
 }
 
@@ -66,7 +66,7 @@ type File {
   apsUrnKey: String!
   docRef: String!
   extension: String!
-  fileId: String!
+  fileId: String
   fileName: String!
   folderId: String!
   orginatorId: String!
@@ -74,7 +74,7 @@ type File {
   path: String!
   projectId: String!
   revision: Float!
-  revisionId: String!
+  revisionId: String
   size: Float!
   status: String!
   userId: String!
@@ -155,14 +155,14 @@ input UploadFileInput {
   apsUrnKey: String
   docRef: String!
   extension: String!
-  fileId: String!
+  fileId: String
   fileName: String!
   orginatorId: String!
   originalname: String!
   path: String!
   projectId: String!
   revision: String!
-  revisionId: String!
+  revisionId: String
   size: Float!
   status: String!
   userId: String!

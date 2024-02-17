@@ -42,7 +42,12 @@ const FileObjSchema = Yup.object().shape({
    fileId?: string;
  }
 
-export const AddFile = () => {
+ export interface AddFilesProps {
+   setListRefresh: React.Dispatch<React.SetStateAction<boolean>>
+ }
+
+
+export const AddFile = ({setListRefresh}:AddFilesProps) => {
    const initValue:FileSchemaType = {
       fileName: "",
       originalname: "",
@@ -108,6 +113,7 @@ export const AddFile = () => {
       const fileName:string|null = res.data?.uploadFile?.fileName;
       if(fileName){
          closeHandler();
+         setListRefresh((flag:boolean)=>!flag);
          // setListRefresh((flag:boolean)=>!flag);
          //dispatch(addUser({token : token}));
          //router.push("/dashboard");
@@ -143,19 +149,19 @@ export const AddFile = () => {
          >
             <Modal.Header css={{justifyContent: 'start'}}>
                <Text id="modal-title" h4>
-                  Add new project
+                  Add new File
                </Text>
 
                <ToastMessage 
                   severity="success" 
                   openFlag={data?.createProject?._id ? true : false } 
-                  message='Project created.'
+                  message='File uploaded.'
                ></ToastMessage>
 
                <ToastMessage 
                   severity="error" 
                   openFlag={error ? true : false } 
-                  message='Problem while creating project.'
+                  message='Problem while uploading the file.'
                ></ToastMessage>
             </Modal.Header>
             <Divider css={{my: '$5'}} />

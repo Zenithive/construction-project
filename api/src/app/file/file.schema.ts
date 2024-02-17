@@ -9,11 +9,11 @@ export type FileDocument = File & Document;
 export class File {
 
   @Prop()
-  @Field()
+  @Field({ nullable: true })
   revisionId!: string;
 
   @Prop()
-  @Field()
+  @Field({ nullable: true })
   fileId!: string;
 
   @Prop()
@@ -80,10 +80,10 @@ export class File {
 @InputType()
 export class UploadFileInput{
 
-    @Field()
+    @Field({ nullable: true })
     fileId!: string;
 
-    @Field()
+    @Field({ nullable: true })
     revisionId!: string;
 
     @Field()

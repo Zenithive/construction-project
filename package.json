@@ -3,7 +3,9 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "start": "nx run-many --parallel --target=serve --projects=api,client"
+    "start": "nx run-many --parallel --target=serve --projects=api,client",
+    "build-client": "nx build client",
+    "build-api": "nx build api"
   },
   "private": true,
   "devDependencies": {

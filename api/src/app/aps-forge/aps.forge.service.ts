@@ -97,6 +97,7 @@ export class ApsForgeService {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return objects.map((o: { objectKey: unknown; objectId: any }) => ({
       name: o.objectKey,
+      objectId: o.objectId,
       urn: this.urnify(o.objectId),
     }));
   }
