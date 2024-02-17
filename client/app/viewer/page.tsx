@@ -7,6 +7,8 @@ import Script from 'next/script';
 import { useEffect,  useState } from 'react';
 import ViewerComponent from '../component/viewer/viewer.component';
 import { CONFIG } from '../constants/config.constant';
+import { useSearchParams } from 'next/navigation'
+
 
 const theme = createTheme();
 
@@ -15,6 +17,10 @@ export default function Viewer() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [urn, setUrn] = useState("");
   const [allData, setAllData] = useState([]);
+
+  const searchParams = useSearchParams()
+ 
+  
 
   const getModelsData = ()=>{
     axios.get(`${CONFIG.server}aps/getApsForgeModels`).then(response => {
@@ -25,8 +31,12 @@ export default function Viewer() {
 
 
   useEffect(() => {
-    if(!allData.length) getModelsData();
-  }, [allData])
+    const urnId = searchParams.get('id');
+    if(urnId) {
+      setUrn(urnId);
+      console.log("urnId", urnId)
+    }
+  }, [urn])
 
   return (
     <>

@@ -15,6 +15,8 @@ import { ProjectModule } from './project/project.module';
 import { OrgModule } from './organization/org.module';
 import { ApsForgeModule } from './aps-forge/aps.forge.module';
 
+const { DB_NAME, MONGO_URL } = process.env;
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -25,7 +27,7 @@ import { ApsForgeModule } from './aps-forge/aps.forge.module';
       autoSchemaFile: join(process.cwd(), 'api/src/schema.gql'),
       sortSchema: true,
     }),
-    MongooseModule.forRoot('mongodb://0.0.0.0:27017/rof'),
+    MongooseModule.forRoot(`${MONGO_URL}/${DB_NAME}`),
     AuthModule,
     UserModule,
     ProjectModule,

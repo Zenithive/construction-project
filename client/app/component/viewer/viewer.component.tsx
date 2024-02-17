@@ -4,6 +4,7 @@ import { Box } from '@mui/material';
 import axios from 'axios';
 import { CONFIG } from '../../constants/config.constant';
 import { useEffect, useRef, useState } from 'react';
+import ToastMessage from '../toast-message/ToastMessage';
 
 
 /* eslint-disable-next-line */
@@ -22,6 +23,7 @@ export default function ViewerComponent(props: ViewerCompoentProps)  {
   const viewerRef = useRef(null)
   const [viewer, setViewer] = useState<any>(null)
   const [ accessToken, setAccessToken] = useState("")
+  const [ error, setError] = useState(false)
 
   const getAccessToken = ()=>{
     axios.get(`${CONFIG.server}aps/getApsForgeToken`).then(response => {
@@ -74,6 +76,7 @@ export default function ViewerComponent(props: ViewerCompoentProps)  {
         }
 
         const onDocumentLoadFailure = (code: any, message: any, errors: any) => {
+            setError(errors ? true : false)
             console.error({ code, message, errors });
         }
 
@@ -102,6 +105,11 @@ export default function ViewerComponent(props: ViewerCompoentProps)  {
 
   return (
     <>
+        <ToastMessage 
+            severity="error"
+            openFlag={error ? true : false } 
+            message='Problem while loading the viewer. Please try again or contact support.'
+          ></ToastMessage>
         <Box ref={viewerRef}></Box>
     </>
   );

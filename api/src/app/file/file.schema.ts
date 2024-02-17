@@ -14,6 +14,10 @@ export class File {
 
   @Prop()
   @Field()
+  fileId!: string;
+
+  @Prop()
+  @Field()
   revision!: number;
 
   @Prop()
@@ -60,10 +64,27 @@ export class File {
   @Field()
   originalname!: string;
 
+  @Prop()
+  @Field({defaultValue: ""})
+  zipEntryPoint!: string;
+
+  @Prop()
+  @Field({defaultValue: ""})
+  apsUrnKey!: string;
+
+  @Prop()
+  @Field({ nullable: true, defaultValue: "" })
+  apsObjKey!: string;
 }
 
 @InputType()
 export class UploadFileInput{
+
+    @Field()
+    fileId!: string;
+
+    @Field()
+    revisionId!: string;
 
     @Field()
     fileName!: string;
@@ -97,6 +118,15 @@ export class UploadFileInput{
 
     @Field()
     userId!: string;
+
+    @Field({ nullable: true })
+    zipEntryPoint!: string;
+
+    @Field({ nullable: true })
+    apsUrnKey!: string;
+
+    @Field({ nullable: true })
+    apsObjKey!: string;    
 }
 
 

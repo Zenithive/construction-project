@@ -5,43 +5,38 @@ import { File, FileDocument, UploadFileInput } from './file.schema';
 //import { FileStorageUtil } from '../util/file-storage.util';
 import { v4 as uuidv4 } from 'uuid'; 
 import * as path from 'path';
+import { ApsForgeService } from '../aps-forge/aps.forge.service';
 
 
 
 @Injectable()
 export class FileService {
-    constructor(@InjectModel(File.name) private fileModel: Model<FileDocument>) {}
+    constructor(
+        @InjectModel(File.name) private fileModel: Model<FileDocument>,
+        private apsForgeService: ApsForgeService,
+    ) {
+
+    }
+
+    async getFiles(){
+        return this.fileModel.find();
+    }
 
 
     async uploadFile(fileObject: UploadFileInput){
-        // const checkExistingFile = await this.fileModel.findOne({ fileName : fileObject.fileName });
-  
-        // if(checkExistingFile){
+        const apsFilesObject  = await this.apsForgeService.uploadObject(fileObject.originalname, fileObject.path);
+        console.log("apsFilesObject", apsFilesObject)
+        const apsUrnObj = await this.apsForgeService.translateObject(
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                this.apsForgeService.urnify(apsFilesObject.objectId as any), fileObject.zipEntryPoint
+            );
+        console.log("apsFilesObject", apsUrnObj)
+        const nameWihUrnKey = {
+            apsObjKey: apsFilesObject.objectId,
+            apsUrnKey: this.apsForgeService.urnify(apsUrnObj.urn)
+        }
             
-            return await this.fileModel.create(fileObject);
-        // }
-
-        // else{
-        //     const filePath : string = fileObject.path;
-        //     const fileId : string = uuidv4();
-        //     const revisionId : string = uuidv4();
-        //     const fileExtName : string = path.extname(fileObject.fileName);
-        //     const newFile = new this.fileModel({
-        //         fileId: fileId,
-        //         revisionId: revisionId, 
-        //         revision: 1, 
-        //         fileName: fileObject.fileName,
-        //         fileExtension: fileExtName, 
-        //         filePath: filePath,
-        //         folderId: "1",
-        //         projectId: fileObject.projectId,
-        //         userId: fileObject.userId,
-        //     });
-
-        //     return await newFile.save();
-        // }
-
-
+        return await this.fileModel.create({...fileObject, ...nameWihUrnKey});
       }
 
 }

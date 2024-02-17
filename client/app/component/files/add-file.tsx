@@ -39,6 +39,7 @@ const FileObjSchema = Yup.object().shape({
    revision: string;
    userId: string;
    projectId: string;
+   fileId?: string;
  }
 
 export const AddFile = () => {

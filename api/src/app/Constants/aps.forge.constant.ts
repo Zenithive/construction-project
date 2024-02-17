@@ -1,4 +1,4 @@
-const { APS_CLIENT_ID, APS_CLIENT_SECRET, DATABASE_USER } = process.env;
+const { APS_CLIENT_ID, APS_CLIENT_SECRET } = process.env;
 let { APS_BUCKET } = process.env;
 if (!APS_CLIENT_ID || !APS_CLIENT_SECRET) {
     process.exit(1);
