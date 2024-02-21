@@ -16,6 +16,7 @@ export default function Viewer() {
   
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [urn, setUrn] = useState("");
+  const [isJSLoader, setIsJSLoader] = useState(true);
   const [allData, setAllData] = useState([]);
 
   const searchParams = useSearchParams()
@@ -42,14 +43,15 @@ export default function Viewer() {
     <>
       <link
         rel="stylesheet"
-        href="https://developer.api.autodesk.com/modelderivative/v2/viewers/7.*/style.css"
+        href="https://developer.api.autodesk.com/modelderivative/v2/viewers/7.0/style.css"
       />
       <Script
-        src="https://developer.api.autodesk.com/modelderivative/v2/viewers/7.*/viewer3D.js"
+        src="https://developer.api.autodesk.com/modelderivative/v2/viewers/7.0/viewer3D.js"
         strategy="lazyOnload"
-        onLoad={() =>
-          console.log(`script loaded correctly, window.FB has been populated`)
-        }
+        onLoad={() =>{
+          console.log(`script loaded correctly, window.FB has been populated`);
+          setIsJSLoader(false);
+        }}
       />
       <ThemeProvider theme={theme}>
         <Container component="main" maxWidth="xl" sx={{ padding: 0 }}>
@@ -66,7 +68,7 @@ export default function Viewer() {
               </Toolbar>
             </AppBar>
             <Box component="main" >
-              <ViewerComponent urn={urn}></ViewerComponent>
+              {isJSLoader ? <h1>Loading....</h1> : <ViewerComponent urn={urn}></ViewerComponent>}
             </Box>
 
           </Box>

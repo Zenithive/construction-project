@@ -5,7 +5,10 @@
   "scripts": {
     "start": "nx run-many --parallel --target=serve --projects=api,client",
     "build-client": "nx build client",
-    "build-api": "nx build api"
+    "build-api": "nx build api",
+    "start-client": "nx serve client",
+    "start-api": "nx serve client"
+
   },
   "private": true,
   "devDependencies": {
