@@ -1,4 +1,5 @@
 import {Col, Row, Table, Tooltip} from '@nextui-org/react';
+import { GridOptions } from 'ag-grid-community';
 import React, { useEffect, useState } from 'react';
 import {columns} from './data';
 import {RenderCell} from './file-render-cell';
@@ -28,7 +29,8 @@ export const FilesListWrapper = ({listRefresh}:FilesListWrapperProps) => {
       { make: "Toyota", model: "Corolla", price: 29600, electric: false },
     ]);
 
-    const ActionRenderer = ({ value }) => (
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const ActionRenderer = ({ value }:any) => (
       <Row
          justify="center"
          align="center"
@@ -54,7 +56,7 @@ export const FilesListWrapper = ({listRefresh}:FilesListWrapperProps) => {
             <Tooltip
                content="Delete Project"
                color="error"
-               onClick={() => console.log('Delete user', project.orgId)}
+               onClick={() => console.log('Delete user')}
             >
                <IconButton>
                   <DeleteIcon size={20} fill="#FF0080" />
@@ -64,7 +66,8 @@ export const FilesListWrapper = ({listRefresh}:FilesListWrapperProps) => {
       </Row>
     );
 
-    const FileNameRenderer = ({ value, data }) => (
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const FileNameRenderer = ({ value, data }:any) => (
       <Link
          variant="body2" 
          underline="none"
@@ -104,7 +107,7 @@ export const FilesListWrapper = ({listRefresh}:FilesListWrapperProps) => {
 
     
    
-    const gridOptions = {
+    const gridOptions:GridOptions = {
       // Other grid options...
       domLayout: 'autoHeight',
     };

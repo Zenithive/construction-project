@@ -24,7 +24,7 @@ export default function Viewer() {
   
 
   const getModelsData = ()=>{
-    axios.get(`${CONFIG.server}aps/getApsForgeModels`).then(response => {
+    axios.get(`${CONFIG.server_api}aps/getApsForgeModels`).then(response => {
       setAllData(response.data);
       setUrn(response.data[0].urn)
     });

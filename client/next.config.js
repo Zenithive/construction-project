@@ -13,7 +13,7 @@ const nextConfig = {
     svgr: false,
   },
   env: {
-    SERVER_URL: process.env.SERVER || ""
+    SERVER_URL: process.env.SERVER_URL || ""
   }
 };
 
