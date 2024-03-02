@@ -83,18 +83,22 @@ export const FilesListWrapper = ({listRefresh}:FilesListWrapperProps) => {
       { 
          field: "originalname",
          headerName: "File Name",
+         filter: 'agSetColumnFilter',
          cellRenderer: FileNameRenderer
       },
       { 
          field: "docRef",
+         filter: 'agSetColumnFilter',
          headerName: "Doc Ref"
       },
       { 
          field: "status",
+         filter: 'agSetColumnFilter',
          headerName: "Status"
       },
       { 
          field: "revision",
+         filter: 'agSetColumnFilter',
          headerName: "Revision",
          width: 100
       },
