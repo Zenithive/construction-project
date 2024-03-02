@@ -1,15 +1,18 @@
-FROM node:lts-alpine
-ENV NODE_ENV=production
-WORKDIR /usr/src/app
-COPY ["package.json", "nx.json", "package-lock.json*", "npm-shrinkwrap.json*", "./"]
-# RUN npm install -g @nrwl/cli
-# RUN npm i nx@17.0.0
+# Use an official Node.js image as the base
+FROM node:20.10.0
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy the shared package.json and package-lock.json
+COPY package*.json ./
+
+# Install dependencies
 RUN npm install
+
+RUN npm install bcrypt
+
+# Copy the entire project (both React and Nest JS code)
 COPY . .
-RUN npm install -g @nrwl/cli
-# RUN npm install --production --silent && mv node_modules ../
-RUN npx nx build client --prod
-EXPOSE 3000
-RUN chown -R node /usr/src/app
-USER node
-CMD ["npm", "run", "start-client"]
+
+# Specify the command to start your combined app
+CMD ["npm", "start"]

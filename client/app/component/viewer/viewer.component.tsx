@@ -26,7 +26,7 @@ export default function ViewerComponent(props: ViewerCompoentProps)  {
   const [ error, setError] = useState(false)
 
   const getAccessToken = ()=>{
-    axios.get(`${CONFIG.server}aps/getApsForgeToken`).then(response => {
+    axios.get(`${CONFIG.server_api}aps/getApsForgeToken`).then(response => {
         setAccessToken(response.data.access_token);
     });
   }

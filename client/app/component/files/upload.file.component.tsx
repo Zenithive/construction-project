@@ -61,7 +61,7 @@ export const UploadFileComponent = (props: UploadFileProps) => {
       const formData = new FormData();
       formData.append("fileName", tmpFile[0]);
 
-      axios.post(`${CONFIG.server}files/upload`, formData, { headers: {"Content-Type": "multipart/form-data" } }).then(response => {
+      axios.post(`${CONFIG.server_api}files/upload`, formData, { headers: {"Content-Type": "multipart/form-data" } }).then(response => {
          console.log(response);
          response.data && props.fileSet(response.data);
          closeHandler();
