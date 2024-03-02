@@ -1,0 +1,25 @@
+services:
+    mongo_db:
+      container_name: db_container
+      image: mongo:latest
+      restart: always
+      volumes:
+        - mongo_db:/data/db
+
+    api:
+      build: .
+      ports: 
+        - 3000:3000
+        - 4200:4200
+      environment:
+        MONGO_URL: mongodb://mongo_db:27017
+        DB_NAME: rof
+        SERVER_URL: http://13.232.197.251:3000/
+        SERVER_API: http://13.232.197.251:3000/api/
+        APS_CLIENT_ID : EbAv1ybr2Va7nowXrmnXPq3ymEhKMG5k
+        APS_CLIENT_SECRET : i8uk12vSGTjBMqAL
+      depends_on:
+        - mongo_db
+
+volumes:
+  mongo_db: {}
