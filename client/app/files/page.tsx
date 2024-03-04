@@ -47,20 +47,20 @@ export default function Files(props: FilesProps) {
              }}
              align={'center'}
           >
-             <Input
+             {/* <Input
                 css={{width: '100%', maxW: '410px'}}
                 placeholder="Search files"
              />
              <SettingsIcon />
              <TrashIcon />
              <InfoIcon />
-             <DotsIcon />
+             <DotsIcon /> */}
           </Flex>
           <Flex direction={'row'} css={{gap: '$6'}} wrap={'wrap'}>
              <AddFile setListRefresh={setListRefresh} />
-             <Button auto iconRight={<ExportIcon />}>
+             {/* <Button auto iconRight={<ExportIcon />}>
                 Export to CSV
-             </Button>
+             </Button> */}
           </Flex>
        </Flex>
 

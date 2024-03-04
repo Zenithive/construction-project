@@ -134,10 +134,6 @@ export const AddFile = ({setListRefresh}:AddFilesProps) => {
             Upload file
          </Button>
 
-         <Button component="label" onClick={openFileDataModal} sx={{borderRadius: 3}} variant="contained">
-            View file
-         </Button>
-
          <UploadFileComponent closeSet={setIsUploadFileOpen} open={isUploadFileOpen} fileSet={setFileData} ></UploadFileComponent>
 
          <Modal

@@ -48,20 +48,10 @@ export default function Projects(props: ProjectsProps) {
              }}
              align={'center'}
           >
-             <Input
-                css={{width: '100%', maxW: '410px'}}
-                placeholder="Search projects"
-             />
-             <SettingsIcon />
-             <TrashIcon />
-             <InfoIcon />
-             <DotsIcon />
+             
           </Flex>
           <Flex direction={'row'} css={{gap: '$6'}} wrap={'wrap'}>
              <AddProject setListRefresh={setListRefresh} />
-             <Button auto iconRight={<ExportIcon />}>
-                Export to CSV
-             </Button>
           </Flex>
        </Flex>
 
