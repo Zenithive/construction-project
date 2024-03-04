@@ -1,7 +1,6 @@
 import {Col, Row, Table, Tooltip} from '@nextui-org/react';
 import { GridOptions } from 'ag-grid-community';
 import React, { useEffect, useState } from 'react';
-import {columns} from './data';
 import {RenderCell} from './file-render-cell';
 import { useQuery } from '@apollo/client';
 import { GET_FILES } from '../../api/file/queries';
@@ -131,46 +130,6 @@ export const FilesListWrapper = ({listRefresh}:FilesListWrapperProps) => {
 
             />
          </Box>
-         {/* <Table
-            aria-label="Example table with custom cells"
-            css={{
-               height: 'auto',
-               minWidth: '100%',
-               boxShadow: 'none',
-               width: '100%',
-               px: 0,
-            }}
-            selectionMode="multiple"
-         >
-            <Table.Header columns={columns}>
-               {(column) => (
-                  <Table.Column
-                     key={column.uid}
-                     hideHeader={column.uid === 'actions'}
-                     align={column.uid === 'actions' ? 'center' : 'start'}
-                  >
-                     {column.name}
-                  </Table.Column>
-               )}
-            </Table.Header>
-            <Table.Body items={data?.getFiles || []}>
-               {(item: FileSchemaType) => (
-                  <Table.Row key={item.fileId}>
-                     {(columnKey: any) => (
-                        <Table.Cell>
-                           {RenderCell({file: item, columnKey: columnKey})}
-                        </Table.Cell>
-                     )}
-                  </Table.Row>
-               )}
-            </Table.Body>
-            <Table.Pagination
-               shadow
-               noMargin
-               align="center"
-               rowsPerPage={8}
-            />
-         </Table> */}
       </Box>
    );
 };
