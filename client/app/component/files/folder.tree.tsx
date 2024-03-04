@@ -1,12 +1,15 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { TreeView } from '@mui/x-tree-view/TreeView';
 import { TreeItem } from '@mui/x-tree-view/TreeItem';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import { Box, Grid, IconButton, ListItemIcon, ListItemText, Menu, MenuItem, TextField, Typography, colors } from '@mui/material';
+import { Box, CircularProgress, Grid, IconButton, ListItemIcon, ListItemText, Menu, MenuItem, TextField, Typography, colors } from '@mui/material';
 import { Folder, MoreVert, CloudUpload, CreateNewFolder, Check, Close } from '@mui/icons-material';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import { useMutation, useQuery } from '@apollo/client';
+import { CREATE_NEW_FOLDER } from '../../api/folder/mutations';
+import { GET_FOLDERS } from '../../api/folder/queries';
 
 const AddFolderSchema = Yup.object().shape({
     folderName: Yup.string().required('Required')
@@ -14,32 +17,43 @@ const AddFolderSchema = Yup.object().shape({
 
 interface BoxWithIconProps{
     label: string;
-    id: number;
+    id: string;
     toggleAddFolder: CallableFunction;
 }
 
 interface DotPopoverProps{
-    treeId: number;
+    treeId: string;
     toggleAddFolder: CallableFunction;
 }
 
 interface AddNewFolderProps{
     toggleAddFolder: CallableFunction;
+    parentFolder: FolderMetaData;
 }
 
 interface FolderMetaData{
-    id: number;
+    id: string;
     name: string;
     childNodes: Array<FolderMetaData>;
 }
 interface TreeListingProps{
     folderData: Array<FolderMetaData>;
+    parentFolder: FolderMetaData;
     folderHook: CallableFunction;
     newflag: boolean;
     andChangeFlag: CallableFunction;
 }
 
 export const FolderTree = () => {
+
+    const { data, refetch } = useQuery(GET_FOLDERS);
+    const [ listRefresh, setListRefresh ] = useState(false);
+
+    
+    useEffect(()=>{
+        console.log("data")
+      refetch();
+   }, [listRefresh, refetch]);
    
     const BoxWithIcon = ({label, id, toggleAddFolder}:BoxWithIconProps) => {
         return (
@@ -106,70 +120,14 @@ export const FolderTree = () => {
         );
     }
 
-    const tempData:Array<FolderMetaData> = [
-        {
-            name: "Test",
-            id: 1,
-            childNodes: [
-                {
-                    id: 2,
-                    name: "Child 1",
-                    childNodes: []
-                },
-                {
-                    id: 3,
-                    name: "Child 2",
-                    childNodes: []
-                }
-            ]
-        },
-        {
-            name: "Calendar",
-            id: 4,
-            childNodes: []
-        },
-        {
-            name: "Documents",
-            id: 5,
-            childNodes: [
-                {
-                    id: 6,
-                    name: "Sites",
-                    childNodes: [
-                        {
-                            id: 8,
-                            name: "Site A",
-                            childNodes: []
-                        },
-                        {
-                            id: 9,
-                            name: "Site B",
-                            childNodes: []
-                        },
-                        {
-                            id: 10,
-                            name: "Site C",
-                            childNodes: []
-                        }
-                    ]
-                },
-                {
-                    id: 7,
-                    name: "Child 2",
-                    childNodes: []
-                }
-            ]
-        }
-    ]
-
-    const TreeListing = ({folderData,folderHook, newflag, andChangeFlag}: TreeListingProps)=>{
+    const TreeListing = ({folderData,folderHook, newflag, andChangeFlag, parentFolder}: TreeListingProps)=>{
 
         return (
             <>
                 {folderData.map((item)=>
                     <TreeItemListComponent key={item.id} item={item} folderHook={folderHook} />
                 )}
-                {newflag ? <AddNewFolder toggleAddFolder={andChangeFlag}/> : ""}
+                {newflag ? <AddNewFolder toggleAddFolder={andChangeFlag} parentFolder={parentFolder} /> : ""}
             </>
         );
     }
@@ -182,15 +140,35 @@ export const FolderTree = () => {
 
         return (
             <TreeItem key={item.id} nodeId={item.id.toString()} label={<BoxWithIcon toggleAddFolder={anotherChangeFlag} id={item.id} label={item.name} />}>
-                {(item.childNodes.length || flag) ? <TreeListing folderData={item.childNodes} folderHook={useToggleAddFolder} newflag={flag} andChangeFlag={anotherChangeFlag}></TreeListing> : ""}
+                {(item.childNodes.length || flag) ? <TreeListing folderData={item.childNodes} folderHook={useToggleAddFolder} newflag={flag} andChangeFlag={anotherChangeFlag} parentFolder={item} ></TreeListing> : ""}
             </TreeItem>
         )
     }
 
     
-    const AddNewFolder = ({toggleAddFolder}:AddNewFolderProps) => {
-        const addFolderSubmit = () => {
-            
+    const AddNewFolder = ({toggleAddFolder, parentFolder}:AddNewFolderProps) => {
+        const [createNewFolder, { data, error, loading }] = useMutation(CREATE_NEW_FOLDER);
+
+        const parentFolderId = parentFolder.id || "-1";
+        const addFolderSubmit = async (values: {folderName:string},{ setSubmitting, resetForm }:any) => {
+            const folderRespond = await createNewFolder({
+                variables: {
+                    folderName: values.folderName,
+                    orginatorId: "1",
+                    projectId: "1",
+                    orgId: "1",
+                    folderId: "",
+                    parentFolderId
+                }
+            });
+
+            const folderId:string|null = folderRespond.data?.createNewFolder?.folderId;
+            if(folderId){
+                resetForm();
+                setListRefresh((val)=>!val);
+            }
+
+            console.log("folderRespond", folderRespond)
         }
     
         const addFolderformik = useFormik({
@@ -229,13 +207,16 @@ export const FolderTree = () => {
                             />
                         </Grid>
                         <Grid sx={{verticalAlign: "center", display: "flex"}} item xs={2}>
-                            <IconButton aria-describedby="add-folder-submit" type='submit' sx={{p: 0}}>
-                                <Check />
+                            <IconButton aria-describedby="add-folder-submit" type='submit' sx={{p: 0}} disabled={loading}>                                
+                                {loading ? <CircularProgress size={20} /> : <Check />}
                             </IconButton>
-                            <IconButton aria-describedby="add-folder-cancel" type='button' onClick={closeAddFolder} sx={{p: 0}}>
+                            <IconButton aria-describedby="add-folder-cancel" type='button' onClick={closeAddFolder} sx={{p: 0}} disabled={loading}>
                                 <Close />
                             </IconButton>
                         </Grid>
+                        {/* <Grid sx={{verticalAlign: "center", display: "flex"}} xs={2}>
+                            <CircularProgress size={20} />
+                        </Grid> */}
                     </Grid>
                 </Box>
             }></TreeItem>
@@ -256,6 +237,32 @@ export const FolderTree = () => {
     }
 
     const parentStpl = () => {};
+    const formatData = (rowData: any) => {
+        const newData:Array<FolderMetaData> = []
+        const folderMap:any = {};
+        if(rowData && rowData?.getFolders){
+            console.log("rowData", rowData)
+            for (let index = 0; index < rowData?.getFolders.length; index++) {
+                const element = rowData?.getFolders[index];
+                
+                const newElem: FolderMetaData = {
+                    id: element.folderId,
+                    name: element.folderName,
+                    childNodes : []
+                }
+                const parentFolder = folderMap[element.parentFolderId];
+                
+                folderMap[element.folderId] = {...newElem};
+                if(element.parentFolderId == -1){
+                    newData.push({...newElem});
+                }else if(parentFolder && parentFolder.id == element.parentFolderId){
+                    parentFolder.childNodes.push({...newElem});
+                }                
+            }            
+        }
+
+        return newData;
+    };
 
    return (
       <>
@@ -266,7 +273,7 @@ export const FolderTree = () => {
             defaultExpandIcon={<ChevronRightIcon />}
             onClick={handleTreeViewEvent}
         >
-            <TreeListing folderData={tempData} folderHook={useToggleAddFolder} newflag={false} andChangeFlag={parentStpl}></TreeListing>
+            <TreeListing parentFolder={{} as FolderMetaData} folderData={formatData(data)} folderHook={useToggleAddFolder} newflag={false} andChangeFlag={parentStpl}></TreeListing>
         </TreeView>
       </>
    );

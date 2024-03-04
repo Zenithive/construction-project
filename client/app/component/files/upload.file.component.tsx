@@ -7,7 +7,7 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { Box, Grid } from '@mui/material';
 import axios from 'axios';
-import { CONFIG } from 'client/app/constants/config.constant';
+import { CONFIG } from '../../constants/config.constant';
 
 const UploadFIleSchema = Yup.object().shape({
    fileName: Yup.string().required('Required'),

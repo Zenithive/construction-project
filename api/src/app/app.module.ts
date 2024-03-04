@@ -14,6 +14,7 @@ import { join } from 'path';
 import { ProjectModule } from './project/project.module';
 import { OrgModule } from './organization/org.module';
 import { ApsForgeModule } from './aps-forge/aps.forge.module';
+import { FolderModule } from './folder/folder.module';
 
 const { DB_NAME, MONGO_URL } = process.env;
 
@@ -33,7 +34,8 @@ const { DB_NAME, MONGO_URL } = process.env;
     ProjectModule,
     OrgModule,
     FileModule,
-    ApsForgeModule
+    ApsForgeModule,
+    FolderModule
   ],
   controllers: [AppController],
   providers: [AppService],

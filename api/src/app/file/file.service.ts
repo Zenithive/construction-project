@@ -3,8 +3,6 @@ import {  Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { File, FileDocument, UploadFileInput } from './file.schema';
 //import { FileStorageUtil } from '../util/file-storage.util';
-import { v4 as uuidv4 } from 'uuid'; 
-import * as path from 'path';
 import { ApsForgeService } from '../aps-forge/aps.forge.service';
 
 
