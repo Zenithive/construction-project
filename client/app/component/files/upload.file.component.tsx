@@ -62,7 +62,6 @@ export const UploadFileComponent = (props: UploadFileProps) => {
       formData.append("fileName", tmpFile[0]);
 
       axios.post(`${CONFIG.server_api}files/upload`, formData, { headers: {"Content-Type": "multipart/form-data" } }).then(response => {
-         console.log(response);
          response.data && props.fileSet(response.data);
          closeHandler();
          resetForm();
@@ -76,7 +75,6 @@ export const UploadFileComponent = (props: UploadFileProps) => {
     });
 
     const onFileChange = (event: React.ChangeEvent<HTMLInputElement> ) => {
-      console.log("event", event)
       formik.handleChange(event);
       if(event && event?.target){
          setTmpFile(event?.target?.files);

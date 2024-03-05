@@ -65,7 +65,7 @@ export function RolesComponent(props: RolesComponentProps) {
           <AddRolesComponent visible={showAddRole} closeAddRole={closeAddRole}></AddRolesComponent>
         </Box>
         <Box sx={{ pb: 3, overflow: "hidden" }}>
-          {data?.getRoles.map((data, index: number) =>
+          {data?.getRoles.map((data:any, index: number) =>
             <>
               <Grid container spacing={2} key={index} sx={{ px: 3, py: 1 }}>
                 <Grid item xs={8}>{data.roleName}</Grid>

@@ -3,6 +3,7 @@ import React, {useEffect, useMemo, useState} from 'react';
 import { GET_PROJECTS } from '../../api/project/queries';
 import { useQuery } from '@apollo/client';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { GridOptions } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 import { Box, IconButton, ListItemText, Menu, MenuItem } from '@mui/material';
 import { EditIcon } from '../icons/table/edit-icon';

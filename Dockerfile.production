@@ -14,7 +14,7 @@ RUN npm install bcrypt
 # Copy the entire project (both React and Nest JS code)
 COPY . .
 
-RUN npm run build
+RUN npm run build-prod
 
 # Specify the command to start your combined app
-CMD ["npm", "run" , "start"]
+CMD ["npm", "run" , "start-prod"]
