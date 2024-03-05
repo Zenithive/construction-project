@@ -101,7 +101,7 @@ export function PermissionComponent(props: PermissionComponentProps) {
           </Grid>
         </Box>
         <Box sx={{ pb: 3, overflow: "hidden" }}>
-          {data?.getRoles.map((data, index: number) =>
+          {data?.getRoles.map((data:any, index: number) =>
             <>
               <Grid container spacing={2} key={index} sx={{ px: 3, py: 1 }}>
                 <Grid item xs={1} sx={{fontWeight: "bold"}}>{data.roleName}</Grid>

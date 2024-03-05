@@ -3,7 +3,8 @@ import { TreeView } from '@mui/x-tree-view/TreeView';
 import { TreeItem } from '@mui/x-tree-view/TreeItem';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import { Box, CircularProgress, Grid, IconButton, ListItemIcon, ListItemText, Menu, MenuItem, TextField, Typography, colors } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import { Box, Button, CircularProgress, Grid, IconButton, ListItemIcon, ListItemText, Menu, MenuItem, TextField, Typography, colors } from '@mui/material';
 import { Folder, MoreVert, CloudUpload, CreateNewFolder, Check, Close } from '@mui/icons-material';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -48,17 +49,16 @@ export const FolderTree = () => {
 
     const { data, refetch } = useQuery(GET_FOLDERS);
     const [ listRefresh, setListRefresh ] = useState(false);
-
+    const [firstFolderFlag, setFirstFolderFlag] = useState(false);
     
     useEffect(()=>{
-        console.log("data")
       refetch();
    }, [listRefresh, refetch]);
    
     const BoxWithIcon = ({label, id, toggleAddFolder}:BoxWithIconProps) => {
         return (
             <Box component="div" sx={{display: 'flex', p: 1, color: colors.grey[700]}}>
-                <Box component={Folder} ></Box>
+                <Box component={Folder}></Box>
                 <Box component="div" sx={{display: "flex", justifyContent: "space-between", flex:1}}>
                     <Typography component="span" sx={{ml: 1/2, mr: 1/2}}>{label}</Typography>
                     <DotPopoverMenu treeId={id} toggleAddFolder={toggleAddFolder}></DotPopoverMenu>
@@ -121,13 +121,24 @@ export const FolderTree = () => {
     }
 
     const TreeListing = ({folderData,folderHook, newflag, andChangeFlag, parentFolder}: TreeListingProps)=>{
+       
+        const [localFolderFlag, setLocalFolderFlag] = useState(false);
 
+        const EmpatyFolderView = () => (
+            <>
+                {!parentFolder.id ? <Box component="div" sx={{flex:1}}>
+                    <Typography component="span" sx={{ml: 1/2, mr: 1/2}}>No folder created.</Typography>
+                </Box> : ""}
+            </>
+        );
+        
         return (
             <>
-                {folderData.map((item)=>
+                {folderData.length ? folderData.map((item)=>
                     <TreeItemListComponent key={item.id} item={item} folderHook={folderHook} />
-                )}
-                {newflag ? <AddNewFolder toggleAddFolder={andChangeFlag} parentFolder={parentFolder} /> : ""}
+                ) : <EmpatyFolderView></EmpatyFolderView>}
+                
+                {(newflag || localFolderFlag) ? <AddNewFolder toggleAddFolder={andChangeFlag} parentFolder={parentFolder} /> : ""}
             </>
         );
     }
@@ -168,7 +179,6 @@ export const FolderTree = () => {
                 setListRefresh((val)=>!val);
             }
 
-            console.log("folderRespond", folderRespond)
         }
     
         const addFolderformik = useFormik({
@@ -236,12 +246,13 @@ export const FolderTree = () => {
         }
     }
 
-    const parentStpl = () => {};
+    const parentStpl = () => {
+        setFirstFolderFlag(false);
+    };
     const formatData = (rowData: any) => {
         const newData:Array<FolderMetaData> = []
         const folderMap:any = {};
         if(rowData && rowData?.getFolders){
-            console.log("rowData", rowData)
             for (let index = 0; index < rowData?.getFolders.length; index++) {
                 const element = rowData?.getFolders[index];
                 
@@ -264,16 +275,25 @@ export const FolderTree = () => {
         return newData;
     };
 
+    const openAddFolder = () => {
+        setFirstFolderFlag(true);
+    }
+
    return (
       <>
-        <Box component="h3" sx={{marginTop: 2}}>FOLDERS</Box>
+        <Box component="h3" sx={{marginTop: 3, mb:0, display: "flex", justifyContent: "space-between", alignItems: "flex-start"}}>
+            <Typography sx={{fontWeight: "bold"}}>FOLDERS</Typography>
+            <IconButton sx={{mt: -1, mr: 1}} onClick={openAddFolder}>
+                <AddIcon />
+            </IconButton>
+        </Box>
         <TreeView
             aria-label="file system navigator"
             defaultCollapseIcon={<ExpandMoreIcon />}
             defaultExpandIcon={<ChevronRightIcon />}
             onClick={handleTreeViewEvent}
         >
-            <TreeListing parentFolder={{} as FolderMetaData} folderData={formatData(data)} folderHook={useToggleAddFolder} newflag={false} andChangeFlag={parentStpl}></TreeListing>
+            <TreeListing parentFolder={{} as FolderMetaData} folderData={formatData(data)} folderHook={useToggleAddFolder} newflag={firstFolderFlag} andChangeFlag={parentStpl}></TreeListing>
         </TreeView>
       </>
    );

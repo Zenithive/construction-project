@@ -33,7 +33,7 @@ export default function Viewer() {
 
   useEffect(() => {
     const urnId = searchParams.get('id');
-    if(urnId) {
+    if(urnId && !urn) {
       setUrn(urnId);
       console.log("urnId", urnId)
     }
