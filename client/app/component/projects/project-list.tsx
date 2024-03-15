@@ -13,6 +13,14 @@ import "ag-grid-community/styles/ag-theme-quartz.css"; // Theme
 import RolesComponent from '../Roles/role.component';
 import PermissionComponent from '../Permission/permission.component';
 
+
+// Sachin Import
+import { DELETE_PROJECT } from 'client/app/api/project/mutations';
+// import { DELETE_PROJ } from '../../api/project/queries';
+import { useMutation } from '@apollo/client';
+
+
+
 export interface ProjectListWrapperProps{
    listRefresh: boolean;
 }
@@ -89,8 +97,27 @@ export const ProjectListWrapper = ({listRefresh}:ProjectListWrapperProps) => {
       );
   }
 
+
+     // Define the deleteProject mutation function
+     const [deleteProject] = useMutation(DELETE_PROJECT);
+
+     // Function to handle project deletion
+     const handleDeleteProject = async (projId: any) => {
+      console.log("projId", projId)
+        try {
+           // Execute the deleteProject mutation with the projectId as variable
+           await deleteProject({ variables: { projId } });
+           // Refetch projects after deletion
+           refetch();
+        } catch (error) {
+           console.error('Error deleting project:', error);
+        }
+     };
+
+
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const ActionRenderer = ({ value }:any) => (
+    const ActionRenderer = ({ value, data }:any) => (
       <Row
          justify="center"
          align="center"
@@ -104,7 +131,7 @@ export const ProjectListWrapper = ({listRefresh}:ProjectListWrapperProps) => {
          <Col css={{d: 'flex'}}>
             <Tooltip content="Edit user">
                <IconButton
-                  onClick={() => console.log('Edit Project', value)}
+                  onClick={() => console.log('Edit Project', data)}
                >
                   <EditIcon size={20} fill="#979797" />
                </IconButton>
@@ -114,7 +141,7 @@ export const ProjectListWrapper = ({listRefresh}:ProjectListWrapperProps) => {
             <Tooltip
                content="Delete Project"
                color="error"
-               onClick={() => console.log('Delete user')}
+               onClick={() => handleDeleteProject(data.projId) }
             >
                <IconButton>
                   <DeleteIcon size={20} fill="#FF0080" />
@@ -165,6 +192,9 @@ export const ProjectListWrapper = ({listRefresh}:ProjectListWrapperProps) => {
         filter: true,
       };
     }, []);
+
+
+
 
    return (
       <Box

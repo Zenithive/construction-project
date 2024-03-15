@@ -21,4 +21,19 @@ export class ProjectService {
       project.projId = uuidv4()
       return this.projModel.create(project);
     }
+
+
+    //Sachin code
+    async deleteProject(id: string) {
+      const searchObj = {
+        projId : id
+      };
+      const updateObj = {
+        status: "Inactive"
+      }
+      return this.projModel.findOneAndUpdate(searchObj, updateObj).exec();
+  
+
+      
+    }
 }
