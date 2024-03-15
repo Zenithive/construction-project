@@ -53,6 +53,7 @@ export default function Login(props: LoginProps) {
       const token:string|null = res.data?.loginUser?.token;
       if(token){
         resetForm();
+        document.cookie = `tokenId=${token}`;
         dispatch(addUser({token : token}));
         router.push("/dashboard");
       }
@@ -104,6 +105,7 @@ export default function Login(props: LoginProps) {
           </Box>
           <Box
             component="form"
+            id='login-form'
             noValidate
             onSubmit={formik.handleSubmit}
             sx={{ mt: 3 }}
@@ -116,7 +118,7 @@ export default function Login(props: LoginProps) {
                   id="email"
                   label="Email Address"
                   name="email"
-                  autoComplete="email"
+                  autoComplete="off"
                   value={formik.values.email}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
@@ -132,7 +134,7 @@ export default function Login(props: LoginProps) {
                   label="Password"
                   type="password"
                   id="password"
-                  autoComplete="new-password"
+                  autoComplete="off"
                   value={formik.values.password}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
@@ -146,6 +148,7 @@ export default function Login(props: LoginProps) {
               type="submit"
               fullWidth
               variant="contained"
+              form="login-form"
               sx={{ mt: 3, mb: 2 }}
             >
               Login

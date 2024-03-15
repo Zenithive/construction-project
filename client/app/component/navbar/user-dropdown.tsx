@@ -4,6 +4,15 @@ import {DarkModeSwitch} from './darkmodeswitch';
 import { Avatar } from '@mui/material';
 
 export const UserDropdown = () => {
+   const logOutHandle = () => {
+      document.cookie = `tokenId=`;
+   }
+
+   const actionHandler = (key: React.Key) =>  {
+      if(key == "logout"){
+         logOutHandle();
+      }
+   }
    return (
       <Dropdown placement="bottom-right">
          <Navbar.Item>
@@ -13,7 +22,8 @@ export const UserDropdown = () => {
          </Navbar.Item>
          <Dropdown.Menu
             aria-label="User menu actions"
-            onAction={(actionKey) => console.log({actionKey})}
+            onAction={actionHandler}
+            //onAction={(actionKey) => console.log({actionKey})}
          >
             <Dropdown.Item key="profile" css={{height: '$18'}}>
                <Text b color="inherit" css={{d: 'flex'}}>

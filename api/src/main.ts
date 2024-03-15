@@ -6,6 +6,7 @@
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import session from 'express-session';
+import cookieParser from 'cookie-parser';
 import { AppModule } from './app/app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
@@ -19,6 +20,7 @@ async function bootstrap() {
     }),
   );
   const globalPrefix = 'api';
+  app.use(cookieParser());
   app.setGlobalPrefix(globalPrefix);
   app.enableCors();
   const port = process.env.PORT || 3000;

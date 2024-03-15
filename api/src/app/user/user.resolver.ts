@@ -1,10 +1,11 @@
-import { Resolver, Query, Mutation, Args, Context } from '@nestjs/graphql'
+import { Resolver, Query, Mutation, Args, Context, GraphQLExecutionContext } from '@nestjs/graphql'
 
 import { User, CreateUserInput, UserId, UpdateUserInput, LoginInput, Email, Token, CreateUserByAdmin } from './user.schema';
 import { UserService } from './user.service'
-import { UseGuards } from '@nestjs/common';
+import { Res, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '../auth/auth.guard';
 import { JwtGuard } from '../auth/jwt.guard';
+import { Response } from 'express';
 
 @Resolver()
 export class UserResolver {
@@ -45,8 +46,16 @@ export class UserResolver {
 
   @Mutation(() => Token)
   @UseGuards(AuthGuard)
-  async loginUser(@Args('input') loginData: LoginInput, @Context("user") user : User) {
-    return this.userService.loginUser(loginData,user);
+  async loginUser(@Args('input') loginData: LoginInput, @Context("user") user : User, @Context() context: GraphQLExecutionContext) {
+    // @ts-ignore
+    const response = context.req.res as Response;
+    // context.getContext() .req.res as Response;
+    const res = await this.userService.loginUser(loginData,user);
+    response.cookie('tokenId', res.token, { 
+      httpOnly: true, // Set security options as needed
+      secure: true,   // Only send over HTTPS
+     });
+    return res;
   }
 
   @Mutation(() => User)

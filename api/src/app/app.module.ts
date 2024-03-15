@@ -28,6 +28,12 @@ const { DB_NAME, MONGO_URL } = process.env;
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'api/src/schema.gql'),
       sortSchema: true,
+      //context: ({ req, res }) => ({ req, res }),
+      playground: {
+        settings: {
+          "request.credentials": "include", // Otherwise cookies won't be sent
+        }
+      },
     }),
     MongooseModule.forRoot(`${MONGO_URL}/${DB_NAME}`),
     AuthModule,
