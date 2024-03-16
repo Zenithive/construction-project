@@ -4,6 +4,11 @@ import { ObjectType, Field, InputType } from '@nestjs/graphql';
 import { DEFAULT_VALUES } from '../Constants/defaultValues.constant';
 
 export type UserDocument = User & Document;
+@ObjectType()
+export class Message {
+  @Field()
+  message!: string;
+}
 
 @Schema()
 @ObjectType()

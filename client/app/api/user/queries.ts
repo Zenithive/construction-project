@@ -10,3 +10,12 @@ export const GET_USERS = gql`
     }
   }
 `;
+
+
+export const LOGOUT = gql`
+  query Logout {
+    logout {
+      message
+    }
+  }
+`;

@@ -2,14 +2,33 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+input CreateFolderInput {
+  folderId: String
+  folderName: String!
+  orgId: String!
+  orginatorId: String!
+  parentFolderId: String!
+  projectId: String!
+  status: String = "Active"
+}
+
+input CreateNewRole {
+  orgId: String
+  orginatorId: String!
+  projId: String!
+  roleId: String!
+  roleName: String!
+  users: [String!] = []
+}
+
 input CreateOrgInput {
   contact: String!
-  creationDate: DateTime! = "2024-02-17T04:16:09.833Z"
+  creationDate: DateTime! = "2024-03-16T12:09:23.909Z"
   orgId: String!
   orgName: String!
   region: String!
   status: String! = "Open"
-  updatedDate: DateTime! = "2024-02-17T04:16:09.833Z"
+  updatedDate: DateTime! = "2024-03-16T12:09:23.909Z"
   website: String
 }
 
@@ -24,7 +43,7 @@ input CreateProjectInput {
 }
 
 input CreateUserByAdmin {
-  creationDate: DateTime! = "2024-02-17T04:16:09.201Z"
+  creationDate: DateTime! = "2024-03-16T12:09:23.273Z"
   email: String
   emailVerified: Boolean! = false
   firstName: String
@@ -34,12 +53,12 @@ input CreateUserByAdmin {
   phoneNo: String
   status: String! = "Active"
   subscriptionId: Float = 1
-  updatedDate: DateTime! = "2024-02-17T04:16:09.201Z"
+  updatedDate: DateTime! = "2024-03-16T12:09:23.273Z"
   userId: String!
 }
 
 input CreateUserInput {
-  creationDate: DateTime! = "2024-02-17T04:16:09.200Z"
+  creationDate: DateTime! = "2024-03-16T12:09:23.273Z"
   email: String!
   emailVerified: Boolean! = false
   firstName: String
@@ -48,7 +67,7 @@ input CreateUserInput {
   password: String!
   status: String = "Active"
   subscriptionId: Float! = 1
-  updatedDate: DateTime! = "2024-02-17T04:16:09.200Z"
+  updatedDate: DateTime! = "2024-03-16T12:09:23.273Z"
   userId: String!
 }
 
@@ -81,12 +100,28 @@ type File {
   zipEntryPoint: String!
 }
 
+type Folder {
+  folderId: String
+  folderName: String!
+  orgId: String!
+  orginatorId: String!
+  parentFolderId: String!
+  projectId: String!
+  status: String!
+}
+
 input LoginInput {
   email: String
   password: String
 }
 
+type Message {
+  message: String!
+}
+
 type Mutation {
+  createNewFolder(input: CreateFolderInput!): Folder!
+  createNewRole(input: CreateNewRole!): Role!
   createOrg(input: CreateOrgInput!): Org!
   createProject(input: CreateProjectInput!): Project!
   createUser(input: CreateUserInput!): User!
@@ -120,10 +155,13 @@ type Project {
 type Query {
   getAllOrg: [Org!]!
   getFiles: [File!]!
+  getFolders: [Folder!]!
   getProjects: [Project!]!
+  getRoles: [Role!]!
   getUser(input: UserId!): User!
   getUserByEmail(input: Email!): User!
   getUsers: [User!]!
+  logout: Message!
   securedResource: String!
 }
 
@@ -132,6 +170,15 @@ type ReturnUserObj {
   firstName: String!
   id: String!
   lastName: String!
+}
+
+type Role {
+  orgId: String!
+  orginatorId: String!
+  projId: String!
+  roleId: String!
+  roleName: String!
+  users: [String!]
 }
 
 type Token {

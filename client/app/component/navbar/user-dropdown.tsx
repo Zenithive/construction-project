@@ -2,10 +2,24 @@ import {Dropdown, Navbar, Text} from '@nextui-org/react';
 import React from 'react';
 import {DarkModeSwitch} from './darkmodeswitch';
 import { Avatar } from '@mui/material';
+import { useQuery } from '@apollo/client';
+import { useRouter } from 'next/navigation'
+import { LOGOUT } from '../../api/user/queries';
 
 export const UserDropdown = () => {
-   const logOutHandle = () => {
-      document.cookie = `tokenId=`;
+
+   const router = useRouter();
+
+   const {data, refetch } = useQuery(LOGOUT);
+
+   const logOutHandle = async () => {
+     await refetch();
+
+      if(data?.logout?.message){
+         document.cookie = `tokenId=`;
+         router.push("/login");
+      }
+
    }
 
    const actionHandler = (key: React.Key) =>  {
