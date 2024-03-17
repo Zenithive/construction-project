@@ -5,8 +5,15 @@ import { Avatar } from '@mui/material';
 import { useQuery } from '@apollo/client';
 import { useRouter } from 'next/navigation'
 import { LOGOUT } from '../../api/user/queries';
+import { useAppSelector } from '../../reducers/hook.redux';
+import { UserSchema, selectUserSession } from '../../reducers/userReducer';
+import { getUserInitials } from '../../services/user.service';
 
 export const UserDropdown = () => {
+
+   const userDetails:UserSchema = useAppSelector(selectUserSession)
+
+   const userInitials = getUserInitials(userDetails);
 
    const router = useRouter();
 
@@ -31,7 +38,7 @@ export const UserDropdown = () => {
       <Dropdown placement="bottom-right">
          <Navbar.Item>
             <Dropdown.Trigger>
-               <Avatar>HA</Avatar>
+               <Avatar>{userInitials}</Avatar>
             </Dropdown.Trigger>
          </Navbar.Item>
          <Dropdown.Menu
@@ -44,7 +51,7 @@ export const UserDropdown = () => {
                   Signed in as
                </Text>
                <Text b color="inherit" css={{d: 'flex'}}>
-                  zoey@example.com
+                  {userDetails.email}
                </Text>
             </Dropdown.Item>
             <Dropdown.Item key="settings" withDivider>

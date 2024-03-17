@@ -54,6 +54,7 @@ export const AddProject = ({setListRefresh}:AddProjectProps) => {
       const res = await createProject({
          variables: {
             projId: "",
+            orginatorId: "",
             projName: values.projName,
             region: values.region,
             status: values.status,

@@ -3,6 +3,7 @@ import {  Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Role, RoleDocument, CreateNewRole } from './role.schema';
 import { v4 as uuidv4 } from 'uuid'; 
+import { Project } from '../project/project.schema';
 
 @Injectable()
 export class RoleService {
@@ -21,4 +22,17 @@ export class RoleService {
       role.roleId = uuidv4();
       return this.roleModel.create(role);
     }
+
+    createDefaultAdminRoleForNewProject(newProject:Project){
+      const newAdminRole: CreateNewRole = {
+        projId: newProject.projId,
+        orgId: newProject.orgId,
+        users: [],
+        orginatorId: newProject.orgId,
+        roleName: "Admin",
+        roleId: "",
+        isDefaultRole: true
+      };
+      return this.createNewRole(newAdminRole)
+    };
 }

@@ -12,7 +12,19 @@ input CreateFolderInput {
   status: String = "Active"
 }
 
+input CreateNewPermission {
+  createdBy: DateTime! = "2024-03-17T10:42:52.072Z"
+  orginatorId: String!
+  permissionId: String!
+  permissionKey: String!
+  permissionLabel: String!
+  projId: String!
+  updatedBy: DateTime! = "2024-03-17T10:42:52.072Z"
+  value: Boolean!
+}
+
 input CreateNewRole {
+  isDefaultRole: Boolean = false
   orgId: String
   orginatorId: String!
   projId: String!
@@ -23,18 +35,19 @@ input CreateNewRole {
 
 input CreateOrgInput {
   contact: String!
-  creationDate: DateTime! = "2024-03-16T12:09:23.909Z"
+  creationDate: DateTime! = "2024-03-17T10:42:51.876Z"
   orgId: String!
   orgName: String!
   region: String!
   status: String! = "Open"
-  updatedDate: DateTime! = "2024-03-16T12:09:23.909Z"
+  updatedDate: DateTime! = "2024-03-17T10:42:51.876Z"
   website: String
 }
 
 input CreateProjectInput {
   orgId: String!
   orgName: String!
+  orginatorId: String!
   projId: String!
   projName: String!
   region: String!
@@ -43,7 +56,7 @@ input CreateProjectInput {
 }
 
 input CreateUserByAdmin {
-  creationDate: DateTime! = "2024-03-16T12:09:23.273Z"
+  creationDate: DateTime! = "2024-03-17T10:42:51.240Z"
   email: String
   emailVerified: Boolean! = false
   firstName: String
@@ -53,12 +66,12 @@ input CreateUserByAdmin {
   phoneNo: String
   status: String! = "Active"
   subscriptionId: Float = 1
-  updatedDate: DateTime! = "2024-03-16T12:09:23.273Z"
+  updatedDate: DateTime! = "2024-03-17T10:42:51.240Z"
   userId: String!
 }
 
 input CreateUserInput {
-  creationDate: DateTime! = "2024-03-16T12:09:23.273Z"
+  creationDate: DateTime! = "2024-03-17T10:42:51.240Z"
   email: String!
   emailVerified: Boolean! = false
   firstName: String
@@ -67,7 +80,7 @@ input CreateUserInput {
   password: String!
   status: String = "Active"
   subscriptionId: Float! = 1
-  updatedDate: DateTime! = "2024-03-16T12:09:23.273Z"
+  updatedDate: DateTime! = "2024-03-17T10:42:51.240Z"
   userId: String!
 }
 
@@ -127,6 +140,7 @@ type Mutation {
   createUser(input: CreateUserInput!): User!
   createUserByAdmin(input: CreateUserByAdmin!): User!
   loginUser(input: LoginInput!): Token!
+  updateUpermissions(input: CreateNewPermission!): Permission!
   updateUser(input: UpdateUserInput!): User!
   uploadFile(input: UploadFileInput!): File!
 }
@@ -142,9 +156,21 @@ type Org {
   website: String!
 }
 
+type Permission {
+  createdBy: DateTime!
+  orginatorId: String!
+  permissionId: String!
+  permissionKey: String!
+  permissionLabel: String!
+  projId: String!
+  updatedBy: DateTime!
+  value: Boolean!
+}
+
 type Project {
   orgId: String
   orgName: String
+  orginatorId: String!
   projId: String!
   projName: String!
   region: String!
@@ -156,6 +182,7 @@ type Query {
   getAllOrg: [Org!]!
   getFiles: [File!]!
   getFolders: [Folder!]!
+  getPermissions: [Permission!]!
   getProjects: [Project!]!
   getRoles: [Role!]!
   getUser(input: UserId!): User!
@@ -168,11 +195,12 @@ type Query {
 type ReturnUserObj {
   email: String!
   firstName: String!
-  id: String!
   lastName: String!
+  userId: String!
 }
 
 type Role {
+  isDefaultRole: Boolean
   orgId: String!
   orginatorId: String!
   projId: String!

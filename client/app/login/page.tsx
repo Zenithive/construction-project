@@ -54,7 +54,8 @@ export default function Login(props: LoginProps) {
       if(token){
         resetForm();
         document.cookie = `tokenId=${token}`;
-        dispatch(addUser({token : token}));
+        const { email, firstName, lastName, userId} = res.data.loginUser.userObj;
+        dispatch(addUser({ token, email, firstName, lastName, userId}));
         router.push("/dashboard");
       }
     },500);

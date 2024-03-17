@@ -154,7 +154,7 @@ export class Email {
 @ObjectType()
 export class ReturnUserObj {
   @Field()
-  id!: string;
+  userId!: string;
   @Field()
   firstName!: string;
   @Field()

@@ -31,6 +31,10 @@ export class Role {
   @Prop()
   @Field()
   projId!: string;
+
+  @Prop()
+  @Field(() => Boolean,{nullable: true, defaultValue: false})
+  isDefaultRole!: boolean;
 }
 
 @InputType()
@@ -52,6 +56,9 @@ export class CreateNewRole {
 
   @Field()
   projId!: string;
+
+  @Field(() => Boolean,{nullable: true, defaultValue: false})
+  isDefaultRole!: boolean;
 }
 
 export const RoleSchema = SchemaFactory.createForClass(Role);
