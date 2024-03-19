@@ -1,6 +1,6 @@
 import { Resolver, Query, Mutation, Args, Context } from '@nestjs/graphql'
 
-import { User, CreateUserInput, UserId, UpdateUserInput, LoginInput, Email, Token, CreateUserByAdmin } from './user.schema';
+import { User, CreateUserInput, UserId, UpdateUserInput, LoginInput, Email, Token, CreateUserByAdmin, DeleteUserInput } from './user.schema';
 import { UserService } from './user.service'
 import { UseGuards } from '@nestjs/common';
 import { AuthGuard } from '../auth/auth.guard';
@@ -53,5 +53,13 @@ export class UserResolver {
   async updateUser(@Args('input') id:UserId, @Args('input') user: UpdateUserInput) {
     return this.userService.updateUser(id, user);
   }
+
+
+  @Mutation(()=> User)
+  async deleteUser( @Args('input') user: DeleteUserInput){
+    return this.userService.deleteUser(user.userId);
+  }
+
+ 
 
 }

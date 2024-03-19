@@ -17,6 +17,9 @@ import { EditIcon } from '../icons/table/edit-icon';
 import { DeleteIcon } from '../icons/table/delete-icon';
 import { EyeIcon } from '../icons/table/eye-icon';
 import { IconButton } from '@mui/material';
+import { DELETE_USER } from 'client/app/api/user/mutations';
+import { useMutation } from '@apollo/client';
+import { User } from '../../../../api/src/app/user/user.schema';
 
 
 export interface UserLiserWrapperProps{
@@ -31,49 +34,25 @@ export const UserLiserWrapper = ({listRefresh}:UserLiserWrapperProps) => {
       refetch();
    }, [listRefresh, refetch]);
 
-
+   
+   // Define the deleteProject mutation function    **********  delete functionality
+   const [deleteUser] = useMutation(DELETE_USER);
+   
+   // Function to handle project deletion
+   const handleDeleteProject = async (userId: any,newdata:any) => {
+      console.log("userId", userId)
+      console.log("newdata" ,newdata);
+           try {
+              // Execute the deleteProject mutation with the projectId as variable
+              await deleteUser({ variables: { userId } });
+              // Refetch projects after deletion
+              refetch();
+           } catch (error) {
+              console.error('Error deleting project:', error);
+           }
+        };
    
    
-   // return (
-   //    // <Box
-   //    //    css={{ height: '100%', width: '100%' }}
-   //    // >
-   //    //    <Table
-   //    //       aria-label="Example table with custom cells"
-   //    //       css={{
-   //    //          height: 'auto',
-   //    //          minWidth: '100%',
-   //    //          boxShadow: 'none',
-   //    //          width: '100%',
-   //    //          px: 0,
-   //    //       }}
-   //    //       selectionMode="multiple"
-   //    //    >
-   //    //       <Table.Header columns={USER_COLUMNS}>
-   //    //          {(column) => (
-   //    //             <Table.Column
-   //    //                key={column.uid}
-   //    //                hideHeader={column.uid === 'actions'}
-   //    //                align={column.uid === 'actions' ? 'center' : 'start'}
-   //    //             >
-   //    //                {column.name}
-   //    //             </Table.Column>
-   //    //          )}
-   //    //       </Table.Header>
-   //    //       <Table.Body items={data?.getUsers || []}>
-   //    //          {(item: UserTypes) => (
-   //    //             <Table.Row key={Math.random()}>
-   //    //                {(columnKey:React.Key) => (
-   //    //                   <Table.Cell>
-   //    //                      {RenderCell({user: item, columnKey: columnKey})}
-   //    //                   </Table.Cell>
-   //    //                )}
-   //    //             </Table.Row>
-   //    //          )}
-   //    //       </Table.Body>  
-            
-   //    //    </Table>
-   //    // </Box>
 
 
    // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -105,7 +84,7 @@ export const UserLiserWrapper = ({listRefresh}:UserLiserWrapperProps) => {
             <Tooltip
                content="Delete User"
                color="error"
-               // onClick={}
+               onClick={() => handleDeleteProject(data.userId,data) }
             >
                <IconButton>
                   <DeleteIcon size={20} fill="#FF0080" />
