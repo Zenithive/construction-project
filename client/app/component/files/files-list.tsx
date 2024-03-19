@@ -2,7 +2,7 @@ import {Col, Row, Table, Tooltip} from '@nextui-org/react';
 import { GridOptions } from 'ag-grid-community';
 import React, { useEffect, useState } from 'react';
 import {RenderCell} from './file-render-cell';
-import { useQuery } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 import { GET_FILES } from '../../api/file/queries';
 import { FileSchemaType } from './add-file';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
@@ -13,6 +13,10 @@ import "ag-grid-community/styles/ag-theme-quartz.css"; // Theme
 import { Box, IconButton, Link } from '@mui/material';
 import { EditIcon } from '../icons/table/edit-icon';
 import { DeleteIcon } from '../icons/table/delete-icon';
+
+// Sachin Import  ******************
+
+import {DELETE_FILE_MEMBERSH} from 'client/app/api/file/mutations'
 
 export interface FilesListWrapperProps{
    listRefresh: boolean;
@@ -28,8 +32,37 @@ export const FilesListWrapper = ({listRefresh}:FilesListWrapperProps) => {
       { make: "Toyota", model: "Corolla", price: 29600, electric: false },
     ]);
 
+
+    // Sachin Code to delete the files
+
+    // Define the deleteProject mutation function
+    const [deleteFile] = useMutation(DELETE_FILE_MEMBERSH);
+
+
+     // Function to handle project deletion
+     const handleDeleteFiles = async (fileId: string, newData: any) => {
+      console.log("fileId", fileId)
+      console.log("newData", newData)
+        try {
+           // Execute the deleteFile mutation with the fieldId as variable
+           await deleteFile({ variables: { fileId } });
+           // Refetch projects after deletion
+           refetch();
+        } catch (error) {
+           console.error('Error deleting project:', error);
+        }
+     };
+
+    
+
+
+
+
+
+
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const ActionRenderer = ({ value }:any) => (
+    const ActionRenderer = ({ value, data }:any) => (
       <Row
          justify="center"
          align="center"
@@ -55,7 +88,7 @@ export const FilesListWrapper = ({listRefresh}:FilesListWrapperProps) => {
             <Tooltip
                content="Delete Project"
                color="error"
-               onClick={() => console.log('Delete user')}
+               onClick={() => handleDeleteFiles(data.fileId, data)} // me *********
             >
                <IconButton>
                   <DeleteIcon size={20} fill="#FF0080" />

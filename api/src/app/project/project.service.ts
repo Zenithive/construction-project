@@ -8,8 +8,8 @@ import { v4 as uuidv4 } from 'uuid';
 export class ProjectService {
     constructor(@InjectModel(Project.name) private projModel: Model<ProjectDocument>) {}
 
-    async getProjects() {
-        return this.projModel.find();
+    async getProjects() { // Modified by Sachin  on 16-02-2024 to filter out the inactive projects
+        return this.projModel.find({ status: { $ne: 'Inactive' } });    
       }
 
     async createProject(project: CreateProjectInput){

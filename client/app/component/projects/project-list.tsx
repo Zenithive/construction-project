@@ -16,7 +16,7 @@ import PermissionComponent from '../Permission/permission.component';
 
 // Sachin Import
 import { DELETE_PROJECT } from 'client/app/api/project/mutations';
-// import { DELETE_PROJ } from '../../api/project/queries';
+
 import { useMutation } from '@apollo/client';
 
 

@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { ObjectType, Field, InputType} from '@nestjs/graphql';
+import { ObjectType, Field, InputType } from '@nestjs/graphql';
+
 
 export type FileDocument = File & Document;
 
@@ -54,7 +55,7 @@ export class File {
 
   @Prop()
   @Field()
-  status!: string;    
+  status!: string;
 
   @Prop()
   @Field()
@@ -65,11 +66,11 @@ export class File {
   originalname!: string;
 
   @Prop()
-  @Field({defaultValue: ""})
+  @Field({ defaultValue: "" })
   zipEntryPoint!: string;
 
   @Prop()
-  @Field({defaultValue: ""})
+  @Field({ defaultValue: "" })
   apsUrnKey!: string;
 
   @Prop()
@@ -78,56 +79,62 @@ export class File {
 }
 
 @InputType()
-export class UploadFileInput{
+export class UploadFileInput {
 
-    @Field({ nullable: true })
-    fileId!: string;
+  @Field({ nullable: true })
+  fileId!: string;
 
-    @Field({ nullable: true })
-    revisionId!: string;
+  @Field({ nullable: true })
+  revisionId!: string;
 
-    @Field()
-    fileName!: string;
+  @Field()
+  fileName!: string;
 
-    @Field()
-    originalname!: string;
+  @Field()
+  originalname!: string;
 
-    @Field()
-    path!: string;
+  @Field()
+  path!: string;
 
-    @Field()
-    orginatorId!: string;
+  @Field()
+  orginatorId!: string;
 
-    @Field()
-    extension!: string;
+  @Field()
+  extension!: string;
 
-    @Field()
-    size!: number;
+  @Field()
+  size!: number;
 
-    @Field()
-    status!: string;    
+  @Field()
+  status!: string;
 
-    @Field()
-    docRef!: string;
+  @Field()
+  docRef!: string;
 
-    @Field()
-    revision!: string;
+  @Field()
+  revision!: string;
 
-    @Field()
-    projectId!: string;
+  @Field()
+  projectId!: string;
 
-    @Field()
-    userId!: string;
+  @Field()
+  userId!: string;
 
-    @Field({ nullable: true })
-    zipEntryPoint!: string;
+  @Field({ nullable: true })
+  zipEntryPoint!: string;
 
-    @Field({ nullable: true })
-    apsUrnKey!: string;
+  @Field({ nullable: true })
+  apsUrnKey!: string;
 
-    @Field({ nullable: true })
-    apsObjKey!: string;    
+  @Field({ nullable: true })
+  apsObjKey!: string;
 }
+////// Sachin  code ***********
 
+@InputType()
+export class DeleteFileInput {
+  @Field()
+  fileId!: string;
+}
 
 export const FileSchema = SchemaFactory.createForClass(File);
