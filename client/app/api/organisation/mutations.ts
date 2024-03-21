@@ -11,3 +11,12 @@ export const CREATE_ORGANISATION = gql`
     }
   }
 `;
+
+// mutation for Delting org button
+export const DELETE_ORGANISATION = gql`
+mutation DeleteOrganisation($orgId: String!) {
+  deleteOrganisation(input:{orgId:$orgId}){
+    orgId
+  }
+}
+`;

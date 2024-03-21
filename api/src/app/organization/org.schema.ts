@@ -69,5 +69,10 @@ export class CreateOrgInput {
   @Field({defaultValue: new Date()})
   updatedDate!: Date;
 }
+@InputType()
+export class DeleteOrganisationInput{
+  @Field()
+  orgId!:string;
+}
 
 export const OrgSchema = SchemaFactory.createForClass(Org);

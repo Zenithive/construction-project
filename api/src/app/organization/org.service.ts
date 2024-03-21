@@ -1,7 +1,7 @@
 import { Model } from 'mongoose';
 import {  Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Org, OrgDocument, CreateOrgInput } from './org.schema';
+import { Org, OrgDocument, CreateOrgInput} from './org.schema';
 import { v4 as uuidv4 } from 'uuid'; 
 
 
@@ -10,9 +10,9 @@ export class OrgService {
     constructor(@InjectModel(Org.name) private orgModel: Model<OrgDocument>) {}
 
     async getAllOrg() {
-        return this.orgModel.find();
+        return this.orgModel.find({status:{$ne:"Inactive"}});
       }
-
+    
     async createOrg(org: CreateOrgInput){
         const checkExistingOrg = await this.orgModel.findOne({ orgName: org.orgName });
   
@@ -23,4 +23,14 @@ export class OrgService {
         return this.orgModel.create(org);
       }
 
+      async deleteOrganisation(id: string) {
+            const searchObj = {
+              orgId : id
+            };
+            const updateObj = {
+              status: "Inactive"
+            }
+            return this.orgModel.findOneAndUpdate(searchObj, updateObj).exec();
+
+}
 }
