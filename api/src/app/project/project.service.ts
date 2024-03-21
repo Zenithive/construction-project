@@ -4,10 +4,15 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Project, ProjectDocument, CreateProjectInput } from './project.schema';
 import { v4 as uuidv4 } from 'uuid'; 
 import { PermissionService } from '../permissions/permissions.service';
+import { RoleService } from '../role/role.service';
 
 @Injectable()
 export class ProjectService {
-    constructor(@InjectModel(Project.name) private projModel: Model<ProjectDocument>, private permissionService: PermissionService) {}
+    constructor(
+      @InjectModel(Project.name) private projModel: Model<ProjectDocument>, 
+      private permissionService: PermissionService,
+      private roleService: RoleService
+      ) {}
 
     async getProjects() {
         return this.projModel.find();
@@ -26,6 +31,12 @@ export class ProjectService {
       if(newProject && newProject.projId) {
         console.log("Project Created");
 
+        // Create default Role: Admin
+        const newRole = await this.roleService.createDefaultAdminRoleForNewProject(newProject);
+        if(!(newRole && newRole.roleId)){
+          throw new Error('Project created, but problems with project role!');
+        }
+
         // Create default Permissions
         const preparePermissionData  = this.permissionService.getNewPermissionsRecordsForNewProject(newProject);
         const insertAllPermissionRecord  = await this.permissionService.createNewPermissions(preparePermissionData);
@@ -33,7 +44,7 @@ export class ProjectService {
           console.log("Project Permissions added");
           return newProject;
         }else{
-          throw new Error('Project created, but probles with project permissions!');
+          throw new Error('Project created, but problems with project permissions!');
         }
       }else {
         throw new Error('Project not created, error with database!');

@@ -26,6 +26,7 @@ export const ProjectListWrapper = ({listRefresh}:ProjectListWrapperProps) => {
    const { data, refetch } = useQuery(GET_PROJECTS);
 
    const [showRoles, setShowRoles] = useState(false)
+   const [currentProj, setCurrentProj] = useState("");
    const [showPermissions, setShowPermissions] = useState(false)
 
    const gridOptions:GridOptions = {
@@ -47,6 +48,7 @@ export const ProjectListWrapper = ({listRefresh}:ProjectListWrapperProps) => {
       }
 
       const openRolesModal = (event: React.MouseEvent<HTMLLIElement>) => {
+         setCurrentProj(treeId);
          setShowRoles(true);
          handleClose(event)
       }
@@ -90,7 +92,7 @@ export const ProjectListWrapper = ({listRefresh}:ProjectListWrapperProps) => {
   }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const ActionRenderer = ({ value }:any) => (
+    const ActionRenderer = ({ value, data }:any) => (
       <Row
          justify="center"
          align="center"
@@ -98,7 +100,7 @@ export const ProjectListWrapper = ({listRefresh}:ProjectListWrapperProps) => {
       >
          <Col css={{d: 'flex'}}>
             <Tooltip content="More Setting">
-               <DotPopoverMenu treeId={"1"} toggleAddFolder={()=>{}}></DotPopoverMenu>
+               <DotPopoverMenu treeId={data.projId} toggleAddFolder={()=>{}}></DotPopoverMenu>
             </Tooltip>
          </Col>
          <Col css={{d: 'flex'}}>
@@ -169,7 +171,7 @@ export const ProjectListWrapper = ({listRefresh}:ProjectListWrapperProps) => {
    return (
       <Box
       >
-         <RolesComponent visible={showRoles} closeRoleModel={()=>setShowRoles(false)}></RolesComponent>
+         <RolesComponent projId={currentProj} clearProjId={()=>setCurrentProj("")} visible={showRoles} closeRoleModel={()=>setShowRoles(false)}></RolesComponent>
          <PermissionComponent visible={showPermissions} closeRoleModel={()=>setShowPermissions(false)}></PermissionComponent>
          <Box component="div" className='ag-theme-quartz' sx={{height: '100%', mt: 2}}>
             <AgGridReact 

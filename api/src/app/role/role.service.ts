@@ -1,7 +1,7 @@
 import { Model } from 'mongoose';
 import {  Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Role, RoleDocument, CreateNewRole } from './role.schema';
+import { Role, RoleDocument, CreateNewRole, GetRolesByProjId } from './role.schema';
 import { v4 as uuidv4 } from 'uuid'; 
 import { Project } from '../project/project.schema';
 
@@ -9,12 +9,12 @@ import { Project } from '../project/project.schema';
 export class RoleService {
     constructor(@InjectModel(Role.name) private roleModel: Model<RoleDocument>) {}
 
-    async getRole() {
-        return this.roleModel.find();
+    async getRole(role: GetRolesByProjId) {
+        return this.roleModel.find({projId: role.projId});
       }
 
     async createNewRole(role: CreateNewRole){
-      const checkExistingProj = await this.roleModel.findOne({ roleName: role.roleName });
+      const checkExistingProj = await this.roleModel.findOne({ roleName: role.roleName, projId: role.projId });
 
       if(checkExistingProj){
         throw new Error('Project with the same Name Exists');
@@ -28,7 +28,7 @@ export class RoleService {
         projId: newProject.projId,
         orgId: newProject.orgId,
         users: [],
-        orginatorId: newProject.orgId,
+        orginatorId: newProject.orginatorId,
         roleName: "Admin",
         roleId: "",
         isDefaultRole: true

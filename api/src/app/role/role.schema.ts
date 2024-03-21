@@ -38,6 +38,12 @@ export class Role {
 }
 
 @InputType()
+export class GetRolesByProjId {
+  @Field()
+  projId!: string;
+}
+
+@InputType()
 export class CreateNewRole {
   @Field()
   roleName!: string;

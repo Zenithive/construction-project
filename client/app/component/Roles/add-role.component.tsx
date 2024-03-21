@@ -1,4 +1,4 @@
-import { Box, Button, Grid, Modal, TextField, Typography, colors } from "@mui/material";
+import { Box, Button, Grid, TextField} from "@mui/material";
 import ToastMessage from "../toast-message/ToastMessage";
 import { useMutation } from "@apollo/client";
 import { CREATE_NEW_ROLE } from "../../api/Roles/mutations";
@@ -9,6 +9,7 @@ import * as Yup from 'yup';
 export interface RolesComponentProps {
   visible: boolean;
   closeAddRole: CallableFunction;
+  projId: string;
 }
 
 const RoleSchema = Yup.object().shape({
@@ -31,7 +32,7 @@ export function AddRolesComponent(props: RolesComponentProps) {
     setSubmitting(true);
     const res = await createNewRole({
        variables: {
-          projId: "",
+          projId: props.projId,
           roleName: values.roleName,
           roleId: "",
           orginatorId: "",

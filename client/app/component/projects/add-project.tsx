@@ -6,6 +6,8 @@ import { useMutation } from '@apollo/client';
 import ToastMessage from '../toast-message/ToastMessage';
 import { Box, Button, Grid, TextField } from '@mui/material';
 import { CREATE_PROJECT } from '../../api/project/mutations';
+import { UserSchema, selectUserSession } from '../../reducers/userReducer';
+import { useAppSelector } from '../../reducers/hook.redux';
 
 
 export interface ProjectTypes {
@@ -31,6 +33,9 @@ const ProjectSchema = Yup.object().shape({
 });
 
 export const AddProject = ({setListRefresh}:AddProjectProps) => {
+
+   const userDetails:UserSchema = useAppSelector(selectUserSession);
+   
    const initValue: ProjectTypes = {
       projName: "",
       region: "",
@@ -54,7 +59,7 @@ export const AddProject = ({setListRefresh}:AddProjectProps) => {
       const res = await createProject({
          variables: {
             projId: "",
-            orginatorId: "",
+            orginatorId: userDetails.userId,
             projName: values.projName,
             region: values.region,
             status: values.status,

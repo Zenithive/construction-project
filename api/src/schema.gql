@@ -13,13 +13,13 @@ input CreateFolderInput {
 }
 
 input CreateNewPermission {
-  createdBy: DateTime! = "2024-03-17T10:42:52.072Z"
+  createdBy: DateTime! = "2024-03-21T18:24:29.881Z"
   orginatorId: String!
   permissionId: String!
   permissionKey: String!
   permissionLabel: String!
   projId: String!
-  updatedBy: DateTime! = "2024-03-17T10:42:52.072Z"
+  updatedBy: DateTime! = "2024-03-21T18:24:29.881Z"
   value: Boolean!
 }
 
@@ -35,12 +35,12 @@ input CreateNewRole {
 
 input CreateOrgInput {
   contact: String!
-  creationDate: DateTime! = "2024-03-17T10:42:51.876Z"
+  creationDate: DateTime! = "2024-03-21T18:24:29.686Z"
   orgId: String!
   orgName: String!
   region: String!
   status: String! = "Open"
-  updatedDate: DateTime! = "2024-03-17T10:42:51.876Z"
+  updatedDate: DateTime! = "2024-03-21T18:24:29.686Z"
   website: String
 }
 
@@ -56,7 +56,7 @@ input CreateProjectInput {
 }
 
 input CreateUserByAdmin {
-  creationDate: DateTime! = "2024-03-17T10:42:51.240Z"
+  creationDate: DateTime! = "2024-03-21T18:24:29.259Z"
   email: String
   emailVerified: Boolean! = false
   firstName: String
@@ -66,12 +66,12 @@ input CreateUserByAdmin {
   phoneNo: String
   status: String! = "Active"
   subscriptionId: Float = 1
-  updatedDate: DateTime! = "2024-03-17T10:42:51.240Z"
+  updatedDate: DateTime! = "2024-03-21T18:24:29.259Z"
   userId: String!
 }
 
 input CreateUserInput {
-  creationDate: DateTime! = "2024-03-17T10:42:51.240Z"
+  creationDate: DateTime! = "2024-03-21T18:24:29.258Z"
   email: String!
   emailVerified: Boolean! = false
   firstName: String
@@ -80,7 +80,7 @@ input CreateUserInput {
   password: String!
   status: String = "Active"
   subscriptionId: Float! = 1
-  updatedDate: DateTime! = "2024-03-17T10:42:51.240Z"
+  updatedDate: DateTime! = "2024-03-21T18:24:29.258Z"
   userId: String!
 }
 
@@ -121,6 +121,10 @@ type Folder {
   parentFolderId: String!
   projectId: String!
   status: String!
+}
+
+input GetRolesByProjId {
+  projId: String!
 }
 
 input LoginInput {
@@ -184,7 +188,7 @@ type Query {
   getFolders: [Folder!]!
   getPermissions: [Permission!]!
   getProjects: [Project!]!
-  getRoles: [Role!]!
+  getRoles(input: GetRolesByProjId!): [Role!]!
   getUser(input: UserId!): User!
   getUserByEmail(input: Email!): User!
   getUsers: [User!]!
