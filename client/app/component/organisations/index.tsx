@@ -8,9 +8,13 @@ import {SettingsIcon} from '../icons/sidebar/settings-icon';
 import {Flex} from '../styles/flex';
 import {AddOrganisation} from './add-organisation';
 import { OrgsListWrapper } from './orgs.list';
+import { EDITE_ORGANISATION } from 'client/app/api/organisation/mutations';
+import { useQuery } from '@apollo/client';
+
 
 export const Organisations = () => {
    const [listRefresh, setListRefresh] = React.useState(false);
+   const [organizationData, setOrganizationData] = React.useState(null);
 
    return (
       <Flex
@@ -50,14 +54,14 @@ export const Organisations = () => {
                <DotsIcon /> */}
             </Flex>
             <Flex direction={'row'} css={{gap: '$6'}} wrap={'wrap'}>
-               <AddOrganisation setListRefresh={setListRefresh}/>
-               <Button auto iconRight={<ExportIcon />}>
+               <AddOrganisation setListRefresh={setListRefresh} organizationData={organizationData}  setOrganizationData={setOrganizationData}/>
+               {/* <Button auto iconRight={<ExportIcon />}>
                   Export to CSV
-               </Button>
+               </Button> */}
             </Flex>
          </Flex>
 
-         <OrgsListWrapper listRefresh={listRefresh}/>
+         <OrgsListWrapper listRefresh={listRefresh} setOrganizationData={setOrganizationData}/>
       </Flex>
    );
 };

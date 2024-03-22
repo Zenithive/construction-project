@@ -14,9 +14,12 @@ import { EyeIcon } from '../icons/table/eye-icon';
 import { DELETE_ORGANISATION } from 'client/app/api/organisation/mutations';
 import { useMutation } from '@apollo/client';
 import { handleClientScriptLoad } from 'next/script';
+import { AddOrganisation } from './add-organisation';
+import { EDITE_ORGANISATION } from 'client/app/api/organisation/mutations';
 
 export interface OrgsListWrapperProps{
    listRefresh: boolean;
+   setOrganizationData:  CallableFunction;
 }
 //Dropdown  menu component for actions on rows in the table
 interface DotPopoverProps{
@@ -24,11 +27,11 @@ interface DotPopoverProps{
    toggleAddFolder: CallableFunction;
 }
 
-export const OrgsListWrapper = ({listRefresh}:OrgsListWrapperProps) => {
+export const OrgsListWrapper = ({listRefresh,setOrganizationData}:OrgsListWrapperProps) => {
      const { data, refetch } = useQuery(GET_ORGANISATIONS);
         useEffect(()=>{
           refetch();
-          }, [listRefresh, refetch]);
+          }, [listRefresh,refetch]);
 
 // fuction for deleting Org button 
    const [deleteOrganisation]=useMutation(DELETE_ORGANISATION);
@@ -43,12 +46,18 @@ export const OrgsListWrapper = ({listRefresh}:OrgsListWrapperProps) => {
       }
    }
    
+
+   const [visible, setVisible] = React.useState(false);
+   const handleEditOrg = (datas: any) => {
+      console.log(datas)
+      setVisible(true);
+      setOrganizationData(datas);
+   };
 //for Dropdown  menu Grid
    const gridOptions:GridOptions = {
       // Other grid options...
       domLayout: 'autoHeight',
     };
-
     const DotPopoverMenu = ({treeId, toggleAddFolder}:DotPopoverProps) => {
       //const [open, setOpen] = useState(false);
       const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
@@ -98,7 +107,7 @@ export const OrgsListWrapper = ({listRefresh}:OrgsListWrapperProps) => {
       <Col css={{d: 'flex'}}>
          <Tooltip content="Edit user">
             <IconButton
-               onClick={() => console.log('Edit user', data.orgId)}
+               onClick={() => handleEditOrg(data)}
             >
                <EditIcon size={20} fill="#979797" />
             </IconButton>

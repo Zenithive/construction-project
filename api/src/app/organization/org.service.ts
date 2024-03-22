@@ -23,7 +23,7 @@ export class OrgService {
         return this.orgModel.create(org);
       }
 
-      async deleteOrganisation(id: string) {
+    async deleteOrganisation(id: string) {
             const searchObj = {
               orgId : id
             };
