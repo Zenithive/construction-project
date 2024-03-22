@@ -16,6 +16,7 @@ import { OrgModule } from './organization/org.module';
 import { ApsForgeModule } from './aps-forge/aps.forge.module';
 import { FolderModule } from './folder/folder.module';
 import { RoleModule } from './role/role.module';
+import { PermissionModule } from './permissions/permissions.module';
 
 const { DB_NAME, MONGO_URL } = process.env;
 
@@ -28,6 +29,12 @@ const { DB_NAME, MONGO_URL } = process.env;
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'api/src/schema.gql'),
       sortSchema: true,
+      //context: ({ req, res }) => ({ req, res }),
+      playground: {
+        settings: {
+          "request.credentials": "include", // Otherwise cookies won't be sent
+        }
+      },
     }),
     MongooseModule.forRoot(`${MONGO_URL}/${DB_NAME}`),
     AuthModule,
@@ -37,7 +44,8 @@ const { DB_NAME, MONGO_URL } = process.env;
     FileModule,
     ApsForgeModule,
     FolderModule,
-    RoleModule
+    RoleModule,
+    PermissionModule
   ],
   controllers: [AppController],
   providers: [AppService],

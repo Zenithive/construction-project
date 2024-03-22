@@ -36,7 +36,7 @@ export class UserService {
     const tokenObj : Token = {
       token : token,
       userObj : {
-        id : "",
+        userId : user.userId,
         firstName : user.firstName,
         lastName : user.lastName,
         email : user.email,
