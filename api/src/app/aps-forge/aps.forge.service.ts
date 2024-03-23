@@ -94,8 +94,7 @@ export class ApsForgeService {
 
   async getModels() {
     const objects = await this.listObjects();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return objects.map((o: { objectKey: unknown; objectId: any }) => ({
+    return objects.map((o: { objectKey: unknown; objectId: WithImplicitCoercion<ArrayBuffer | SharedArrayBuffer> }) => ({
       name: o.objectKey,
       objectId: o.objectId,
       urn: this.urnify(o.objectId),
