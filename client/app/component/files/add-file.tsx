@@ -6,7 +6,7 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { UploadFileComponent } from './upload.file.component';
 import ToastMessage from '../toast-message/ToastMessage';
 import { Box, Grid, TextField } from '@mui/material';
-import { useFormik } from 'formik';
+import { FormikHelpers, useFormik } from 'formik';
 import { useMutation } from '@apollo/client';
 import { SAVE_FILE_DATA } from '../../api/file/mutations';
 
@@ -91,21 +91,11 @@ export const AddFile = ({setListRefresh}:AddFilesProps) => {
       formik.setFieldValue("size", fileData.size);
    }
 
-   const openViewer = () => {
-      
-   }
-
-   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-   const submitForm = async (values: FileSchemaType,{ setSubmitting }:any) => {
+   const submitForm = async (values: FileSchemaType,{ setSubmitting }:FormikHelpers<FileSchemaType>) => {
       setSubmitting(true);
       const res = await saveFileData({
          variables: {
             ...values,
-            // fileName: fileData.fileName,
-            // originalname: fileData.originalname || "",
-            // path: fileData.path,
-            // extension: fileData.extension,
-            // size: fileData.size,
          },
       });
 
@@ -114,9 +104,6 @@ export const AddFile = ({setListRefresh}:AddFilesProps) => {
       if(fileName){
          closeHandler();
          setListRefresh((flag:boolean)=>!flag);
-         // setListRefresh((flag:boolean)=>!flag);
-         //dispatch(addUser({token : token}));
-         //router.push("/dashboard");
       }
       
       setSubmitting(false);

@@ -1,6 +1,6 @@
 import { Box, Button, Divider, Grid, IconButton, Modal, Typography } from "@mui/material";
 import ToastMessage from "../toast-message/ToastMessage";
-import AddRolesComponent from "./add-role.component";
+import AddRolesComponent, { RolesSchema } from "./add-role.component";
 import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
 import { useEffect, useState } from "react";
@@ -76,7 +76,7 @@ export function RolesComponent(props: RolesComponentProps) {
           <AddRolesComponent projId={props.projId} visible={showAddRole} closeAddRole={closeAddRole}></AddRolesComponent>
         </Box>
         <Box sx={{ pb: 3, overflow: "hidden" }}>
-          {data?.getRoles.map((data:any, index: number) =>
+          {data?.getRoles.map((data:RolesSchema, index: number) =>
             <>
               <Grid container spacing={2} key={index} sx={{ px: 3, py: 1 }}>
                 <Grid item xs={8}>{data.roleName}</Grid>

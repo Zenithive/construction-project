@@ -1,10 +1,8 @@
-import {Col, Row, Table, Tooltip} from '@nextui-org/react';
+import {Col, Row, Tooltip} from '@nextui-org/react';
 import { GridOptions } from 'ag-grid-community';
-import React, { useEffect, useState } from 'react';
-import {RenderCell} from './file-render-cell';
+import React, { useEffect } from 'react';
 import { useQuery } from '@apollo/client';
 import { GET_FILES } from '../../api/file/queries';
-import { FileSchemaType } from './add-file';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 import { AgGridReact } from 'ag-grid-react'; // React Grid Logic
@@ -21,12 +19,6 @@ export interface FilesListWrapperProps{
 export const FilesListWrapper = ({listRefresh}:FilesListWrapperProps) => {
 
    const { data, refetch } = useQuery(GET_FILES);
-
-   const [rowData, setRowData] = useState([
-      { make: "Tesla", model: "Model Y", price: 64950, electric: true },
-      { make: "Ford", model: "F-Series", price: 33850, electric: false },
-      { make: "Toyota", model: "Corolla", price: 29600, electric: false },
-    ]);
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const ActionRenderer = ({ value }:any) => (
