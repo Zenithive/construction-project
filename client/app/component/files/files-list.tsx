@@ -1,10 +1,9 @@
-import {Col, Row, Table, Tooltip} from '@nextui-org/react';
+import {Col, Row, Tooltip} from '@nextui-org/react';
 import { GridOptions } from 'ag-grid-community';
 import React, { useEffect, useState } from 'react';
 import {RenderCell} from './file-render-cell';
 import { useMutation, useQuery } from '@apollo/client';
 import { GET_FILES } from '../../api/file/queries';
-import { FileSchemaType } from './add-file';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 import { AgGridReact } from 'ag-grid-react'; // React Grid Logic

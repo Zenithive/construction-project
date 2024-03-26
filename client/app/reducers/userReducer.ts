@@ -2,13 +2,20 @@ import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "./store";
 //import {USER_ACTIONS} from "./actions/user.actions";
 
-interface UserState {
-  user: { token : string }; // Define the structure of your user object
+export interface UserSchema{
+  token : string, email: string, firstName: string, lastName: string, userId: string 
+}
+export interface UserState {
+  user: UserSchema; // Define the structure of your user object
 }
 
 const initialState: UserState = {
   user: {
     token: "",
+    email: "", 
+    firstName: "", 
+    lastName: "", 
+    userId: ""
   }
 }
 
@@ -16,12 +23,12 @@ export const userSliece = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    addUser: (state, action: PayloadAction<{ token: string }>) => {
+    addUser: (state, action: PayloadAction<UserSchema>) => {
       const newObj = action.payload;
       state.user = { ...state.user , ...newObj};
     },
     removeUser: (state) => {
-      state.user = { token: "" };
+      state.user = { ...initialState.user };
     },
   }
 });

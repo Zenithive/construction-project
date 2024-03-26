@@ -21,6 +21,10 @@ export class Project {
 
   @Prop({ required: true })
   @Field()
+  orginatorId!: string;
+
+  @Prop({ required: true })
+  @Field()
   status!: string;
 
   @Prop()
@@ -49,6 +53,9 @@ export class CreateProjectInput {
 
   @Field()
   projName!: string;
+
+  @Field()
+  orginatorId!: string;
 
   @Field()
   region!: string;

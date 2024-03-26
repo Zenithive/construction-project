@@ -1,6 +1,6 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql'
 import { RoleService } from './role.service'
-import { Role, CreateNewRole } from './role.schema'
+import { Role, CreateNewRole, GetRolesByProjId } from './role.schema'
 
 @Resolver()
 export class RoleResolver {
@@ -9,8 +9,8 @@ export class RoleResolver {
   ) {}
 
   @Query(() => [Role])
-  async getRoles() {
-    return this.roleService.getRole();
+  async getRoles(@Args('input') role: GetRolesByProjId) {
+    return this.roleService.getRole(role);
   }
 
   @Mutation(() => Role)

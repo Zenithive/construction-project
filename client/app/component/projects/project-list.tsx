@@ -34,6 +34,7 @@ export const ProjectListWrapper = ({listRefresh}:ProjectListWrapperProps) => {
    const { data, refetch } = useQuery(GET_PROJECTS);
 
    const [showRoles, setShowRoles] = useState(false)
+   const [currentProj, setCurrentProj] = useState("");
    const [showPermissions, setShowPermissions] = useState(false)
 
    const gridOptions:GridOptions = {
@@ -55,12 +56,14 @@ export const ProjectListWrapper = ({listRefresh}:ProjectListWrapperProps) => {
       }
 
       const openRolesModal = (event: React.MouseEvent<HTMLLIElement>) => {
+         setCurrentProj(treeId);
          setShowRoles(true);
          handleClose(event)
       }
 
       const openPermissionModal = (event: React.MouseEvent<HTMLLIElement>) => {
          setShowPermissions(true);
+         setCurrentProj(treeId);
          handleClose(event)
       }
 
@@ -69,9 +72,6 @@ export const ProjectListWrapper = ({listRefresh}:ProjectListWrapperProps) => {
 
       return (
           <>
-              {/* <IconButton aria-describedby={id} onClick={handleClick} sx={{p: 0}}>
-                  <MoreVert />
-              </IconButton> */}
 
                <IconButton aria-describedby={id} onClick={handleClick} sx={{p: 0}}>
                   <MoreVertIcon sx={{ color: "#979797" }} />
@@ -125,7 +125,7 @@ export const ProjectListWrapper = ({listRefresh}:ProjectListWrapperProps) => {
       >
          <Col css={{d: 'flex'}}>
             <Tooltip content="More Setting">
-               <DotPopoverMenu treeId={"1"} toggleAddFolder={()=>{}}></DotPopoverMenu>
+               <DotPopoverMenu treeId={data.projId} toggleAddFolder={()=>{}}></DotPopoverMenu>
             </Tooltip>
          </Col>
          <Col css={{d: 'flex'}}>
@@ -199,8 +199,8 @@ export const ProjectListWrapper = ({listRefresh}:ProjectListWrapperProps) => {
    return (
       <Box
       >
-         <RolesComponent visible={showRoles} closeRoleModel={()=>setShowRoles(false)}></RolesComponent>
-         <PermissionComponent visible={showPermissions} closeRoleModel={()=>setShowPermissions(false)}></PermissionComponent>
+         <RolesComponent projId={currentProj} clearProjId={()=>setCurrentProj("")} visible={showRoles} closeRoleModel={()=>setShowRoles(false)}></RolesComponent>
+         <PermissionComponent projId={currentProj} visible={showPermissions} closeRoleModel={()=>{setShowPermissions(false);setCurrentProj("")}}></PermissionComponent>
          <Box component="div" className='ag-theme-quartz' sx={{height: '100%', mt: 2}}>
             <AgGridReact 
                   rowData={data?.getProjects || []} 

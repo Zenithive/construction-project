@@ -2,25 +2,56 @@ import {Dropdown, Navbar, Text} from '@nextui-org/react';
 import React from 'react';
 import {DarkModeSwitch} from './darkmodeswitch';
 import { Avatar } from '@mui/material';
+import { useQuery } from '@apollo/client';
+import { useRouter } from 'next/navigation'
+import { LOGOUT } from '../../api/user/queries';
+import { useAppSelector } from '../../reducers/hook.redux';
+import { UserSchema, selectUserSession } from '../../reducers/userReducer';
+import { getUserInitials } from '../../services/user.service';
 
 export const UserDropdown = () => {
+
+   const userDetails:UserSchema = useAppSelector(selectUserSession)
+
+   const userInitials = getUserInitials(userDetails);
+
+   const router = useRouter();
+
+   const {data, refetch } = useQuery(LOGOUT);
+
+   const logOutHandle = async () => {
+     await refetch();
+
+      if(data?.logout?.message){
+         document.cookie = `tokenId=`;
+         router.push("/login");
+      }
+
+   }
+
+   const actionHandler = (key: React.Key) =>  {
+      if(key == "logout"){
+         logOutHandle();
+      }
+   }
    return (
       <Dropdown placement="bottom-right">
          <Navbar.Item>
             <Dropdown.Trigger>
-               <Avatar>HA</Avatar>
+               <Avatar>{userInitials}</Avatar>
             </Dropdown.Trigger>
          </Navbar.Item>
          <Dropdown.Menu
             aria-label="User menu actions"
-            onAction={(actionKey) => console.log({actionKey})}
+            onAction={actionHandler}
+            //onAction={(actionKey) => console.log({actionKey})}
          >
             <Dropdown.Item key="profile" css={{height: '$18'}}>
                <Text b color="inherit" css={{d: 'flex'}}>
                   Signed in as
                </Text>
                <Text b color="inherit" css={{d: 'flex'}}>
-                  zoey@example.com
+                  {userDetails.email}
                </Text>
             </Dropdown.Item>
             <Dropdown.Item key="settings" withDivider>

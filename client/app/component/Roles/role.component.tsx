@@ -1,22 +1,32 @@
 import { Box, Button, Divider, Grid, IconButton, Modal, Typography } from "@mui/material";
 import ToastMessage from "../toast-message/ToastMessage";
-import AddRolesComponent from "./add-role.component";
+import AddRolesComponent, { RolesSchema } from "./add-role.component";
 import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
-import { useState } from "react";
-import { useQuery } from "@apollo/client";
+import { useEffect, useState } from "react";
+import { useLazyQuery } from "@apollo/client";
 import { GET_ROLES } from "../../api/Roles/queries";
 
 /* eslint-disable-next-line */
 export interface RolesComponentProps {
   visible: boolean;
   closeRoleModel: CallableFunction;
+  clearProjId: CallableFunction;
+  projId: string;
 }
 
 export function RolesComponent(props: RolesComponentProps) {
 
   const [showAddRole, setShowAddRole] = useState(false);
-  const { data, error, refetch } = useQuery(GET_ROLES);
+  const [GetRoles , { data, error, refetch }] = useLazyQuery(GET_ROLES,);
+
+  useEffect(()=>{
+    if(props.projId){
+      GetRoles({variables: {
+        projId: props.projId
+      }});
+    }
+  }, [props.projId]);
 
   const closeAddRole = () => {
     setShowAddRole(false);
@@ -25,6 +35,7 @@ export function RolesComponent(props: RolesComponentProps) {
 
   const closeHandler = () => {
     props.closeRoleModel()
+    props.clearProjId()
   }
   return (
     <Modal
@@ -62,10 +73,10 @@ export function RolesComponent(props: RolesComponentProps) {
         </Box>
         <Divider sx={{ my: '$5' }} />
         <Box sx={{ px: 3 }}>
-          <AddRolesComponent visible={showAddRole} closeAddRole={closeAddRole}></AddRolesComponent>
+          <AddRolesComponent projId={props.projId} visible={showAddRole} closeAddRole={closeAddRole}></AddRolesComponent>
         </Box>
         <Box sx={{ pb: 3, overflow: "hidden" }}>
-          {data?.getRoles.map((data:any, index: number) =>
+          {data?.getRoles.map((data:RolesSchema, index: number) =>
             <>
               <Grid container spacing={2} key={index} sx={{ px: 3, py: 1 }}>
                 <Grid item xs={8}>{data.roleName}</Grid>

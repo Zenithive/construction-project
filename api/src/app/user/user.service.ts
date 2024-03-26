@@ -7,7 +7,7 @@ import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
 import { v4 as uuidv4 } from 'uuid'; 
 
-import { User, UserDocument, CreateUserInput, UserId, UpdateUserInput, LoginInput, Email, Token, ReturnUserObj, CreateUserByAdmin } from './user.schema';
+import { User, UserDocument, CreateUserInput, UserId, UpdateUserInput, LoginInput, Email, Token, CreateUserByAdmin } from './user.schema';
 
 
 @Injectable()
@@ -29,7 +29,6 @@ export class UserService {
   } 
 
   async loginUser(LoginInput: LoginInput, user: User) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const payLoad = {
       email : user.email,
     }
@@ -37,7 +36,7 @@ export class UserService {
     const tokenObj : Token = {
       token : token,
       userObj : {
-        id : "",
+        userId : user.userId,
         firstName : user.firstName,
         lastName : user.lastName,
         email : user.email,

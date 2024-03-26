@@ -1,18 +1,21 @@
 import { Box, Button, Checkbox, Divider, Grid, IconButton, Modal, Typography } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import ToastMessage from "../toast-message/ToastMessage";
-import { useQuery } from "@apollo/client";
+import { useLazyQuery } from "@apollo/client";
 import { GET_ROLES } from "../../api/Roles/queries";
+import { useEffect } from "react";
+import { RolesSchema } from "../Roles/add-role.component";
 
 /* eslint-disable-next-line */
 export interface PermissionComponentProps {
   visible: boolean;
   closeRoleModel: CallableFunction;
+  projId: string;
 }
 
 export function PermissionComponent(props: PermissionComponentProps) {
 
-  const { data, error, refetch } = useQuery(GET_ROLES);
+  const [GetRoles , { data, error }] = useLazyQuery(GET_ROLES,);
 
   const permistionList = [
     {
@@ -51,11 +54,16 @@ export function PermissionComponent(props: PermissionComponentProps) {
       name: "Can Upload File",
       kye: "canUploadFile"
     }
-  ]
+  ];
 
-  const closeAddRole = () => {
-    refetch();
-  }
+  useEffect(()=>{
+    console.log("props.projId", props.projId)
+    if(props.projId){
+      GetRoles({variables: {
+        projId: props.projId
+      }});
+    }
+  }, [props.projId]);
 
   const closeHandler = () => {
     props.closeRoleModel()
@@ -101,7 +109,7 @@ export function PermissionComponent(props: PermissionComponentProps) {
           </Grid>
         </Box>
         <Box sx={{ pb: 3, overflow: "hidden" }}>
-          {data?.getRoles.map((data:any, index: number) =>
+          {data?.getRoles.map((data:RolesSchema, index: number) =>
             <>
               <Grid container spacing={2} key={index} sx={{ px: 3, py: 1 }}>
                 <Grid item xs={1} sx={{fontWeight: "bold"}}>{data.roleName}</Grid>
