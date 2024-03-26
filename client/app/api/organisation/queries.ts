@@ -7,6 +7,7 @@ export const GET_ORGANISATIONS = gql`
       status
       website
       orgName
+      contact
       orgId
     }
   }

@@ -69,6 +69,34 @@ export class CreateOrgInput {
   @Field({defaultValue: new Date()})
   updatedDate!: Date;
 }
+
+@InputType()
+export class UpdateOrgInput {
+  @Field()
+  contact?: string;
+
+  @Field()
+  region?: string;
+
+  @Field({ nullable: true })
+  website?: string;
+
+  @Field()
+  orgId?: string;
+
+  @Field()
+  orgName?: string;
+
+  @Field({defaultValue: DEFAULT_VALUES.orgStatus})
+  status?: string;
+
+  @Field({defaultValue: new Date()})
+  creationDate?: Date;
+
+  @Field({defaultValue: new Date()})
+  updatedDate?: Date;
+}
+
 @InputType()
 export class DeleteOrganisationInput{
   @Field()

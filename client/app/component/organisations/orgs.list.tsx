@@ -46,7 +46,7 @@ export const OrgsListWrapper = ({listRefresh,setOrganizationData}:OrgsListWrappe
       }
    }
    
-
+//for edit Org
    const [visible, setVisible] = React.useState(false);
    const handleEditOrg = (datas: any) => {
       console.log(datas)
@@ -59,7 +59,6 @@ export const OrgsListWrapper = ({listRefresh,setOrganizationData}:OrgsListWrappe
       domLayout: 'autoHeight',
     };
     const DotPopoverMenu = ({treeId, toggleAddFolder}:DotPopoverProps) => {
-      //const [open, setOpen] = useState(false);
       const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
 
       const handleClick = (event: React.MouseEvent<HTMLButtonElement>)=>{
@@ -76,9 +75,6 @@ export const OrgsListWrapper = ({listRefresh,setOrganizationData}:OrgsListWrappe
 
       return (
           <>
-              {/* <IconButton aria-describedby={id} onClick={handleClick} sx={{p: 0}}>
-                  <MoreVert />
-              </IconButton> */}
 
                <IconButton aria-describedby={id} onClick={handleClick} sx={{p: 0}}>
                   <MoreVertIcon sx={{ color: "#979797" }} />

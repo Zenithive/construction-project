@@ -44,20 +44,11 @@ export const Organisations = () => {
                }}
                align={'center'}
             >
-               {/* <Input
-                  css={{width: '100%', maxW: '410px'}}
-                  placeholder="Search organisation"
-               /> */}
-               {/* <SettingsIcon />
-               <TrashIcon />
-               <InfoIcon />
-               <DotsIcon /> */}
+              
             </Flex>
             <Flex direction={'row'} css={{gap: '$6'}} wrap={'wrap'}>
                <AddOrganisation setListRefresh={setListRefresh} organizationData={organizationData}  setOrganizationData={setOrganizationData}/>
-               {/* <Button auto iconRight={<ExportIcon />}>
-                  Export to CSV
-               </Button> */}
+         
             </Flex>
          </Flex>
 

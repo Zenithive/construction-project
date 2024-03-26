@@ -10,6 +10,16 @@ export const CREATE_USER = gql`
     }
   }
 `;
+export const EDITE_USER = gql`
+  mutation EditUser( $email: String!, $password: String!, $lastName: String!, $firstName: String, $userId: String!) {
+    editUser(input: { email: $email, password: $password, lastName: $lastName, firstName: $firstName, userId: $userId }) {
+      email
+      lastName
+      firstName
+      userId
+    }
+  }
+`;
 
 export const CREATE_USER_BY_ADMIN = gql`
   mutation CreateUserByAdmin( $email: String!, $lastName: String!, $firstName: String, $userId: String!, $phoneNo: String!, $subscriptionId: Float!) {

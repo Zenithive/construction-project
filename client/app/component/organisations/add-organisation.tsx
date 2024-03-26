@@ -78,18 +78,12 @@ export const AddOrganisation = ({setListRefresh,organizationData,setOrganization
       if(orgId){
          closeHandler();
          setListRefresh((flag:boolean)=>!flag);
-         //dispatch(addUser({token : token}));
-         //router.push("/dashboard");
+       
       }
       
       setSubmitting(false);
    }
 
-   const formik = useFormik({
-      initialValues: initValue,
-      validationSchema: OrganisationSchema,
-      onSubmit: addNewOrganisation,
-    });
 
 
     const updateOrg = async (values: OrganisationTypes,{ setSubmitting, resetForm }:any) => {
@@ -100,27 +94,25 @@ export const AddOrganisation = ({setListRefresh,organizationData,setOrganization
             region: values.region,
             website: values.website,
             orgName: values.orgName,
-            orgId: ""
+            orgId: values.orgId,
          },
       });
 
 
-      const orgId:string|null = res.data?.createOrg?.orgId;
+      const orgId:string|null = res.data?.editOrg?.orgId;
       if(orgId){
          closeHandler();
          setListRefresh((flag:boolean)=>!flag);
          setOrganizationData(null);
-         //dispatch(addUser({token : token}));
-         //router.push("/dashboard");
       }
       
       setSubmitting(false);
    }
    
-   const formiki= useFormik({
-      initialValues: initValue,
+   const formik= useFormik({
+      initialValues: initValue, 
       validationSchema: OrganisationSchema,
-      onSubmit:updateOrg,
+      onSubmit:organizationData ? updateOrg : addNewOrganisation,
     });
 
    return (
@@ -148,7 +140,7 @@ export const AddOrganisation = ({setListRefresh,organizationData,setOrganization
                id='add-org-form'
                component="form"
                noValidate
-               onSubmit={organizationData ? formik.handleSubmit :  formiki.handleSubmit}
+               onSubmit={formik.handleSubmit}
                sx={{ mt: 3 }}
             >
                <Grid container spacing={2}>
