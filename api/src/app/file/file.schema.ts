@@ -129,12 +129,24 @@ export class UploadFileInput {
   @Field({ nullable: true })
   apsObjKey!: string;
 }
-////// Sachin  code ***********
+////// Sachin  code  ***********
 
 @InputType()
 export class DeleteFileInput {
   @Field()
   fileId!: string;
 }
+
+/// FOR DOWNLOAD {GET SINGLE FILE }   ***************
+
+@InputType()
+export class GetSingleFileInput {
+  @Field()
+  urn!: string;
+}
+
+
+
+
 
 export const FileSchema = SchemaFactory.createForClass(File);

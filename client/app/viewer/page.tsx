@@ -4,26 +4,37 @@ import { AppBar, Box, Container, CssBaseline, ThemeProvider, Toolbar, Typography
 import axios from 'axios';
 
 import Script from 'next/script';
-import { useEffect,  useState } from 'react';
+import { useEffect, useState } from 'react';
 import ViewerComponent from '../component/viewer/viewer.component';
 import { CONFIG } from '../constants/config.constant';
 import { useSearchParams } from 'next/navigation'
 
 
+// Sachin code 
+import DownloadIcon from '@mui/icons-material/Download';
+import App from 'next/app';
+import { GET_ONE_FILE } from '../api/file/queries';
+import { useLazyQuery, useQuery } from '@apollo/client';
+import { GetSingleFileInput } from '../../../api/src/app/file/file.schema';
+
+
+
+
+
 const theme = createTheme();
 
 export default function Viewer() {
-  
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [urn, setUrn] = useState("");
   const [isJSLoader, setIsJSLoader] = useState(true);
   const [allData, setAllData] = useState([]);
 
   const searchParams = useSearchParams()
- 
-  
 
-  const getModelsData = ()=>{
+
+
+  const getModelsData = () => {
     axios.get(`${CONFIG.server_api}aps/getApsForgeModels`).then(response => {
       setAllData(response.data);
       setUrn(response.data[0].urn)
@@ -31,13 +42,61 @@ export default function Viewer() {
   }
 
 
+
+
+
   useEffect(() => {
     const urnId = searchParams.get('id');
-    if(urnId && !urn) {
+
+    if (urnId && !urn) {
       setUrn(urnId);
       console.log("urnId", urnId)
+      GetSingleFile(urnId);
     }
   }, [urn])
+
+
+
+  // *********** SACHIN CODE TO GET FILE FROM DB ************
+  const [GetOneFile, { loading, error, data }] = useLazyQuery(GET_ONE_FILE);
+
+  const [fileData, setFileData] = useState({
+    tmpData: null, // s
+    data: null,    // s
+    originalname: ''}
+  );
+  const GetSingleFile = async (urn: string) => {
+    // Define state variables to store file data
+    const tmpData = await GetOneFile({
+      variables: {
+        urn
+      }
+    });     
+    
+    // Sachin Code
+
+    setFileData((prevData) => ({
+      ...prevData,
+      tmpDatas: tmpData,
+      originalname: tmpData?.data?.getOneFile?.originalname || ''
+    }));
+
+    console.log("tmpData", tmpData);
+    console.log("data", data);
+
+    // Fetch file details using GraphQL query
+  }
+
+
+
+  //////  Downlaod file ////////////
+
+
+
+
+
+
+
 
   return (
     <>
@@ -48,7 +107,7 @@ export default function Viewer() {
       <Script
         src="https://developer.api.autodesk.com/modelderivative/v2/viewers/7.0/viewer3D.js"
         strategy="lazyOnload"
-        onLoad={() =>{
+        onLoad={() => {
           console.log(`script loaded correctly, window.FB has been populated`);
           setIsJSLoader(false);
         }}
@@ -58,13 +117,15 @@ export default function Viewer() {
           <CssBaseline />
 
           <Box
-            sx={{ display: 'flex'}}
+            sx={{ display: 'flex' }}
           >
             <AppBar component="nav">
               <Toolbar>
                 <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                  Viewer
+                  Viewer/
+                  {fileData.originalname}
                 </Typography>
+                <DownloadIcon className='Download-button' />
               </Toolbar>
             </AppBar>
             <Box component="main" >
@@ -77,4 +138,4 @@ export default function Viewer() {
       </ThemeProvider>
     </>
   );
-}
+};

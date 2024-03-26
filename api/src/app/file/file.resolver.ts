@@ -1,7 +1,7 @@
 import { Resolver, Mutation, Args, Query } from '@nestjs/graphql'
 import { v4 as uuidv4 } from 'uuid'; 
 import { FileService } from './file.service'
-import { DeleteFileInput, File, UploadFileInput } from './file.schema';
+import { DeleteFileInput, File, UploadFileInput, GetSingleFileInput } from './file.schema';
 
 @Resolver()
 export class FileResolver {
@@ -32,4 +32,23 @@ export class FileResolver {
       return result;
     
   }
+
+////////////// SACHIN CODE FOR GET ONE FILE //////////////////
+
+
+
+
+  @Query(() => File)  
+  async getOneFile(@Args('input') fileObj: GetSingleFileInput) {
+    // Fetch file by apsUrnKey
+    return await this.fileService.getFileByApsUrn(fileObj.urn);
+  }
+
+  
 }
+
+////////////// SACHIN CODE FOR DOWNLOAD ONE FILE //////////////////
+
+
+
+

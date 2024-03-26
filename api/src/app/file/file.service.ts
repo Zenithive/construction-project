@@ -51,8 +51,12 @@ export class FileService {
 
     }
 
+    async getFileByApsUrn(apsUrnKey: string){
+      
+    return await this.fileModel.findOne({apsUrnKey});
+
 }
 
 
-
+}
 
