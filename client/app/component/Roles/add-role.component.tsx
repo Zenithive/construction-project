@@ -1,14 +1,28 @@
-import { Box, Button, Grid, Modal, TextField, Typography, colors } from "@mui/material";
+import { Box, Button, Grid, TextField} from "@mui/material";
 import ToastMessage from "../toast-message/ToastMessage";
 import { useMutation } from "@apollo/client";
 import { CREATE_NEW_ROLE } from "../../api/Roles/mutations";
-import { useFormik } from "formik";
+import { FormikHelpers, useFormik } from "formik";
 import * as Yup from 'yup';
 
 /* eslint-disable-next-line */
 export interface RolesComponentProps {
   visible: boolean;
   closeAddRole: CallableFunction;
+  projId: string;
+}
+
+export interface RoleFormValues {
+  roleName: string;
+}
+
+export interface RolesSchema{
+  roleName: string;
+  roleId: string;
+  orginatorId: string;
+  users: string;
+  orgId: string;
+  projId: string;
 }
 
 const RoleSchema = Yup.object().shape({
@@ -23,15 +37,15 @@ export function AddRolesComponent(props: RolesComponentProps) {
     props.closeAddRole();
   }
 
-  const initValue = {
+  const initValue: RoleFormValues = {
     roleName: ""
   }
 
-  const addRole = async (values: {roleName: string},{ setSubmitting, resetForm }:any) => {
+  const addRole = async (values: RoleFormValues,{ setSubmitting, resetForm }:FormikHelpers<RoleFormValues> ) => {
     setSubmitting(true);
     const res = await createNewRole({
        variables: {
-          projId: "",
+          projId: props.projId,
           roleName: values.roleName,
           roleId: "",
           orginatorId: "",
