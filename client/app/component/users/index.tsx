@@ -41,20 +41,20 @@ export const Users = () => {
                }}
                align={'center'}
             >
-               <Input
+               {/* <Input
                   css={{width: '100%', maxW: '410px'}}
                   placeholder="Search users"
-               />
-               <SettingsIcon />
-               <TrashIcon />
-               <InfoIcon />
-               <DotsIcon />
+               /> */}
+               {/* <SettingsIcon /> */}
+               {/* <TrashIcon /> */}
+               {/* <InfoIcon /> */}
+               {/* <DotsIcon /> */}
             </Flex>
             <Flex direction={'row'} css={{gap: '$6'}} wrap={'wrap'}>
                <AddUser setListRefresh={setListRefresh} />
-               <Button auto iconRight={<ExportIcon />}>
+               {/* <Button auto iconRight={<ExportIcon />}>
                   Export to CSV
-               </Button>
+               </Button> */}
             </Flex>
          </Flex>
 

@@ -19,3 +19,18 @@ export const GET_FILES = gql`
     }
   }
 `;
+
+
+//////////// Sachin code for get file for one   particular document ////////////////////
+
+export const GET_ONE_FILE = gql`
+query GetOneFile($urn: String!){
+    getOneFile(input:{urn:$urn}) {
+      apsUrnKey
+      originalname
+      }  
+  }
+ `; 
+
+
+

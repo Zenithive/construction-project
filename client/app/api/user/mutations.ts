@@ -46,3 +46,13 @@ export const LOGIN_USER = gql`
     }
   }
 `;
+
+
+// sachin code
+export const DELETE_USER = gql`
+  mutation DeleteUser($userId: String!) {
+    deleteUser(input:{userId: $userId}) {
+      userId
+    }
+  }
+`;

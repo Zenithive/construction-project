@@ -14,3 +14,13 @@ export const CREATE_PROJECT = gql`
     }
   }
 `;
+
+
+// sachin code
+export const DELETE_PROJECT = gql`
+  mutation DeleteProject($projId: String!) {
+    deleteProject(input:{projId: $projId}) {
+      projId
+    }
+  }
+`;

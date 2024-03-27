@@ -9,16 +9,17 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { User, UserDocument, CreateUserInput, UserId, UpdateUserInput, LoginInput, Email, Token, CreateUserByAdmin } from './user.schema';
 
+
 @Injectable()
 export class UserService {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
   async getUsers() {
-    return this.userModel.find()
+    return this.userModel.find({status : {$ne:'Inactive'}})
   }
 
   async getUser(id: UserId) {
-    return this.userModel.findOne({ _id: id })
+    return this.userModel.findOne({ _id: id })   
   }
 
   async getUserByEmail(email: Email){
@@ -73,6 +74,24 @@ export class UserService {
       new: true
     });
   }
+
+
+// (*************************) Sachin Code (modified )
+  async deleteUser(id: string) {
+    const searchUser = {
+      userId: id
+    };
+    
+    const UpdateUser = {
+      status: 'Inactive'
+    }
+
+    return this.userModel.findOneAndUpdate(searchUser, UpdateUser).exec();
+
+
+  }
+
+  
 
   
 }

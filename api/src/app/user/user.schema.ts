@@ -208,4 +208,13 @@ export class UpdateUserInput {
   endDate!: Date;
 }
 
+
+// ##############    Sachin Edit 
+
+@InputType()
+export class DeleteUserInput {
+  @Field()
+  userId!: string;
+}
+
 export const UserSchema = SchemaFactory.createForClass(User);

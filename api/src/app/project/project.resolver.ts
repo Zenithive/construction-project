@@ -1,6 +1,6 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql'
 import { ProjectService } from './project.service'
-import { Project, CreateProjectInput } from './project.schema'
+import { Project, CreateProjectInput, DeleteProjectInput } from './project.schema'
 
 @Resolver()
 export class ProjectResolver {
@@ -17,5 +17,12 @@ export class ProjectResolver {
   async createProject(@Args('input') project: CreateProjectInput) {
     return this.projService.createProject(project);
   }
+
+  @Mutation(() => Project)
+  async deleteProject(@Args('input') project: DeleteProjectInput) {
+    return this.projService.deleteProject(project.projId);
+  }
+
+
 
 }
