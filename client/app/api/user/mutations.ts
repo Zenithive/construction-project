@@ -11,12 +11,14 @@ export const CREATE_USER = gql`
   }
 `;
 export const EDITE_USER = gql`
-  mutation EditUser( $email: String!, $password: String!, $lastName: String!, $firstName: String, $userId: String!) {
-    editUser(input: { email: $email, password: $password, lastName: $lastName, firstName: $firstName, userId: $userId }) {
+  mutation EditUser( $email: String!, $lastName: String!, $firstName: String, $userId: String!,$phoneNo: String!, $subscriptionId: Float!) {
+    editUser(input: { email: $email, lastName: $lastName, firstName: $firstName, userId: $userId ,phoneNo: $phoneNo, subscriptionId: $subscriptionId}) {
       email
       lastName
       firstName
       userId
+      phoneNo
+      subscriptionId
     }
   }
 `;

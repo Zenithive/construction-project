@@ -1,5 +1,5 @@
 import {Col, Row, Table, Tooltip} from '@nextui-org/react';
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {Box} from '../styles/box';
 import {USER_COLUMNS} from './users.data';
 import {RenderCell} from './user.render.cell';
@@ -20,13 +20,15 @@ import { IconButton } from '@mui/material';
 import { DELETE_USER } from 'client/app/api/user/mutations';
 import { useMutation } from '@apollo/client';
 import { User } from '../../../../api/src/app/user/user.schema';
+import { tree } from 'next/dist/build/templates/app-page';
 
 
 export interface UserLiserWrapperProps{
    listRefresh: boolean;
+   setUSERDATA:CallableFunction;
 }
 
-export const UserLiserWrapper = ({listRefresh}:UserLiserWrapperProps) => {
+export const UserLiserWrapper = ({listRefresh,setUSERDATA}:UserLiserWrapperProps) => {
 
    const { data, refetch } = useQuery(GET_USERS);
 
@@ -52,7 +54,13 @@ export const UserLiserWrapper = ({listRefresh}:UserLiserWrapperProps) => {
            }
         };
    
-   
+   //for edite
+   const [visible,setVisible]=React.useState(false);
+   const handleEditUser=(datas:any)=>{
+      console.log(datas);
+      setVisible(true)
+      setUSERDATA(datas);
+   }
 
 
    // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -62,19 +70,11 @@ export const UserLiserWrapper = ({listRefresh}:UserLiserWrapperProps) => {
          align="center"
          css={{'gap': '$8', '@md': {gap: 0}}}
       >
+       
          <Col css={{d: 'flex'}}>
             <Tooltip content="Edit user">
                <IconButton
-                  onClick={() => console.log('Edit Project', data)}
-               >
-                  <EyeIcon size={20} fill="#979797" />
-               </IconButton>
-            </Tooltip>
-         </Col>
-         <Col css={{d: 'flex'}}>
-            <Tooltip content="Edit user">
-               <IconButton
-                  onClick={() => console.log('Edit Project', data)}
+                  onClick={() =>handleEditUser(data)}
                >
                   <EditIcon size={20} fill="#979797" />
                </IconButton>

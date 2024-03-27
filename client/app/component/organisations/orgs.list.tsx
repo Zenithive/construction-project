@@ -91,15 +91,7 @@ export const OrgsListWrapper = ({listRefresh,setOrganizationData}:OrgsListWrappe
       align="center"
       css={{'gap': '$8', '@md': {gap: 0}}}
    >
-      <Col css={{d: 'flex'}}>
-         <Tooltip content="Details">
-            <IconButton
-               onClick={() => console.log('View user', data.orgId)}
-            >
-               <EyeIcon size={20} fill="#979797" />
-            </IconButton>
-         </Tooltip>
-      </Col>
+    
       <Col css={{d: 'flex'}}>
          <Tooltip content="Edit user">
             <IconButton

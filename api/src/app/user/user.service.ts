@@ -7,7 +7,7 @@ import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
 import { v4 as uuidv4 } from 'uuid'; 
 
-import { User, UserDocument, CreateUserInput, UserId, UpdateUserInput, LoginInput, Email, Token, CreateUserByAdmin } from './user.schema';
+import { User, UserDocument, CreateUserInput, UserId, UpdateUserInput, LoginInput, Email, Token, CreateUserByAdmin,EditUserByAdmin } from './user.schema';
 
 
 @Injectable()
@@ -67,6 +67,26 @@ export class UserService {
     
     user.userId = uuidv4()
     return this.userModel.create(user);
+  }
+  async editUser(user: EditUserByAdmin) {
+    const existinguser = await this.userModel.findOneAndUpdate({ userId: user.userId },{
+      $set:{
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        status: user.status,
+        phoneNo: user.phoneNo,
+        subscriptionId: user.subscriptionId,
+        updatedDate: user.updatedDate,
+        emailVerified:user.emailVerified,
+        isPasswordReset:user.isPasswordReset 
+      }
+    }, { new: true });
+    console.log(existinguser);
+    if (!existinguser) {
+      throw new Error('Organization not found');
+    }
+    return existinguser.save();
   }
 
   async updateUser(id: UserId, update: UpdateUserInput) {

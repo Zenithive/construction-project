@@ -12,6 +12,7 @@ import {AddUser} from './add-user';
 
 export const Users = () => {
    const [listRefresh, setListRefresh] = React.useState(false);
+   const [userData,setUSERDATA]=React.useState(null);
 
    return (
       <Flex
@@ -51,14 +52,14 @@ export const Users = () => {
                {/* <DotsIcon /> */}
             </Flex>
             <Flex direction={'row'} css={{gap: '$6'}} wrap={'wrap'}>
-               <AddUser setListRefresh={setListRefresh} />
+               <AddUser setListRefresh={setListRefresh} userData={userData} setUSERDATA={setUSERDATA} />
                {/* <Button auto iconRight={<ExportIcon />}>
                   Export to CSV
                </Button> */}
             </Flex>
          </Flex>
 
-         <UserLiserWrapper listRefresh={listRefresh} />
+         <UserLiserWrapper listRefresh={listRefresh} setUSERDATA={setUSERDATA}/>
       </Flex>
    );
 };

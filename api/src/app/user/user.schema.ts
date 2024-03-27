@@ -81,6 +81,9 @@ export class CreateUserInput {
   @Field({ nullable: true, defaultValue: DEFAULT_VALUES.userStatus })
   status!: string;
 
+  @Field({ nullable: true, defaultValue:"" })
+  phoneNo!: string;
+  
   @Field({defaultValue: new Date()})
   creationDate!: Date;
 
@@ -137,6 +140,45 @@ export class CreateUserByAdmin {
 
   @Field({defaultValue: true})
   isPasswordReset!: boolean;
+}
+
+@InputType()
+export class EditUserByAdmin {
+  @Field({ nullable: true })
+  email?: string;
+
+  @Field({defaultValue:""})
+  password?: string;
+
+  @Field({ nullable: true })
+  lastName?: string;
+
+  @Field({ nullable: true })
+  firstName?: string;
+
+  @Field({defaultValue: DEFAULT_VALUES.userStatus})
+  status?: string;
+
+  @Field({ nullable: true })
+  phoneNo?: string;
+
+  @Field({ defaultValue: DEFAULT_VALUES.subscriptionId, nullable: true })
+  subscriptionId?: number;
+
+  // @Field({defaultValue: new Date()})
+  // creationDate!: Date;
+
+  @Field({defaultValue: new Date()})
+  updatedDate?: Date;
+
+  @Field()
+  userId?: string;
+
+  @Field({defaultValue: false})
+  emailVerified?: boolean;
+
+  @Field({defaultValue: true})
+  isPasswordReset?: boolean;
 }
 
 @InputType()

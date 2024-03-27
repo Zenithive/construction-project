@@ -8,6 +8,8 @@ export const GET_USERS = gql`
       firstName
       status
       userId
+      phoneNo
+      subscriptionId
     }
   }
 `;

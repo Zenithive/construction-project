@@ -117,7 +117,7 @@ export default function Viewer() {
           <CssBaseline />
 
           <Box
-            sx={{ display: 'flex' }}
+            sx={{ display: 'flex', overflow: 'hidden' }}
           >
             <AppBar component="nav">
               <Toolbar>
