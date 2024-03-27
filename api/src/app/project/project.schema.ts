@@ -41,6 +41,12 @@ export class Project {
 }
 
 @InputType()
+export class DeleteProjectInput {
+  @Field()
+  projId!: string;
+}
+
+@InputType()
 export class CreateProjectInput {
   @Field()
   projId!: string;

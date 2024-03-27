@@ -1,7 +1,7 @@
 import { Model } from 'mongoose';
-import {  Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { File, FileDocument, UploadFileInput } from './file.schema';
+import { DeleteFileInput, File, FileDocument, UploadFileInput } from './file.schema';
 //import { FileStorageUtil } from '../util/file-storage.util';
 import { ApsForgeService } from '../aps-forge/aps.forge.service';
 
@@ -16,25 +16,47 @@ export class FileService {
 
     }
 
-    async getFiles(){
-        return this.fileModel.find();
+    async getFiles() {
+        return this.fileModel.find({status: { $ne: 'Inactive' } });
     }
 
 
-    async uploadFile(fileObject: UploadFileInput){
-        const apsFilesObject  = await this.apsForgeService.uploadObject(fileObject.originalname, fileObject.path);
+    async uploadFile(fileObject: UploadFileInput) {
+        const apsFilesObject = await this.apsForgeService.uploadObject(fileObject.originalname, fileObject.path);
         console.log("apsFilesObject 1", apsFilesObject)
         const apsUrnObj = await this.apsForgeService.translateObject(
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                this.apsForgeService.urnify(apsFilesObject.objectId as any), fileObject.zipEntryPoint
-            );
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            this.apsForgeService.urnify(apsFilesObject.objectId as any), fileObject.zipEntryPoint
+        );
         console.log("apsUrnObj 2", apsUrnObj)
         const nameWihUrnKey = {
             apsObjKey: apsFilesObject.objectId,
             apsUrnKey: apsUrnObj.urn
         }
-            
-        return await this.fileModel.create({...fileObject, ...nameWihUrnKey});
-      }
+
+        return await this.fileModel.create({ ...fileObject, ...nameWihUrnKey });
+    }
+
+    async deleteFile(fileId: string) {
+
+        const searchObj = {
+            fileId : fileId
+          };
+          const updateObj = {
+            status: "Inactive"
+          }
+
+          return this.fileModel.findOneAndUpdate(searchObj, updateObj).exec();
+        
+
+    }
+
+    async getFileByApsUrn(apsUrnKey: string){
+      
+    return await this.fileModel.findOne({apsUrnKey});
 
 }
+
+
+}
+

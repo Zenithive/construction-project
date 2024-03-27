@@ -17,3 +17,15 @@ export const SAVE_FILE_DATA = gql`
     }
   }
 `;
+
+
+export  const DELETE_FILE_MEMBERSH =  gql `
+   mutation DeleteFile($fileId: String!){
+     deleteFile(input:{fileId:$fileId}) {
+      fileId
+
+     }  
+   }
+`;
+
+

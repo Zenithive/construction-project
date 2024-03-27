@@ -14,8 +14,8 @@ export class ProjectService {
       private roleService: RoleService
       ) {}
 
-    async getProjects() {
-        return this.projModel.find();
+    async getProjects() { // Modified by Sachin  on 16-02-2024 to filter out the inactive projects
+        return this.projModel.find({ status: { $ne: 'Inactive' } });    
       }
 
     async createProject(project: CreateProjectInput){
@@ -49,5 +49,20 @@ export class ProjectService {
       }else {
         throw new Error('Project not created, error with database!');
       }
+    }
+
+
+    //Sachin code
+    async deleteProject(id: string) {
+      const searchObj = {
+        projId : id
+      };
+      const updateObj = {
+        status: "Inactive"
+      }
+      return this.projModel.findOneAndUpdate(searchObj, updateObj).exec();
+  
+
+      
     }
 }

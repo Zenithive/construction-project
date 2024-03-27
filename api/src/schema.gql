@@ -89,6 +89,18 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+input DeleteFileInput {
+  fileId: String!
+}
+
+input DeleteProjectInput {
+  projId: String!
+}
+
+input DeleteUserInput {
+  userId: String!
+}
+
 input Email {
   email: String!
 }
@@ -143,6 +155,9 @@ type Mutation {
   createProject(input: CreateProjectInput!): Project!
   createUser(input: CreateUserInput!): User!
   createUserByAdmin(input: CreateUserByAdmin!): User!
+  deleteFile(input: DeleteFileInput!): File!
+  deleteProject(input: DeleteProjectInput!): Project!
+  deleteUser(input: DeleteUserInput!): User!
   loginUser(input: LoginInput!): Token!
   updateUpermissions(input: CreateNewPermission!): Permission!
   updateUser(input: UpdateUserInput!): User!
@@ -205,6 +220,15 @@ type ReturnUserObj {
 
 type Role {
   isDefaultRole: Boolean
+  orgId: String!
+  orginatorId: String!
+  projId: String!
+  roleId: String!
+  roleName: String!
+  users: [String!]
+}
+
+type Role {
   orgId: String!
   orginatorId: String!
   projId: String!
