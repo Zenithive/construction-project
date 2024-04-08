@@ -17,6 +17,13 @@ import { GET_ONE_FILE } from '../api/file/queries';
 import { useLazyQuery, useQuery } from '@apollo/client';
 import { GetSingleFileInput } from '../../../api/src/app/file/file.schema';
 
+import * as React from 'react';
+import CircularProgress from '@mui/material/CircularProgress';
+import { AddBoxTwoTone } from '@mui/icons-material';
+// import Box from '@mui/material/Box';
+
+
+
 
 
 
@@ -41,10 +48,6 @@ export default function Viewer() {
     });
   }
 
-
-
-
-
   useEffect(() => {
     const urnId = searchParams.get('id');
 
@@ -63,7 +66,8 @@ export default function Viewer() {
   const [fileData, setFileData] = useState({
     tmpData: null, // s
     data: null,    // s
-    originalname: ''}
+    originalname: ''
+  }
   );
   const GetSingleFile = async (urn: string) => {
     // Define state variables to store file data
@@ -71,8 +75,8 @@ export default function Viewer() {
       variables: {
         urn
       }
-    });     
-    
+    });
+
     // Sachin Code
 
     setFileData((prevData) => ({
@@ -89,14 +93,22 @@ export default function Viewer() {
 
 
 
+
   //////  Downlaod file ////////////
 
 
+  const generateDownloadUrl = (tmpData: any) => {
 
 
+    const urnId = searchParams.get('id');
+    const downloadUrl = `${CONFIG.server_api}files/downloadFile/${urnId}`
+    const fileName = fileData.originalname || 'Untitled';
 
-
-
+    const anchorElement = document.createElement('a');
+    anchorElement.href = downloadUrl;
+    anchorElement.download = fileName;
+    anchorElement.click();
+  };
 
   return (
     <>
@@ -113,28 +125,31 @@ export default function Viewer() {
         }}
       />
       <ThemeProvider theme={theme}>
-        <Container component="main" maxWidth="xl" sx={{ padding: 0 }}>
+        <Box sx={{ paddingX: 0 }}>
           <CssBaseline />
 
           <Box
-            sx={{ display: 'flex' }}
+            sx={{ display: 'flex', overflowX: 'hidden' }}
           >
             <AppBar component="nav">
               <Toolbar>
-                <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                <Typography variant="h6" component="div" sx={{ flexGrow: 1, overflowX: 'hidden' }}>
                   Viewer/
                   {fileData.originalname}
                 </Typography>
-                <DownloadIcon className='Download-button' />
+                <DownloadIcon className='Download-button' onClick={generateDownloadUrl} />
               </Toolbar>
             </AppBar>
-            <Box component="main" >
-              {isJSLoader ? <h1>Loading....</h1> : <ViewerComponent urn={urn}></ViewerComponent>}
+            <Box >
+              {isJSLoader ? <h1>
+                {/* Loading.... */}
+                <CircularProgress />
+              </h1> : <ViewerComponent urn={urn}></ViewerComponent>}
             </Box>
 
           </Box>
 
-        </Container>
+        </Box>
       </ThemeProvider>
     </>
   );

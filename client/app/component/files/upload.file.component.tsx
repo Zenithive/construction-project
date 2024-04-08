@@ -8,6 +8,7 @@ import * as Yup from 'yup';
 import { Box, Grid } from '@mui/material';
 import axios from 'axios';
 import { CONFIG } from '../../constants/config.constant';
+import { BooleanLiteral } from 'typescript';
 
 const UploadFIleSchema = Yup.object().shape({
    fileName: Yup.string().required('Required'),
@@ -47,9 +48,10 @@ export const UploadFileComponent = (props: UploadFileProps) => {
       }
    }, [props.open]);
 
-   const closeHandler = () => {
+   const closeHandler = (resetFileFlag: boolean) => {
       setVisible(false);
       props.closeSet(false);
+      resetFileFlag && props.fileSet("");
    };
 
    const initValue = {
@@ -63,7 +65,7 @@ export const UploadFileComponent = (props: UploadFileProps) => {
 
       axios.post(`${CONFIG.server_api}files/upload`, formData, { headers: {"Content-Type": "multipart/form-data" } }).then(response => {
          response.data && props.fileSet(response.data);
-         closeHandler();
+         closeHandler(false);
          resetForm();
        });
    }
@@ -82,6 +84,10 @@ export const UploadFileComponent = (props: UploadFileProps) => {
 
     }
 
+    const o = () => {
+      console.log('O');
+    }
+
    return (
       <>
          <Modal
@@ -89,11 +95,11 @@ export const UploadFileComponent = (props: UploadFileProps) => {
             aria-labelledby="modal-title"
             width="600px"
             open={visible}
-            onClose={closeHandler}
+            onClose={closeHandler.bind(this, true)}
          >
             <Modal.Header css={{justifyContent: 'start'}}>
                <Text id="modal-title" h4>
-                  Upload new File
+                  Upload new Files
                </Text>
             </Modal.Header>
             <Divider css={{my: '$5'}} />
@@ -162,8 +168,8 @@ export const UploadFileComponent = (props: UploadFileProps) => {
             </Modal.Body>
             <Divider css={{my: '$5'}} />
             <Modal.Footer>
-               <Button variant='contained' type='submit' sx={{borderRadius: 3}} form="upload-file-form">
-                  Upload File
+               <Button onClick={o} variant='contained' type='submit' sx={{borderRadius: 3}} form="upload-file-form">
+                  Upload Files
                </Button>
             </Modal.Footer>
          </Modal>
