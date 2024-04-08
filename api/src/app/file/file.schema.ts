@@ -96,6 +96,10 @@ export class UploadFileInput {
   @Field()
   path!: string;
 
+  // @Prop()
+  @Field()
+  folderId!: string; ////////////
+
   @Field()
   orginatorId!: string;
 

@@ -13,11 +13,14 @@ export class FileResolver {
   async getFiles() {
     return this.fileService.getFiles();
   }
+
+  
   
   @Mutation(() => File)
-  async uploadFile(@Args('input') fileObject: UploadFileInput) {
+  async uploadFile(@Args('input') fileObject: UploadFileInput) { /////////
     fileObject.fileId = uuidv4();
     fileObject.revisionId = uuidv4();
+    //fileObject.folderId = folderId;  //////////////
     console.log("fileObject", fileObject)
     return this.fileService.uploadFile(fileObject);
   }
@@ -43,6 +46,14 @@ export class FileResolver {
     // Fetch file by apsUrnKey
     return await this.fileService.getFileByApsUrn(fileObj.urn);
   }
+
+
+  @Query(() => [File])  // New query resolver to get files by folderId
+  async getFilesByFolderId(@Args('input') folderId: string) {
+    // console.log("folderId", folderId)
+    return await  this.fileService.getFileByFolderId(folderId);
+  }
+
 
   
 }

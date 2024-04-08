@@ -1,14 +1,20 @@
 import {Divider, Modal, Text} from '@nextui-org/react';
 import Button from '@mui/material/Button';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import * as Yup from 'yup';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload'; 
 import { UploadFileComponent } from './upload.file.component';
 import ToastMessage from '../toast-message/ToastMessage';
 import { Box, Grid, TextField } from '@mui/material';
 import { FormikHelpers, useFormik } from 'formik';
-import { useMutation } from '@apollo/client';
+import { useLazyQuery, useMutation } from '@apollo/client';
 import { SAVE_FILE_DATA } from '../../api/file/mutations';
+import { toggleUploadModalInterface , FolderIdInterface } from 'client/app/files/page';
+// import { Folder } from '../../../../api/src/app/folder/folder.schema';
+// import { Folder } from '@mui/icons-material';
+import { useQuery } from '@apollo/client';
+import { GET_FILES_BY_FOLDER_ID } from 'client/app/api/file/queries';
+
 
 const FileObjSchema = Yup.object().shape({
    fileName: Yup.string().required('Required'),
@@ -23,6 +29,8 @@ const FileObjSchema = Yup.object().shape({
    path: string;
    size: number;
    extension: string;
+   folderId: string;
+   
  }
 
  export interface FileSchemaType{
@@ -40,14 +48,19 @@ const FileObjSchema = Yup.object().shape({
    userId: string;
    projectId: string;
    fileId?: string;
+   folderId: string;  // this is the id of the parent folder
  }
 
  export interface AddFilesProps {
-   setListRefresh: React.Dispatch<React.SetStateAction<boolean>>
+   setListRefresh: React.Dispatch<React.SetStateAction<boolean>>;
+   toggleUploadModalHook: toggleUploadModalInterface;
+   folderIdHook: FolderIdInterface; ////////
+   
  }
 
 
-export const AddFile = ({setListRefresh}:AddFilesProps) => {
+export const AddFile = ({setListRefresh, toggleUploadModalHook,folderIdHook }:AddFilesProps) => {
+
    const initValue:FileSchemaType = {
       fileName: "",
       originalname: "",
@@ -60,6 +73,9 @@ export const AddFile = ({setListRefresh}:AddFilesProps) => {
       revision: "",
       userId: "a",
       projectId: "v",
+      folderId:""
+      
+      
    }
    const [saveFileData, { data, error, loading }] = useMutation(SAVE_FILE_DATA);
    const [visible, setVisible] = React.useState(false);
@@ -74,13 +90,23 @@ export const AddFile = ({setListRefresh}:AddFilesProps) => {
       formik.resetForm();
    };
 
+
+       
+
    useEffect(()=>{
       console.log("fileData", fileData)
+      console.log("folderIdHook.folderId", folderIdHook.folderId)
       if(fileData && fileData?.fileName){
          setInitFileData();
          openFileDataModal();
       }
-   }, [fileData]);
+
+      if(toggleUploadModalHook.isUploadModalOpen){
+         fileUploadDialogOpen();
+      }else{
+         toggleUploadModalHook.setIsUploadModalOpen(false);
+      } 
+   }, [fileData, toggleUploadModalHook.isUploadModalOpen,folderIdHook.folderId]);
 
    const setInitFileData = () => {
       
@@ -89,21 +115,28 @@ export const AddFile = ({setListRefresh}:AddFilesProps) => {
       formik.setFieldValue("path", fileData.path);
       formik.setFieldValue("extension", fileData.extension || "");
       formik.setFieldValue("size", fileData.size);
+      // formik.setFieldValue("folderId", fileData.folderId);
    }
-
-   const submitForm = async (values: FileSchemaType,{ setSubmitting }:FormikHelpers<FileSchemaType>) => {
+   
+   const submitForm = async (values: FileSchemaType,{ setSubmitting }:FormikHelpers<FileSchemaType>, ) => {
       setSubmitting(true);
+      
       const res = await saveFileData({
          variables: {
             ...values,
+
+            folderId : folderIdHook.folderId,  // this is  folderId
+            
+            
          },
       });
+      
 
 
       const fileName:string|null = res.data?.uploadFile?.fileName;
       if(fileName){
          closeHandler();
-         setListRefresh((flag:boolean)=>!flag);
+         setListRefresh((boolFlag:boolean)=>!boolFlag);
       }
       
       setSubmitting(false);
@@ -117,11 +150,11 @@ export const AddFile = ({setListRefresh}:AddFilesProps) => {
 
    return (
       <>
-         <Button component="label" onClick={fileUploadDialogOpen} sx={{borderRadius: 3}} variant="contained" startIcon={<CloudUploadIcon />}>
+          <Button component="label" onClick={fileUploadDialogOpen} sx={{borderRadius: 3}} variant="contained" startIcon={<CloudUploadIcon />}>
             Upload file
-         </Button>
+         </Button>   
 
-         <UploadFileComponent closeSet={setIsUploadFileOpen} open={isUploadFileOpen} fileSet={setFileData} ></UploadFileComponent>
+         <UploadFileComponent closeSet={()=>{setIsUploadFileOpen(false);toggleUploadModalHook.setIsUploadModalOpen(false);closeHandler()}} open={isUploadFileOpen} fileSet={setFileData} ></UploadFileComponent>
 
          <Modal
             closeButton
@@ -218,6 +251,7 @@ export const AddFile = ({setListRefresh}:AddFilesProps) => {
                      />
                   </Grid>
                   
+                  
                </Grid>
           </Box>
             </Modal.Body>
@@ -231,3 +265,5 @@ export const AddFile = ({setListRefresh}:AddFilesProps) => {
       </>
    );
 };
+
+

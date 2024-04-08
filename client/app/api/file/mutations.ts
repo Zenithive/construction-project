@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
 export const SAVE_FILE_DATA = gql`
-  mutation UploadFile($fileName: String!, $originalname: String!, $path: String!, $status: String!, $orginatorId: String! ,$extension: String!, $size: Float!, $docRef: String!, $revision: String!, $projectId: String!, $userId: String!) {
-    uploadFile(input: { fileName: $fileName, originalname: $originalname, path: $path, status: $status, orginatorId: $orginatorId, extension: $extension, size: $size, docRef: $docRef, revision: $revision, projectId: $projectId, userId: $userId }) {
+  mutation UploadFile($fileName: String!, $originalname: String!, $path: String!, $status: String!, $orginatorId: String! ,$extension: String!, $size: Float!, $docRef: String!, $revision: String!, $projectId: String!, $userId: String!,$folderId: String!) {
+    uploadFile(input: { fileName: $fileName, originalname: $originalname, path: $path, status: $status, orginatorId: $orginatorId, extension: $extension, size: $size, docRef: $docRef, revision: $revision, projectId: $projectId, userId: $userId,folderId: $folderId }) {
       fileName
       originalname
       path
@@ -14,6 +14,7 @@ export const SAVE_FILE_DATA = gql`
       revision
       projectId
       userId
+      folderId
     }
   }
 `;

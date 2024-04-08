@@ -1,6 +1,6 @@
 "use client"
 import {Button, Input} from '@nextui-org/react';
-import React from 'react';
+import React, { useState } from 'react';
 import {DotsIcon} from '../component/icons/accounts/dots-icon';
 import {ExportIcon} from '../component/icons/accounts/export-icon';
 import {InfoIcon} from '../component/icons/accounts/info-icon';
@@ -15,9 +15,44 @@ import { Box } from '@mui/material';
 
 /* eslint-disable-next-line */
 export interface FilesProps {}
+export interface toggleUploadModalInterface {
+   isUploadModalOpen: Boolean; 
+   setIsUploadModalOpen: CallableFunction;
+}
+
+/////////////////
+export interface FolderIdInterface {
+   folderId: string;
+   setFolderId: (nodeIds: string) => void;
+ }
+
+const useToggleUploadModal = ():toggleUploadModalInterface => {
+   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+
+   return {
+      isUploadModalOpen,
+      setIsUploadModalOpen
+   }
+}
+
+//////////////
+const useFolderId = (initialFolderId: string): FolderIdInterface => {
+   const [folderId, setFolderId] = useState(initialFolderId);
+ 
+   return {
+     folderId,
+     setFolderId(nodeIds: string) {
+        setFolderId(nodeIds);
+     }
+   };
+ };
+
+
 
 export default function Files(props: FilesProps) {
    const [listRefresh, setListRefresh] = React.useState(false);
+   const folderIdHook = useFolderId('');  ////////
+   const toggleUploadModalHook = useToggleUploadModal();
 
   return (
     <Flex
@@ -57,7 +92,10 @@ export default function Files(props: FilesProps) {
              <DotsIcon /> */}
           </Flex>
           <Flex direction={'row'} css={{gap: '$6'}} wrap={'wrap'}>
-             <AddFile setListRefresh={setListRefresh} />
+             <AddFile setListRefresh={setListRefresh} toggleUploadModalHook={toggleUploadModalHook} 
+             folderIdHook={folderIdHook} 
+             />
+             
              {/* <Button auto iconRight={<ExportIcon />}>
                 Export to CSV
              </Button> */}
@@ -66,10 +104,10 @@ export default function Files(props: FilesProps) {
 
        <Flex>
          <Box component="div" sx={{flex: 1}}>
-            <FolderTree />
+            <FolderTree toggleUploadModalHook={toggleUploadModalHook}  folderIdHook={folderIdHook}/>
          </Box>
          <Box component="div" sx={{flex: 4}}>
-            <FilesListWrapper listRefresh={listRefresh} />
+            <FilesListWrapper folderIdHook={folderIdHook} listRefresh={listRefresh} />
          </Box>
        </Flex>
 
