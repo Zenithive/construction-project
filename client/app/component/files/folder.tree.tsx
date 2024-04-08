@@ -12,6 +12,21 @@ import { useMutation, useQuery } from '@apollo/client';
 import { CREATE_NEW_FOLDER } from '../../api/folder/mutations';
 import { GET_FOLDERS } from '../../api/folder/queries';
 
+import { UploadFileComponent } from './upload.file.component'; // Sachin code 
+import { toggleUploadModalInterface, FolderIdInterface } from 'client/app/files/page';
+
+
+export interface FileMetadataType{   ///
+        fileName: string;
+        originalName: string;
+        path: string;
+        size: number;
+        extension: string;
+        folderId: string;
+      }
+
+
+
 const AddFolderSchema = Yup.object().shape({
     folderName: Yup.string().required('Required')
  });
@@ -45,11 +60,29 @@ interface TreeListingProps{
     andChangeFlag: CallableFunction;
 }
 
-export const FolderTree = () => {
+interface FolderTreeInterface{
+    toggleUploadModalHook: toggleUploadModalInterface;
+    folderIdHook: FolderIdInterface;
+}
+
+export const FolderTree = ({toggleUploadModalHook, folderIdHook}: FolderTreeInterface) => {
 
     const { data, refetch } = useQuery(GET_FOLDERS);
     const [ listRefresh, setListRefresh ] = useState(false);
     const [firstFolderFlag, setFirstFolderFlag] = useState(false);
+    const [isUploadFileOpen, setIsUploadFileOpen] = useState(false); /// Sachin Code
+    const [fileData, setFileData] = useState({} as FileMetadataType); /// Sachin code
+    
+    
+    const fileUploadDialogOpen = () => {
+        
+        
+        toggleUploadModalHook.setIsUploadModalOpen(true);
+    } /// Sachin Code
+
+
+    
+    
     
     useEffect(()=>{
       refetch();
@@ -113,9 +146,11 @@ export const FolderTree = () => {
                         <ListItemIcon>
                             <CloudUpload fontSize="small" />
                         </ListItemIcon>
-                        <ListItemText>Upload File</ListItemText>
+                        <ListItemText onClick={fileUploadDialogOpen}  >Upload File </ListItemText>
                     </MenuItem>
                 </Menu>
+                
+                
             </>
         );
     }
@@ -162,6 +197,7 @@ export const FolderTree = () => {
 
         const parentFolderId = parentFolder.id || "-1";
         const addFolderSubmit = async (values: {folderName:string},{ setSubmitting, resetForm }:any) => {
+            console.log("values", values)
             const folderRespond = await createNewFolder({
                 variables: {
                     folderName: values.folderName,
@@ -174,6 +210,7 @@ export const FolderTree = () => {
             });
 
             const folderId:string|null = folderRespond.data?.createNewFolder?.folderId;
+            
             if(folderId){
                 resetForm();
                 setListRefresh((val)=>!val);
@@ -193,7 +230,7 @@ export const FolderTree = () => {
         return (
             <TreeItem nodeId={`${Math.random()}`} label={
                 <Box
-                    id='add-project-form'
+                    id='add-folder-form'
                     component="form"
                     noValidate
                     onSubmit={addFolderformik.handleSubmit}
@@ -217,7 +254,7 @@ export const FolderTree = () => {
                             />
                         </Grid>
                         <Grid sx={{verticalAlign: "center", display: "flex"}} item xs={2}>
-                            <IconButton aria-describedby="add-folder-submit" type='submit' sx={{p: 0}} disabled={loading}>                                
+                            <IconButton aria-describedby="add-folder-submit" type='submit' sx={{p: 0}} disabled={loading} form="add-folder-form">                                
                                 {loading ? <CircularProgress size={20} /> : <Check />}
                             </IconButton>
                             <IconButton aria-describedby="add-folder-cancel" type='button' onClick={closeAddFolder} sx={{p: 0}} disabled={loading}>
@@ -234,6 +271,17 @@ export const FolderTree = () => {
     }
 
     const handleTreeViewEvent = (event:React.MouseEvent<HTMLUListElement>)=>{
+        // console.log("folderId", nodeIds);
+        // folderIdHook.setFolderId(nodeIds);
+    }
+
+    const handleTreeViewEvent2 = (event: React.SyntheticEvent<Element, Event>, nodeIds: string)=>{
+        console.log("nodeIds", nodeIds)
+        if(isNaN(Number(nodeIds))){
+            console.log("nodeIds 1", nodeIds)
+            folderIdHook.setFolderId(nodeIds); /////////////
+            
+        }
         
     }
 
@@ -291,6 +339,7 @@ export const FolderTree = () => {
             aria-label="file system navigator"
             defaultCollapseIcon={<ExpandMoreIcon />}
             defaultExpandIcon={<ChevronRightIcon />}
+            onNodeSelect={handleTreeViewEvent2}
             onClick={handleTreeViewEvent}
         >
             <TreeListing parentFolder={{} as FolderMetaData} folderData={formatData(data)} folderHook={useToggleAddFolder} newflag={firstFolderFlag} andChangeFlag={parentStpl}></TreeListing>

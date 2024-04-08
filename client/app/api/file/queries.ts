@@ -34,3 +34,25 @@ query GetOneFile($urn: String!){
 
 
 
+
+export const GET_FILES_BY_FOLDER_ID = gql`
+  query GetFilesByFolderId($folderId: String!) {
+    getFilesByFolderId(input:$folderId) {
+      fileName
+      originalname
+      path
+      status
+      orginatorId
+      extension
+      size
+      docRef
+      revision
+      projectId
+      userId
+      fileId
+      apsUrnKey
+    }
+  }
+`;
+
+

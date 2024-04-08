@@ -2,8 +2,8 @@ import {Col, Row, Tooltip} from '@nextui-org/react';
 import { GridOptions } from 'ag-grid-community';
 import React, { useEffect, useState } from 'react';
 import {RenderCell} from './file-render-cell';
-import { useMutation, useQuery } from '@apollo/client';
-import { GET_FILES } from '../../api/file/queries';
+import { useLazyQuery, useMutation, useQuery } from '@apollo/client';
+import { GET_FILES, GET_FILES_BY_FOLDER_ID } from '../../api/file/queries';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 import { AgGridReact } from 'ag-grid-react'; // React Grid Logic
@@ -16,22 +16,20 @@ import { DeleteIcon } from '../icons/table/delete-icon';
 // Sachin Import  ******************
 
 import {DELETE_FILE_MEMBERSH} from 'client/app/api/file/mutations'
+import { FolderIdInterface } from 'client/app/files/page';
 
 export interface FilesListWrapperProps{
    listRefresh: boolean;
+   folderIdHook: FolderIdInterface;
 }
 
-export const FilesListWrapper = ({listRefresh}:FilesListWrapperProps) => {
+export const FilesListWrapper = ({listRefresh,folderIdHook}:FilesListWrapperProps) => {
 
-   const { data, refetch } = useQuery(GET_FILES);
+   const { data, refetch } = useQuery(GET_FILES_BY_FOLDER_ID , {
+      variables : {folderId: (folderIdHook.folderId || "")}, ///
+   });
 
-   const [rowData, setRowData] = useState([
-      { make: "Tesla", model: "Model Y", price: 64950, electric: true },
-      { make: "Ford", model: "F-Series", price: 33850, electric: false },
-      { make: "Toyota", model: "Corolla", price: 29600, electric: false },
-    ]);
-
-
+   
     // Sachin Code to delete the files
 
     // Define the deleteProject mutation function
@@ -40,8 +38,6 @@ export const FilesListWrapper = ({listRefresh}:FilesListWrapperProps) => {
 
      // Function to handle project deletion
      const handleDeleteFiles = async (fileId: string, newData: any) => {
-      console.log("fileId", fileId)
-      console.log("newData", newData)
         try {
            // Execute the deleteFile mutation with the fieldId as variable
            await deleteFile({ variables: { fileId } });
@@ -51,12 +47,6 @@ export const FilesListWrapper = ({listRefresh}:FilesListWrapperProps) => {
            console.error('Error deleting project:', error);
         }
      };
-
-    
-
-
-
-
 
 
 
@@ -148,15 +138,17 @@ export const FilesListWrapper = ({listRefresh}:FilesListWrapperProps) => {
     };
     
    useEffect(()=>{
+      console.log("folderIdHook.folderId", folderIdHook.folderId)
       refetch();
-   }, [listRefresh, refetch]);
+      
+   }, [listRefresh, refetch, folderIdHook.folderId]);
    
    return (
       <Box
       >
          <Box component="div" className='ag-theme-quartz' sx={{height: '100%', mt: 2}}>
             <AgGridReact 
-               rowData={data?.getFiles || []} 
+               rowData={data?.getFilesByFolderId || []} 
                columnDefs={colDefs}
                gridOptions={gridOptions}
 
