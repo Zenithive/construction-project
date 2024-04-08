@@ -67,4 +67,18 @@ export class CreateNewRole {
   isDefaultRole!: boolean;
 }
 
+@InputType()
+export class DeleteRoleInput {
+  @Field()
+  roleId!: string;
+}
+
+@InputType()
+export class UpdateRoleInput {
+  @Field()
+  roleId!: string;
+
+  @Field(() => [String])
+  users!: string[];
+}
 export const RoleSchema = SchemaFactory.createForClass(Role);

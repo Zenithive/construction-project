@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory  } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { ObjectType, Field, InputType} from '@nestjs/graphql';
+import { ObjectType, Field, InputType,Int} from '@nestjs/graphql';
 
 export type ProjectDocument = Project & Document;
 
@@ -38,6 +38,34 @@ export class Project {
   @Prop()
   @Field({ nullable: true })
   orgId!: string;
+
+
+}
+
+@ObjectType()
+export class PaginationResult {
+  @Field(() => Int)
+  totalProjects!: number;
+
+  @Field(() => Int)
+  totalPages!: number;
+
+  @Field(() => [Project])
+  projects!: Project[];
+ 
+  @Field(() => Int)
+  currentPage!: number;
+}
+
+@InputType()
+export class PaginationInput{
+  @Prop()
+  @Field()
+  pageSize!: number;
+
+  @Prop()
+  @Field()
+  currentPage!: number;
 }
 
 @InputType()

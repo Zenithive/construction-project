@@ -1,10 +1,11 @@
 import {Divider, Modal, Text} from '@nextui-org/react';
-import React from 'react';
+import React, { useEffect } from 'react';
 import * as Yup from 'yup';
 import { Box, Button, Grid, TextField } from '@mui/material';
 import { useFormik } from 'formik';
 import { useMutation } from '@apollo/client';
 import { CREATE_ORGANISATION } from '../../api/organisation/mutations';
+import { EDITE_ORGANISATION } from '../../api/organisation/mutations';
 
 const OrganisationSchema = Yup.object().shape({
    contact: Yup.string().required('Required'),
@@ -20,28 +21,44 @@ export interface OrganisationTypes {
    orgName: string;
    orgId: string;
  }
+ 
 
  export interface AddOrganisationProps {
    setListRefresh: React.Dispatch<React.SetStateAction<boolean>>
+   organizationData: OrganisationTypes | null;
+   setOrganizationData:CallableFunction;
  }
 
-export const AddOrganisation = ({setListRefresh}:AddOrganisationProps) => {
+export const AddOrganisation = ({setListRefresh,organizationData,setOrganizationData }:AddOrganisationProps) => {
    const initValue: OrganisationTypes = {
-      region: "",
-      website: "",
-      orgName: "",
-      contact: "",
-      orgId: "1r"
+      region: organizationData?.region || "",
+      website: organizationData?.website || "",
+      orgName: organizationData?.orgName || "",
+      contact: organizationData?.contact || "",
+      orgId: organizationData?.orgId || "1r"
     }
 
+
+    useEffect(()=>{
+      console.log(organizationData)
+      if (organizationData) {
+         formik.setValues(organizationData); 
+         handler(); 
+      }
+    }, [organizationData]);
+   
+   
    const [visible, setVisible] = React.useState(false);
    const handler = () => setVisible(true);
    const [createOrg, { data, error, loading }] = useMutation(CREATE_ORGANISATION);
+   const[editOrg]=useMutation(EDITE_ORGANISATION);
 
    const closeHandler = () => {
       setVisible(false);
       formik && formik.resetForm();
+      setOrganizationData(null);
    };
+   
 
    // eslint-disable-next-line @typescript-eslint/no-explicit-any
    const addNewOrganisation = async (values: OrganisationTypes,{ setSubmitting, resetForm }:any) => {
@@ -61,24 +78,48 @@ export const AddOrganisation = ({setListRefresh}:AddOrganisationProps) => {
       if(orgId){
          closeHandler();
          setListRefresh((flag:boolean)=>!flag);
-         //dispatch(addUser({token : token}));
-         //router.push("/dashboard");
+       
       }
       
       setSubmitting(false);
    }
 
-   const formik = useFormik({
-      initialValues: initValue,
+
+
+    const updateOrg = async (values: OrganisationTypes,{ setSubmitting, resetForm }:any) => {
+      setSubmitting(true);
+      const res = await editOrg({
+         variables: {
+            contact: values.contact,
+            region: values.region,
+            website: values.website,
+            orgName: values.orgName,
+            orgId: values.orgId,
+         },
+      });
+
+
+      const orgId:string|null = res.data?.editOrg?.orgId;
+      if(orgId){
+         closeHandler();
+         setListRefresh((flag:boolean)=>!flag);
+         setOrganizationData(null);
+      }
+      
+      setSubmitting(false);
+   }
+   
+   const formik= useFormik({
+      initialValues: initValue, 
       validationSchema: OrganisationSchema,
-      onSubmit: addNewOrganisation,
+      onSubmit:organizationData ? updateOrg : addNewOrganisation,
     });
 
    return (
       <>
-         <Button variant='contained' onClick={handler} sx={{borderRadius: 3}}>
-            Add Organisation
-         </Button>
+          <Button variant='contained' onClick={handler} sx={{borderRadius: 3}}>
+               Add Organisation
+            </Button>
          <Modal
             closeButton
             aria-labelledby="modal-title"
@@ -86,11 +127,13 @@ export const AddOrganisation = ({setListRefresh}:AddOrganisationProps) => {
             open={visible}
             onClose={closeHandler}
          >
+            
             <Modal.Header css={{justifyContent: 'start'}}>
-               <Text id="modal-title" h4>
-                  Add new organisation
+              <Text id="modal-title" h4>
+              {organizationData ? "Edit Organisation" : "Add Organisation"}
                </Text>
             </Modal.Header>
+            
             <Divider css={{my: '$5'}} />
             <Modal.Body css={{py: '$10'}}>
             <Box
@@ -167,7 +210,7 @@ export const AddOrganisation = ({setListRefresh}:AddOrganisationProps) => {
             <Divider css={{my: '$5'}} />
             <Modal.Footer>
                <Button disabled={loading} style={{borderRadius: 10}} variant="contained" type='submit' form="add-org-form">
-                  Add Organisation
+               {organizationData ? "Edit Organisation" : "Add Organisation"}
                </Button>
             </Modal.Footer>
          </Modal>

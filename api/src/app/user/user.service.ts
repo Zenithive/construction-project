@@ -6,17 +6,49 @@ import { InjectModel } from '@nestjs/mongoose';
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
 import { v4 as uuidv4 } from 'uuid'; 
+import { Document } from 'mongoose';
 
-import { User, UserDocument, CreateUserInput, UserId, UpdateUserInput, LoginInput, Email, Token, CreateUserByAdmin } from './user.schema';
+import { User, UserDocument, CreateUserInput, UserId, UpdateUserInput, LoginInput, Email, Token, CreateUserByAdmin,EditUserByAdmin ,PaginationInputs} from './user.schema';
 
 
 @Injectable()
 export class UserService {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
-  async getUsers() {
-    return this.userModel.find({status : {$ne:'Inactive'}})
-  }
+  // async getUsers() {
+  //   return this.userModel.find({status : {$ne:'Inactive'}})
+  // }
+  async getUsers(paginationInput: PaginationInputs) {
+    try {
+        const { pageSize, currentPage } = paginationInput;
+        const skip = pageSize * (currentPage - 1);
+
+        const totalUsers = await this.userModel.countDocuments({ status: { $ne: 'Inactive' } });
+        const totalPages = Math.ceil(totalUsers / pageSize);
+
+        const users = await this.userModel
+            .find({ status: { $ne: 'Inactive' } })
+            .skip(skip)
+            .limit(pageSize)
+            .exec();
+
+        // Ensure users is never null, even if no users found
+        const formattedUsers = users.map((user: Document) => user.toObject() as User) || [];
+
+        return {
+            users: formattedUsers,
+            totalUsers,
+            totalPages,
+            currentPage,
+        };
+    } catch (error) {
+        // Handle any errors that occur during data fetching
+        console.error("Error fetching users:", error);
+        throw new Error("Failed to fetch users");
+    }
+}
+
+
 
   async getUser(id: UserId) {
     return this.userModel.findOne({ _id: id })   
@@ -67,6 +99,26 @@ export class UserService {
     
     user.userId = uuidv4()
     return this.userModel.create(user);
+  }
+  async editUser(user: EditUserByAdmin) {
+    const existinguser = await this.userModel.findOneAndUpdate({ userId: user.userId },{
+      $set:{
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        status: user.status,
+        phoneNo: user.phoneNo,
+        subscriptionId: user.subscriptionId,
+        updatedDate: user.updatedDate,
+        emailVerified:user.emailVerified,
+        isPasswordReset:user.isPasswordReset 
+      }
+    }, { new: true });
+    console.log(existinguser);
+    if (!existinguser) {
+      throw new Error('Organization not found');
+    }
+    return existinguser.save();
   }
 
   async updateUser(id: UserId, update: UpdateUserInput) {

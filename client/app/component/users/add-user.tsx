@@ -1,5 +1,5 @@
 import {Divider, Modal, Text} from '@nextui-org/react';
-import React from 'react';
+import React,{useEffect} from 'react';
 import { Autocomplete, Box, Button, Grid, TextField } from '@mui/material';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -7,6 +7,8 @@ import { useMutation } from '@apollo/client';
 import { SUBSCRIPTION_LIST } from '../../constants/subscription.constant';
 import { CREATE_USER_BY_ADMIN } from '../../api/user/mutations';
 import ToastMessage from '../toast-message/ToastMessage';
+import { EDITE_USER } from '../../api/user/mutations';
+
 
 
 const UserSchema = Yup.object().shape({
@@ -23,37 +25,53 @@ export interface UserTypes {
    lastName: string;
    firstName: string;
    userId: string;
-   phoneNo: number | "";
+   phoneNo: string | "";
    subscriptionId: number;
  }
 
  export interface AddUserProps {
    setListRefresh: React.Dispatch<React.SetStateAction<boolean>>
+   userData:UserTypes|null;
+   setUSERDATA:CallableFunction;
  }
 
-export const AddUser = ({setListRefresh}:AddUserProps) => {
+export const AddUser = ({setListRefresh,userData,setUSERDATA}:AddUserProps) => {
    const initValue: UserTypes = {
-      email: "",
-      lastName: "",
-      firstName: "",
-      userId: "",
-      phoneNo: "",
-      subscriptionId: 1
+      email:userData?.email||"",
+      lastName:userData?.lastName|| "",
+      firstName:userData?.firstName||"",
+      userId: userData?.userId||"",
+      phoneNo:userData?.phoneNo|| "",
+      subscriptionId:userData?.subscriptionId||1
    }
-   const defaultSubscriptionOption = SUBSCRIPTION_LIST.find((elem) => elem.key === initValue.subscriptionId);
 
+   useEffect(() => {
+      if (userData) {
+         console.log("userData", userData)
+         formik.setValues(userData); 
+         formik.setFieldValue("subscriptionId", (userData.subscriptionId && userData.subscriptionId > -1) ? userData.subscriptionId : "");
+         handler();
+         //userData ? UpdateUsers : 
+      }
+   }, [userData]);
+   
+
+   const defaultSubscriptionOption = SUBSCRIPTION_LIST.find((elem) => elem.key === initValue.subscriptionId);
    const [visible, setVisible] = React.useState(false);
    const handler = () => setVisible(true);
 
+ 
    const closeHandler = () => {
       setVisible(false);
-      formik.resetForm();
+      formik && formik.resetForm();
+      setUSERDATA(null);
    };
-
    const [createUserByAdmin, { data, error, loading }] = useMutation(CREATE_USER_BY_ADMIN);
 
    // eslint-disable-next-line @typescript-eslint/no-explicit-any
    const addNewUser = async (values: UserTypes,{ setSubmitting }:any) => {
+      console.log("createUser",createUserByAdmin)
+      console.log("values",values)
       setSubmitting(true);
       const res = await createUserByAdmin({
          variables: {
@@ -71,18 +89,55 @@ export const AddUser = ({setListRefresh}:AddUserProps) => {
       if(userEmail){
          closeHandler();
          setListRefresh((flag:boolean)=>!flag);
-         //dispatch(addUser({token : token}));
-         //router.push("/dashboard");
       }
       
       setSubmitting(false);
    }
 
+   const [editUser]=useMutation(EDITE_USER);
+
+    const UpdateUsers = async (values: UserTypes,{ setSubmitting }:any) => {
+      console.log("editUser",editUser);
+      console.log("values",values)
+      setSubmitting(true);
+      const res = await editUser({
+         variables: {
+            email: values.email,
+            userId: values.userId,
+            firstName: values.firstName,
+            lastName: values.lastName,
+            phoneNo: values.phoneNo,
+            subscriptionId: values.subscriptionId
+         },
+      });
+      console.log("res",res);
+
+      const userEmail:string|null = res.data?.editUser?.email;
+      if(userEmail){
+         closeHandler();
+         setListRefresh((flag:boolean)=>!flag);
+         setUSERDATA(null);
+      }
+      
+      setSubmitting(false);
+      console.log(UpdateUsers);
+   }
+
+   const handleSubmitMethod = (values: UserTypes,{ setSubmitting }:any) => {
+      if(userData){
+         UpdateUsers(values,{ setSubmitting });
+      }else{
+
+         addNewUser(values,{ setSubmitting });
+      }
+   }
+
    const formik = useFormik({
       initialValues: initValue,
       validationSchema: UserSchema,
-      onSubmit: addNewUser,
+      onSubmit: handleSubmitMethod,
     });
+
 
    return (
       <>
@@ -98,7 +153,7 @@ export const AddUser = ({setListRefresh}:AddUserProps) => {
          >
             <Modal.Header css={{justifyContent: 'start'}}>
                <Text id="modal-title" h4>
-                  Add new user
+               {userData ? "Edit User" : "Add User"}
                </Text>
 
                <ToastMessage 
@@ -214,7 +269,7 @@ export const AddUser = ({setListRefresh}:AddUserProps) => {
             <Divider css={{my: '$5'}} />
             <Modal.Footer>
                <Button disabled={loading} style={{borderRadius: 10}} variant="contained" type='submit' form="add-user-form">
-                  Add User
+               {userData ? "Edit User" : "Add User"}
                </Button>
             </Modal.Footer>
          </Modal>

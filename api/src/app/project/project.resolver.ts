@@ -1,6 +1,6 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql'
 import { ProjectService } from './project.service'
-import { Project, CreateProjectInput, DeleteProjectInput } from './project.schema'
+import { Project, CreateProjectInput, DeleteProjectInput,PaginationInput, PaginationResult } from './project.schema'
 
 @Resolver()
 export class ProjectResolver {
@@ -8,9 +8,9 @@ export class ProjectResolver {
     private projService: ProjectService,
   ) {}
 
-  @Query(() => [Project])
-  async getProjects() {
-    return this.projService.getProjects();
+  @Query(() => PaginationResult)
+  async getProjects(@Args('input') project:PaginationInput) {
+    return this.projService.getProjects(project);
   }
 
   @Mutation(() => Project)

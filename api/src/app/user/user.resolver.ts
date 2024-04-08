@@ -1,6 +1,6 @@
 import { Resolver, Query, Mutation, Args, Context, GraphQLExecutionContext } from '@nestjs/graphql'
 
-import { User, CreateUserInput, UserId, UpdateUserInput, LoginInput, Email, Token, CreateUserByAdmin, Message, DeleteUserInput } from './user.schema';
+import { User, CreateUserInput, UserId, UpdateUserInput, LoginInput, Email, Token, CreateUserByAdmin, Message, DeleteUserInput,EditUserByAdmin,PaginationInputs,PaginationResults } from './user.schema';
 import { UserService } from './user.service'
 import { UseGuards } from '@nestjs/common';
 import { AuthGuard } from '../auth/auth.guard';
@@ -13,9 +13,9 @@ export class UserResolver {
     private userService: UserService,
   ) {}
 
-  @Query(() => [User])
-  async getUsers() {
-    return this.userService.getUsers()
+  @Query(() => PaginationResults)
+  async getUsers(@Args('input') project:PaginationInputs) {
+    return this.userService.getUsers(project);
   }
 
   @Query(() => User)
@@ -56,6 +56,11 @@ export class UserResolver {
   @Mutation(() => User)
   async createUserByAdmin(@Args('input') user: CreateUserByAdmin) {
     return this.userService.createUserByAdmin(user);
+  }
+
+  @Mutation(() => User)
+  async editUser(@Args('input') user: EditUserByAdmin) {
+    return this.userService.editUser(user);
   }
 
   @Mutation(() => Token)

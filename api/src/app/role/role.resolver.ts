@@ -1,12 +1,17 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql'
 import { RoleService } from './role.service'
-import { Role, CreateNewRole, GetRolesByProjId } from './role.schema'
+import { Role, CreateNewRole, GetRolesByProjId ,DeleteRoleInput,UpdateRoleInput} from './role.schema'
 
 @Resolver()
 export class RoleResolver {
   constructor(
     private roleService: RoleService,
   ) {}
+
+  // @Query(() => [Role])
+  // async getRole() {
+  //   return this.roleService.getRoles()
+  // }
 
   @Query(() => [Role])
   async getRoles(@Args('input') role: GetRolesByProjId) {
@@ -18,4 +23,13 @@ export class RoleResolver {
     return this.roleService.createNewRole(role);
   }
 
+  @Mutation(() => Role)
+  async deleterole(@Args('input') role: DeleteRoleInput) {
+    return this.roleService.deleterole(role.roleId);
+  }
+  @Mutation(() => Role)
+  async updateRole(@Args('input') role: UpdateRoleInput) {
+  return this.roleService.updaterole(role.roleId, role.users);
+}
+  
 }

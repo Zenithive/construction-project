@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { ObjectType, Field, InputType } from '@nestjs/graphql';
+import { ObjectType, Field, InputType,Int} from '@nestjs/graphql';
 import { DEFAULT_VALUES } from '../Constants/defaultValues.constant';
 
 export type UserDocument = User & Document;
@@ -81,6 +81,9 @@ export class CreateUserInput {
   @Field({ nullable: true, defaultValue: DEFAULT_VALUES.userStatus })
   status!: string;
 
+  @Field({ nullable: true, defaultValue:"" })
+  phoneNo!: string;
+  
   @Field({defaultValue: new Date()})
   creationDate!: Date;
 
@@ -137,6 +140,45 @@ export class CreateUserByAdmin {
 
   @Field({defaultValue: true})
   isPasswordReset!: boolean;
+}
+
+@InputType()
+export class EditUserByAdmin {
+  @Field({ nullable: true })
+  email?: string;
+
+  @Field({defaultValue:""})
+  password?: string;
+
+  @Field({ nullable: true })
+  lastName?: string;
+
+  @Field({ nullable: true })
+  firstName?: string;
+
+  @Field({defaultValue: DEFAULT_VALUES.userStatus})
+  status?: string;
+
+  @Field({ nullable: true })
+  phoneNo?: string;
+
+  @Field({ defaultValue: DEFAULT_VALUES.subscriptionId, nullable: true })
+  subscriptionId?: number;
+
+  // @Field({defaultValue: new Date()})
+  // creationDate!: Date;
+
+  @Field({defaultValue: new Date()})
+  updatedDate?: Date;
+
+  @Field()
+  userId?: string;
+
+  @Field({defaultValue: false})
+  emailVerified?: boolean;
+
+  @Field({defaultValue: true})
+  isPasswordReset?: boolean;
 }
 
 @InputType()
@@ -208,6 +250,31 @@ export class UpdateUserInput {
   endDate!: Date;
 }
 
+@ObjectType()
+export class PaginationResults {
+  @Field(() => Int)
+  totalUsers!: number;
+
+  @Field(() => Int)
+  totalPages!: number;
+
+  @Field(() => [User])
+  users!: User[];
+ 
+  @Field(() => Int)
+  currentPage!: number;
+}
+
+@InputType()
+export class PaginationInputs{
+  @Prop()
+  @Field()
+  pageSize!: number;
+
+  @Prop()
+  @Field()
+  currentPage!: number;
+}
 
 // ##############    Sachin Edit 
 
