@@ -24,3 +24,17 @@ export const DELETE_PROJECT = gql`
     }
   }
 `;
+
+// export const FILTER_PROJECTS = gql`
+//   query FilterProjects($offset: Int, $limit: Int, $filters: ProjectFilterInput) {
+//     filterProjects(offset: $offset, limit: $limit, filters: $filters) {
+//       projId
+//       projName
+//       region
+//       status
+//       website
+//       orgName
+//       orgId
+//     }
+//   }
+// `;

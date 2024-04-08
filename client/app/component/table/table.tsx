@@ -8,7 +8,7 @@ export const TableWrapper = () => {
    return (
       <Box
          css={{
-            '& .nextui-table-container': {
+            '& .nextui-table-container': {   
                boxShadow: 'none',
             },
          }}

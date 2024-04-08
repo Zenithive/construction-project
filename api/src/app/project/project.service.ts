@@ -1,10 +1,11 @@
 import { Model } from 'mongoose';
 import {  Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Project, ProjectDocument, CreateProjectInput } from './project.schema';
+import { Project, ProjectDocument, CreateProjectInput,PaginationInput ,PaginationResult} from './project.schema';
 import { v4 as uuidv4 } from 'uuid'; 
 import { PermissionService } from '../permissions/permissions.service';
 import { RoleService } from '../role/role.service';
+import { Document } from 'mongoose';
 
 @Injectable()
 export class ProjectService {
@@ -14,9 +15,33 @@ export class ProjectService {
       private roleService: RoleService
       ) {}
 
-    async getProjects() { // Modified by Sachin  on 16-02-2024 to filter out the inactive projects
-        return this.projModel.find({ status: { $ne: 'Inactive' } });    
-      }
+    // async getProjects() { // Modified by Sachin  on 16-02-2024 to filter out the inactive projects
+    //     return this.projModel.find({ status: { $ne: 'Inactive' } });    
+    //   }
+    async getProjects(paginationInput: PaginationInput) {
+      const { pageSize, currentPage } = paginationInput;
+      const skip = pageSize * (currentPage - 1);
+  
+      const totalProjects = await this.projModel.countDocuments({ status: { $ne: 'Inactive' } });
+      const totalPages = Math.ceil(totalProjects / pageSize);
+  
+      const projects = await this.projModel
+          .find({ status: { $ne: 'Inactive' } })
+          .skip(skip)
+          .limit(pageSize)
+          .exec();
+  
+      // Convert Mongoose documents to plain JavaScript objects
+      const formattedProjects = projects.map((project: Document) => project.toObject() as Project);
+  
+      return {
+          projects: formattedProjects,
+          totalProjects,
+          totalPages,
+          currentPage,
+      };
+  }
+  
 
     async createProject(project: CreateProjectInput){
       const checkExistingProj = await this.projModel.findOne({ projName: project.projName });

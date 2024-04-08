@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { ObjectType, Field, InputType } from '@nestjs/graphql';
+import { ObjectType, Field, InputType,Int} from '@nestjs/graphql';
 import { DEFAULT_VALUES } from '../Constants/defaultValues.constant';
 
 export type UserDocument = User & Document;
@@ -250,6 +250,31 @@ export class UpdateUserInput {
   endDate!: Date;
 }
 
+@ObjectType()
+export class PaginationResults {
+  @Field(() => Int)
+  totalUsers!: number;
+
+  @Field(() => Int)
+  totalPages!: number;
+
+  @Field(() => [User])
+  users!: User[];
+ 
+  @Field(() => Int)
+  currentPage!: number;
+}
+
+@InputType()
+export class PaginationInputs{
+  @Prop()
+  @Field()
+  pageSize!: number;
+
+  @Prop()
+  @Field()
+  currentPage!: number;
+}
 
 // ##############    Sachin Edit 
 

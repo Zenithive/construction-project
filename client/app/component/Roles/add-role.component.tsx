@@ -10,6 +10,7 @@ export interface RolesComponentProps {
   visible: boolean;
   closeAddRole: CallableFunction;
   projId: string;
+  roleId: string;
 }
 
 export interface RoleFormValues {

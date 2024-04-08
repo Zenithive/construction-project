@@ -1,11 +1,11 @@
-import {Col, Row, Tooltip} from '@nextui-org/react';
-import React, {useEffect, useMemo, useState} from 'react';
+import { Col, Row, Tooltip } from '@nextui-org/react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { GET_ORGANISATIONS } from 'client/app/api/organisation/queries';
 import { useQuery } from '@apollo/client';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { GridOptions } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
-import { Box, IconButton, ListItemText, Menu, MenuItem } from '@mui/material';
+import { Box, IconButton, ListItemText, Menu, MenuItem, Select } from '@mui/material';
 import { EditIcon } from '../icons/table/edit-icon';
 import { DeleteIcon } from '../icons/table/delete-icon';
 import "ag-grid-community/styles/ag-grid.css"; // Core CSS
@@ -16,151 +16,205 @@ import { useMutation } from '@apollo/client';
 import { handleClientScriptLoad } from 'next/script';
 import { AddOrganisation } from './add-organisation';
 import { EDITE_ORGANISATION } from 'client/app/api/organisation/mutations';
+import { Table } from '@nextui-org/react';
+import { SelectChangeEvent } from '@mui/material/Select';
+import Stack from '@mui/material/Stack';
+import Pagination from '@mui/material/Pagination';
+import { makeStyles } from '@mui/styles';
+import { PAGE } from 'client/app/constants/page.constant';
+import { PaginationComponent } from '../Pagination/pagination.component';
 
-export interface OrgsListWrapperProps{
+export interface OrgsListWrapperProps {
    listRefresh: boolean;
-   setOrganizationData:  CallableFunction;
+   setOrganizationData: CallableFunction;
 }
 //Dropdown  menu component for actions on rows in the table
-interface DotPopoverProps{
+interface DotPopoverProps {
    treeId: string;
    toggleAddFolder: CallableFunction;
 }
 
-export const OrgsListWrapper = ({listRefresh,setOrganizationData}:OrgsListWrapperProps) => {
-     const { data, refetch } = useQuery(GET_ORGANISATIONS);
-        useEffect(()=>{
-          refetch();
-          }, [listRefresh,refetch]);
 
-// fuction for deleting Org button 
-   const [deleteOrganisation]=useMutation(DELETE_ORGANISATION);
-   
-   const handleDeleteOrg=async(orgId:any,newdata:any)=>{
-      try{
-         await deleteOrganisation({variables:{orgId}});
+export const OrgsListWrapper = ({ listRefresh, setOrganizationData }: OrgsListWrapperProps) => {
+   const [pageSize, setPageSize] = useState(10);
+   const [currentPage, setCurrentPage] = useState(1);
+   const [totalPages, setTotalPages] = useState(0);
+
+   const { data, refetch } = useQuery(GET_ORGANISATIONS, {
+      variables: { pageSize, currentPage },
+      notifyOnNetworkStatusChange: true,
+      fetchPolicy: "network-only"
+
+   });
+   useEffect(() => {
+      console.log("Data", data)
+      if (data?.getAllOrg) {
+         setTotalPages(data.getAllOrg.totalPages);
+      }
+      console.log("if", data?.getAllOrg);
+
+   }, [data]);
+
+
+   useEffect(() => {
+      console.log("pageSize:", pageSize);
+      console.log("currentPage:", currentPage);
+      refetch({ variables: { pageSize, currentPage } });
+   }, [pageSize, currentPage, refetch]);
+
+   const handlePageSizeChange = (event: SelectChangeEvent<number>) => {
+      const newSize = Number(event.target.value);
+      setPageSize(newSize);
+  
+   };
+
+
+   const handlePageChange = (newPage: number) => {
+      setCurrentPage(newPage);
+   };
+
+
+
+   // fuction for deleting Org button 
+   const [deleteOrganisation] = useMutation(DELETE_ORGANISATION);
+
+   const handleDeleteOrg = async (orgId: any, newdata: any) => {
+      try {
+         await deleteOrganisation({ variables: { orgId } });
          refetch();
       }
-      catch(error){
+      catch (error) {
          console.error("Error deleting organisation", error);
       }
    }
-   
-//for edit Org
+
+   //for edit Org
    const [visible, setVisible] = React.useState(false);
    const handleEditOrg = (datas: any) => {
       console.log(datas)
       setVisible(true);
       setOrganizationData(datas);
    };
-//for Dropdown  menu Grid
-   const gridOptions:GridOptions = {
+   //for Dropdown  menu Grid
+   const gridOptions: GridOptions = {
       // Other grid options...
       domLayout: 'autoHeight',
-    };
-    const DotPopoverMenu = ({treeId, toggleAddFolder}:DotPopoverProps) => {
+   };
+   const DotPopoverMenu = ({ treeId, toggleAddFolder }: DotPopoverProps) => {
       const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
 
-      const handleClick = (event: React.MouseEvent<HTMLButtonElement>)=>{
-          event.stopPropagation();
-          setAnchorEl(event.currentTarget)
+      const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+         event.stopPropagation();
+         setAnchorEl(event.currentTarget)
       }
-      const handleClose = (event: React.MouseEvent<HTMLLIElement>)=>{
-          event.stopPropagation();
-          setAnchorEl(null)
+      const handleClose = (event: React.MouseEvent<HTMLLIElement>) => {
+         event.stopPropagation();
+         setAnchorEl(null)
       }
 
       const open = Boolean(anchorEl);
       const id = open ? 'simple-popover' : undefined;
 
       return (
-          <>
+         <>
 
-               <IconButton aria-describedby={id} onClick={handleClick} sx={{p: 0}}>
-                  <MoreVertIcon sx={{ color: "#979797" }} />
-               </IconButton>
+            <IconButton aria-describedby={id} onClick={handleClick} sx={{ p: 0 }}>
+               <MoreVertIcon sx={{ color: "#979797" }} />
+            </IconButton>
 
-          </>
+         </>
       );
-  }
+   }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const ActionRenderer = ({ value ,data}:any) => (
+   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   const ActionRenderer = ({ value, data }: any) => (
       <Row
-      justify="center"
-      align="center"
-      css={{'gap': '$8', '@md': {gap: 0}}}
-   >
-    
-      <Col css={{d: 'flex'}}>
-         <Tooltip content="Edit user">
-            <IconButton
-               onClick={() => handleEditOrg(data)}
+         justify="center"
+         align="center"
+         css={{ 'gap': '$8', '@md': { gap: 0 } }}
+      >
+
+         <Col css={{ d: 'flex' }}>
+            <Tooltip content="Edit user">
+               <IconButton
+                  onClick={() => handleEditOrg(data)}
+               >
+                  <EditIcon size={20} fill="#979797" />
+               </IconButton>
+            </Tooltip>
+         </Col>
+         <Col css={{ d: 'flex' }}>
+            <Tooltip
+               content="Delete user"
+               color="error"
+               onClick={() => handleDeleteOrg(data.orgId, data)}//handeler fuction for deleting Org Button
             >
-               <EditIcon size={20} fill="#979797" />
-            </IconButton>
-         </Tooltip>
-      </Col>
-      <Col css={{d: 'flex'}}>
-         <Tooltip
-            content="Delete user"
-            color="error"
-            onClick={() =>handleDeleteOrg(data.orgId,data)}//handeler fuction for deleting Org Button
-         >
-            <IconButton>
-               <DeleteIcon size={20} fill="#FF0080" />
-            </IconButton>
-         </Tooltip>
-      </Col>
-   </Row>
-    );
-console.log(data);
+               <IconButton>
+                  <DeleteIcon size={20} fill="#FF0080" />
+               </IconButton>
+            </Tooltip>
+         </Col>
+      </Row>
+   );
+   console.log(data);
 
    const colDefs = [
-      { 
+      {
          field: "orgName",
          headerName: "Organisation Name",
          filter: 'agSetColumnFilter',
       },
-      { 
+      {
          field: "region",
          filter: 'agSetColumnFilter',
          headerName: "Region"
       },
-      { 
+      {
          field: "status",
          filter: 'agSetColumnFilter',
          headerName: "Status"
       },
-      { 
+      {
          field: "",
          resizable: false,
          cellRenderer: ActionRenderer
       }
-    ];
+   ];
 
-    console.log(colDefs)
+   console.log(colDefs)
 
    const defaultColDef = useMemo(() => {
       return {
-        flex: 1,
-        minWidth: 150,
-        filter: true,
+         flex: 1,
+         minWidth: 150,
+         filter: true,
       };
-    }, []);
+   }, []);
    console.log(defaultColDef)
 
+   useEffect(() => {
+      refetch();
+   }, [listRefresh, refetch]);
+
    return (
-      <Box
-      >
-         <Box component="div" className='ag-theme-quartz' sx={{height: '100%', mt: 2}}>
-            <AgGridReact 
-                  rowData={data?.getAllOrg || []} 
-                  columnDefs={colDefs}
-                  gridOptions={gridOptions}
-                  defaultColDef={defaultColDef}
-                  sideBar={'filters'}
-               />  
+      <Box>
+         <Box component="div" className='ag-theme-quartz' sx={{ height: '100%', mt: 2 }}>
+            <AgGridReact
+               rowData={data?.getAllOrg.orgs || []}
+               columnDefs={colDefs}
+               gridOptions={gridOptions}
+               defaultColDef={defaultColDef}
+               sideBar={'filters'}
+            />
+         </Box>
+         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+            <PaginationComponent
+               totalPage={totalPages}
+               currentPage={currentPage}
+               pageSize={pageSize}
+               handlePageSizeChange={handlePageSizeChange}
+               handlePageChange={handlePageChange}
+            />
          </Box>
       </Box>
    );

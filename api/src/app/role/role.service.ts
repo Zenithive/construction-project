@@ -8,6 +8,10 @@ import { Project } from '../project/project.schema';
 @Injectable()
 export class RoleService {
     constructor(@InjectModel(Role.name) private roleModel: Model<RoleDocument>) {}
+    
+  // async getRoles() {
+  //   return this.roleModel.find({status : {$ne:'Inactive'}})
+  // }
 
     async getRole(role: GetRolesByProjId) {
         return this.roleModel.find({projId: role.projId});
@@ -35,4 +39,16 @@ export class RoleService {
       };
       return this.createNewRole(newAdminRole)
     };
+    
+    async deleterole(id: string) {
+      const searchRole = {
+        roleId: id
+      };
+      return this.roleModel.findOneAndDelete(searchRole).exec();
+    };
+
+    async updaterole(id: string, users: string[]) {
+      const update = [users];
+      return this.roleModel.findOneAndUpdate({ roleId: id }, update, { new: true }).exec();
+    }
 }

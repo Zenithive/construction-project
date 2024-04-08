@@ -1,6 +1,6 @@
 import { Resolver, Mutation, Query, Args } from '@nestjs/graphql'
 import { OrgService } from './org.service'
-import { Org, CreateOrgInput ,DeleteOrganisationInput,UpdateOrgInput} from './org.schema'
+import { Org, CreateOrgInput ,DeleteOrganisationInput,UpdateOrgInput,PaginationInputss,PaginationResultss} from './org.schema'
 
 
 @Resolver()
@@ -9,9 +9,9 @@ export class OrgResolver {
     private orgService: OrgService,
   ) {}
 
-  @Query(() => [Org])
-  async getAllOrg() {
-    return this.orgService.getAllOrg();
+  @Query(() => PaginationResultss)
+  async getAllOrg(@Args('input') org:PaginationInputss) {
+    return this.orgService.getAllOrg(org);
   }
  
 

@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { ObjectType, Field, InputType} from '@nestjs/graphql';
+import { ObjectType, Field, InputType,Int} from '@nestjs/graphql';
 import { DEFAULT_VALUES } from '../Constants/defaultValues.constant';
 
 export type OrgDocument = Org & Document;
@@ -95,6 +95,32 @@ export class UpdateOrgInput {
 
   @Field({defaultValue: new Date()})
   updatedDate?: Date;
+}
+
+@ObjectType()
+export class PaginationResultss {
+  @Field(() => Int)
+  totalOrgs!: number;
+
+  @Field(() => Int)
+  totalPages!: number;
+
+  @Field(() => [Org])
+  orgs!: Org[];
+ 
+  @Field(() => Int)
+  currentPage!: number;
+}
+
+@InputType()
+export class PaginationInputss{
+  @Prop()
+  @Field()
+  pageSize!: number;
+
+  @Prop()
+  @Field()
+  currentPage!: number;
 }
 
 @InputType()

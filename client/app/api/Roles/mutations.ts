@@ -11,3 +11,19 @@ export const CREATE_NEW_ROLE = gql`
     }
   }
 `;
+
+export const DELETE_Role = gql`
+  mutation DeleteRole($roleId: String!) {
+    deleterole(input:{roleId: $roleId}) {
+      roleId
+    }
+  }
+`;
+export const UPDATE_Role = gql`
+  mutation UpdateRole($roleId: String!,$users: [String!]!) {
+    updateRole(input:[{roleId: $roleId,users: $users}]) {
+      roleId
+      users
+    }
+  }
+`;

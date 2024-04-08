@@ -1,8 +1,9 @@
 import { gql } from "@apollo/client";
 
 export const GET_USERS = gql`
-  query GetUsers {
-    getUsers {
+  query GetUsers($pageSize: Float!,$currentPage:Float!) {
+    getUsers(input:{pageSize: $pageSize,currentPage:$currentPage}) {
+      users{
       email
       lastName
       firstName
@@ -11,6 +12,10 @@ export const GET_USERS = gql`
       phoneNo
       subscriptionId
     }
+    totalUsers
+    totalPages
+    currentPage
+  }
   }
 `;
 
