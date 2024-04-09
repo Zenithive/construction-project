@@ -18,7 +18,7 @@ export const PaginationComponent = ({ totalPage, currentPage, pageSize, handlePa
 
     return (
         <Box>
-            <Box style={{ display: 'flex', justifyContent: 'center', marginTop: 170 }}>
+            <Box style={{ display: 'flex', justifyContent: 'center', marginTop: 20,overflow:"hidden"}} >
                 <Stack spacing={2}>
                     <Pagination
                         count={totalPage}
@@ -57,11 +57,7 @@ export const PaginationComponent = ({ totalPage, currentPage, pageSize, handlePa
                     {PAGE.LIMIT.map((limit, index) => (
                         <MenuItem key={index} value={limit.toString()}>{limit} </MenuItem>
                     ))}
-                    {/* <MenuItem value={1}>1</MenuItem>
-               <MenuItem value={2}>2</MenuItem>
-               <MenuItem value={3}>3</MenuItem>
-               <MenuItem value={4}>4</MenuItem>
-               <MenuItem value={5}>5</MenuItem> */}
+            
                 </Select>
             </Box>
         </Box>
