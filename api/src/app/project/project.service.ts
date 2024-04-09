@@ -15,9 +15,7 @@ export class ProjectService {
       private roleService: RoleService
       ) {}
 
-    // async getProjects() { // Modified by Sachin  on 16-02-2024 to filter out the inactive projects
-    //     return this.projModel.find({ status: { $ne: 'Inactive' } });    
-    //   }
+    
     async getProjects(paginationInput: PaginationInput) {
       const { pageSize, currentPage } = paginationInput;
       const skip = pageSize * (currentPage - 1);

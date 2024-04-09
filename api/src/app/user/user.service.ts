@@ -15,79 +15,7 @@ import { User, UserDocument, CreateUserInput, UserId, UpdateUserInput, LoginInpu
 export class UserService {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
-  // async getUsers() {
-  //   return this.userModel.find({status : {$ne:'Inactive'}})
-  // }
-//   async getUsers(paginationInput: PaginationInputs) {
-//     try {
-//         const { pageSize, currentPage } = paginationInput;
-//         const skip = pageSize * (currentPage - 1);
-
-//         const totalUsers = await this.userModel.countDocuments({ status: { $ne: 'Inactive' } });
-//         const totalPages = Math.ceil(totalUsers / pageSize);
-
-//         const users = await this.userModel
-//             .find({ status: { $ne: 'Inactive' } })
-//             .skip(skip)
-//             .limit(pageSize)
-//             .exec();
-
-//         // Ensure users is never null, even if no users found
-//         const formattedUsers = users.map((user: Document) => user.toObject() as User) || [];
-
-//         return {
-//             users: formattedUsers,
-//             totalUsers,
-//             totalPages,
-//             currentPage,
-//         };
-//     } catch (error) {
-//         // Handle any errors that occur during data fetching
-//         console.error("Error fetching users:", error);
-//         throw new Error("Failed to fetch users");
-//     }
-// }
-
-// async getUsers(paginationInput:PaginationInputs) {
-//   try {
-//       let { pageSize, currentPage } = paginationInput;
-
-     
-//       if (pageSize=== -1 || currentPage === -1) {
-//         const  users = await this.userModel
-//           .find({ status: { $ne: 'Inactive' } })
-//           .exec();
-//       }
-      
-//       else{
-
-//       const skip = pageSize * (currentPage - 1);
-
-//       const totalUsers = await this.userModel.countDocuments({ status: { $ne: 'Inactive' } });
-//       const totalPages = pageSize > -1 ? Math.ceil(totalUsers / pageSize) : 1;
-
-//         const  users = await this.userModel
-//               .find({ status: { $ne: 'Inactive' } })
-//               .skip(skip)
-//               .limit(pageSize)
-//               .exec();
-
-      
-//       const formattedUsers = users.map((user:Document) => user.toObject()as User) || [];
-  
-//       return {
-//           users: formattedUsers,
-//           totalUsers,
-//           totalPages,
-//           currentPage,
-//       };
-//    }
-//   } catch (error) {
-//       // Handle any errors that occur during data fetching
-//       console.error("Error fetching users:", error);
-//       throw new Error("Failed to fetch users");
-//   } 
-// }
+ 
 
 async getUsers(paginationInput: PaginationInputs) {
   try {
@@ -139,7 +67,6 @@ async getUsers(paginationInput: PaginationInputs) {
   }
 
   async getUserByEmail(email: Email){
-   // const mail:string = email.email;
     const user: User | null = await this.userModel.findOne({ email : email })
     return user;
   } 
