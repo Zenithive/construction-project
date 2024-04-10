@@ -17,7 +17,7 @@ import { IServerSideDatasource } from "ag-grid-community";
 import { SelectChangeEvent } from '@mui/material/Select';
 import Stack from '@mui/material/Stack';
 import Pagination from '@mui/material/Pagination';
-import { makeStyles } from '@mui/styles';
+// import { makeStyles } from '@mui/styles';
 import { PAGE } from 'client/app/constants/page.constant';
 import { PaginationComponent } from '../Pagination/pagination.component';
 
@@ -25,7 +25,6 @@ import { PaginationComponent } from '../Pagination/pagination.component';
 
 // Sachin Import
 import { DELETE_PROJECT } from 'client/app/api/project/mutations';
-
 import { useMutation } from '@apollo/client';
 
 
@@ -76,7 +75,7 @@ export const ProjectListWrapper = ({ listRefresh }: ProjectListWrapperProps) => 
     const handlePageSizeChange = (event: SelectChangeEvent<number>) => {
         const newSize = Number(event.target.value);
         setPageSize(newSize);
-        //   setCurrentPage(1); 
+        //   setCurrentPage(1);        
     };
 
 

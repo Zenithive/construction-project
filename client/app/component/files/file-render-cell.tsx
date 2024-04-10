@@ -67,7 +67,7 @@ export const RenderCell = ({file, columnKey}: Props) => {
                   </Tooltip>
                </Col>
                <Col css={{d: 'flex'}}>
-                  <Tooltip content="Edit user">
+                  <Tooltip content="Edit file">
                      <IconButton
                         onClick={() => console.log('Edit File', file)}
                      >

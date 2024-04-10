@@ -1,12 +1,12 @@
 import { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { DeleteFileInput, File, FileDocument, UploadFileInput } from './file.schema';
+import { DeleteFileInput, File, FileDocument, PaginationInputF, UploadFileInput } from './file.schema';
 //import { FileStorageUtil } from '../util/file-storage.util';
 import { ApsForgeService } from '../aps-forge/aps.forge.service';
 import { FolderService } from '../folder/folder.service'
 // import  {getFolderTreeIds} from '../folder/folder.service'
-
+import { Document } from 'mongoose';
 
 
 
@@ -64,25 +64,55 @@ export class FileService {
 
     }
 
-    // async getFileByFolderId(folderId: string) {
-    //     if (folderId) {
-    //         return await this.fileModel.find({ folderId }).exec();
-    //     }
-
-    //     return this.fileModel.find({ status: { $ne: 'Inactive' } }).exec();
-    // }
+    
 
 
-    async getFileByFolderId(folderId: string) {
-        if (folderId) {
-            const folderIds = await this.folderService.getFolderTreeIds(folderId); // Call
-            // console.log("folderIds", folderIds)
-            const files = await this.fileModel.find({ folderId: { $in: folderIds } }).exec();
-            return files;
-        }
-        return this.fileModel.find({ status: { $ne: 'Inactive' } }).exec();
+//     async getFileByFolderId(folderId: string) {
+//         if (folderId) {
+//             const folderIds = await this.folderService.getFolderTreeIds(folderId); // Call
+//             // console.log("folderIds", folderIds)
+//             const files = await this.fileModel.find({ folderId: { $in: folderIds } }).exec();
+//             return files;
+//         }
+//         return this.fileModel.find({ status: { $ne: 'Inactive' } }).exec();
+//     }
+// }
+
+
+async getFileByFolderId( paginationInputF: PaginationInputF) {
+    const { pageSize, currentPage, folderId } = paginationInputF;
+    const skip = pageSize * (currentPage - 1);
+
+    let query = {}; //  logic for the folderId as it is also in input 
+    if (folderId) {
+        const folderIds = await this.folderService.getFolderTreeIds(folderId);
+        query = { folderId: { $in: folderIds } };
+    } else {
+        query = { status: { $ne: 'Inactive' } };
     }
+
+    const totalFiles = await this.fileModel.countDocuments(query);
+    const totalPages = Math.ceil(totalFiles / pageSize);
+
+    const files = await this.fileModel
+        .find(query)
+        .skip(skip)
+        .limit(pageSize)
+        .exec();
+
+    // Convert Mongoose documents to plain JavaScript objects
+    const formattedFiles = files.map((file: Document) => file.toObject() as File);
+
+    return {
+        files: formattedFiles,
+        totalFiles,
+        totalPages,
+        currentPage,
+    };
 }
+}
+
+
 
 
 

@@ -30,14 +30,15 @@ query GetOneFile($urn: String!){
       originalname
       }  
   }
- `; 
+ `;
 
 
 
 
 export const GET_FILES_BY_FOLDER_ID = gql`
-  query GetFilesByFolderId($folderId: String!) {
-    getFilesByFolderId(input:$folderId) {
+  query GetFilesByFolderId($folderId: String!,$pageSize: Float!,$currentPage:Float!) {
+    getFileByFolderId(input: { folderId: $folderId, pageSize: $pageSize, currentPage: $currentPage }) {
+      files{
       fileName
       originalname
       path
@@ -51,6 +52,11 @@ export const GET_FILES_BY_FOLDER_ID = gql`
       userId
       fileId
       apsUrnKey
+
+      }
+    totalFiles   ###
+    totalPages
+    currentPage
     }
   }
 `;
