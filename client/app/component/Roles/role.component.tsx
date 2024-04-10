@@ -28,6 +28,7 @@ export interface RolesComponentProps {
   userData: { userId: string; firstName: string; }[];
   roleId: string;
   roleName: string;
+
 }
 
 const ITEM_HEIGHT = 40;
@@ -44,14 +45,14 @@ const MenuProps = {
 export function RolesComponent(props: RolesComponentProps) {
 
   const [showAddRole, setShowAddRole] = useState(false);
-  const [roles, setRoles] = useState([]);
+  const [roles, setRoles] = useState<any[]>([]);
   const [selectedRoleUsers, setSelectedRoleUsers] = useState<{ [key: string]: string[] }>({});
   const [anchorEl, setAnchorEl] = useState(null);
-  // const [GetRoles , { data, error, refetch }] = useLazyQuery(GET_ROLES,);
   const [GetRoles, { data: rolesData, error: rolesError, refetch: refetchRoles }] = useLazyQuery(GET_ROLES);
-  const [GetUsers, { data: usersData, loading: usersLoading, error: usersError }] = useLazyQuery(GET_USERS);
+  const [getUsers, { data: usersData, loading: usersLoading, error: usersError }] = useLazyQuery(GET_USERS);
 
-  console.log(usersData)
+
+  console.log("userData", usersData)
   const [deleterole] = useMutation(DELETE_Role);
 
   const handleDeleteRole = async (roleId: string) => {
@@ -73,20 +74,7 @@ export function RolesComponent(props: RolesComponentProps) {
       console.log(selectedRoleUsers)
       const roleIds = Object.keys(selectedRoleUsers);
 
-      const arrayTmp = [
-        // {
-        //   roleId: "",
-        //   userIds: ["id1", "id2"]
-        // },
-        // {
-        //   roleId: "",
-        //   userIds: ["id1", "id2"]
-        // },
-        // {
-        //   roleId: "",
-        //   userIds: ["id1", "id2"]
-        // }
-      ];
+      const arrayTmp = [];
 
       for (const key in selectedRoleUsers) {
         if (Object.prototype.hasOwnProperty.call(selectedRoleUsers, key)) {
@@ -113,8 +101,8 @@ export function RolesComponent(props: RolesComponentProps) {
     }
   };
 
- 
-  
+
+
 
 
   useEffect(() => {
@@ -128,8 +116,15 @@ export function RolesComponent(props: RolesComponentProps) {
   }, [props.projId]);
 
   useEffect(() => {
-    GetUsers();
-  }, [GetUsers]);
+    if (props.visible) {
+      getUsers({
+        variables: { pageSize: -1, currentPage: -1 },
+        notifyOnNetworkStatusChange: true,
+        fetchPolicy: "network-only"
+
+      });
+    }
+  }, [props.visible]);
 
   useEffect(() => {
     if (rolesData && rolesData.getRoles) {
@@ -153,63 +148,21 @@ export function RolesComponent(props: RolesComponentProps) {
     props.clearProjId()
   }
 
-  // const handleRoleClick = (event: React.MouseEvent<HTMLButtonElement>, roleId: string) => {
-  //   // Toggle the menu visibility
-  //   setAnchorEl(anchorEl ? null : event.currentTarget);  
-  // };
 
-
-  // const handleMenuItemClick = (user: string, roleId: string) => {
-  //   if (!selectedRoleUsers[roleId]?.includes(user)) {
-  //     setSelectedRoleUsers(prevState => ({
-  //       ...prevState,
-  //       [roleId]: [...(prevState[roleId] || []), user]
-  //     }));
-  //   }
-  // };
-
-  // const handleChange = (event: SelectChangeEvent<typeof selectedRoleUsers>) => {
-  //   const {
-  //     target: { value },
-  //   } = event;
-  //   setSelectedRoleUsers(
-  //     // On autofill we get a stringified value.
-  //     typeof value === 'string' ? value.split(',') : value,
-  //   );
-  // };
 
   const handleChange = (event: SelectChangeEvent<string[]>, roleId: string, child: any) => {
     const {
       target: { value },
     } = event;
 
-    setSelectedRoleUsers((prevUsers) => ({
+    setSelectedRoleUsers((prevUsers: { [key: string]: string[] }) => ({
       ...prevUsers,
-      [roleId]: value,
+      [roleId]: value as string[],
     }));
   };
   const handleClose = () => {
     setAnchorEl(null);
   };
-  // const handleUpdate = () => {
-  //   // Implement the logic for updating roles or any other data here
-  // };
-
-
-  // const handleDeleteUser = (roleId: string, index: number) => {
-  //   setSelectedRoleUsers(prevState => {
-  //     const updatedUsers = [...prevState[roleId]];
-  //     updatedUsers.splice(index, 1);
-  //     return {
-  //       ...prevState,
-  //       [roleId]: updatedUsers
-  //     };
-  //   });
-  // };
-
-  // const handleDeleteRole = (roleId: string) => {
-  //   setRoles(prevRoles => prevRoles.filter(role => role.roleId !== roleId));
-  // };
 
   return (
     <Modal
@@ -244,15 +197,10 @@ export function RolesComponent(props: RolesComponentProps) {
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
               >
-                {/* {usersData?.getUsers?.map((user: any) => (
-            <MenuItem key={user.id} onClick={() => handleMenuItemClick(user.firstName, user.id)}>
-              {user.firstName}
-            </MenuItem>
-          ))} */}
               </Menu>
             </Grid>
           </Grid>
-          <ToastMessage severity="error" openFlag={rolesError || usersError} message="Problem while fetching data." />
+          <ToastMessage severity="error" openFlag={rolesError || usersError ? true : false} message="Problem while fetching data." />
         </Box>
         <Divider sx={{ my: '$5' }} />
 
@@ -264,19 +212,6 @@ export function RolesComponent(props: RolesComponentProps) {
           {roles.map((rolesData, index) => (
             <React.Fragment key={index}>
               <Grid sx={{ display: 'flex', py: 1 }} container spacing={3}>
-                {/* <Col>
-                  {rolesData.roleName !== 'Admin' && (
-                    <Tooltip
-                      content="Delete Role"
-                      color="error"
-                      onClick={() => handleDeleteRole(rolesData.roleId)}
-                    >
-                      <IconButton >
-                        <DeleteIcon size={20} fill="#FF0080" />
-                      </IconButton>
-                    </Tooltip>
-                  )}
-                </Col> */}
                 <Grid item xs={1}>{rolesData.roleName !== 'Admin' ? (
                   <Tooltip
                     content="Delete Role"
@@ -297,60 +232,26 @@ export function RolesComponent(props: RolesComponentProps) {
                     multiple
                     value={selectedRoleUsers[rolesData.roleId] || []}
                     onChange={(event, child) => handleChange(event, rolesData.roleId, child)}
-                    input={<OutlinedInput label="Users" id="select-multiple-chip" label="Chip" />}
+                    input={<OutlinedInput label="Users" id="select-multiple-chip" />}
                     renderValue={(selected) => (
                       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                         {selectedRoleUsers[rolesData.roleId]?.map((userId) => (
-                          <Chip key={userId} label={usersData?.getUsers.find((user: any) => user.userId === userId)?.firstName} />
+                          <Chip key={userId} label={usersData?.getUsers.users.find((user: any) => user.userId === userId)?.firstName} />
                         ))}
                       </Box>
                     )}
                     MenuProps={MenuProps}
                   >
-                    {usersData?.getUsers?.map((user: any) => {
-                      // console.log("Key:", user.userId);
+                    {usersData?.getUsers?.users?.map((users: any) => {
                       return (
-                        <MenuItem key={user.userId} value={user.userId}>
-                          <Checkbox checked={(selectedRoleUsers[rolesData.roleId] || []).includes(user.userId)} />
-                          <ListItemText primary={user.firstName} />
+                        <MenuItem key={users.userId} value={users.userId}>
+                          <Checkbox checked={(selectedRoleUsers[rolesData.roleId] || []).includes(users.userId)} />
+                          <ListItemText primary={users.firstName} />
                         </MenuItem>
                       );
                     })}
                   </Select>
                 </Grid>
-                {/* <Grid item xs={10}>
-            <Button
-              variant="outlined"
-              aria-controls="users-menu"
-              aria-haspopup="true"
-              onClick={(event) => handleRoleClick(event, rolesData.id)}
-            >
-              Users
-            </Button>
-            <Grid container spacing={1} sx={{ mt: 2 }}>
-              {selectedRoleUsers[rolesData.id]?.map((user, userIndex) => (
-                <Grid item key={userIndex}>
-                  <Box display="flex" alignItems="center">
-                    <Button
-                      variant="outlined"
-                      size="small"
-                      disabled
-                      sx={{ color: 'text.primary', borderColor: 'text.primary', mr: 1 }}
-                    >
-                      {user}
-                    </Button>
-                    <IconButton
-                      onClick={() => handleDeleteUser(rolesData.id, userIndex)}
-                      sx={{ p: 0 }}
-                      aria-label="delete"
-                    >
-                      <CloseIcon fontSize="small" />
-                    </IconButton>
-                  </Box>
-                </Grid>
-              ))}
-            </Grid>
-          </Grid> */}
 
               </Grid>
               <Divider sx={{ my: '$5' }} />

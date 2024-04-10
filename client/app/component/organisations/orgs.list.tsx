@@ -198,7 +198,7 @@ export const OrgsListWrapper = ({ listRefresh, setOrganizationData }: OrgsListWr
 
    return (
       <Box>
-         <Box component="div" className='ag-theme-quartz' sx={{ height: '100%', mt: 2 }}>
+         <Box component="div" className='ag-theme-quartz' sx={{ height: '400px', mt: 2,  overflowY: 'auto' }}>
             <AgGridReact
                rowData={data?.getAllOrg.orgs || []}
                columnDefs={colDefs}
@@ -207,7 +207,7 @@ export const OrgsListWrapper = ({ listRefresh, setOrganizationData }: OrgsListWr
                sideBar={'filters'}
             />
          </Box>
-         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+         <Box style={{ display: 'flex', justifyContent: 'center', marginTop: 30 }}>
             <PaginationComponent
                totalPage={totalPages}
                currentPage={currentPage}
