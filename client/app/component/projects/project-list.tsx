@@ -58,7 +58,6 @@ export const ProjectListWrapper = ({ listRefresh }: ProjectListWrapperProps) => 
     useEffect(() => {
         console.log("Data", data)
         if (data?.getProjects) {
-            // const totalCount = data.getProjects.length;
             setTotalPages(data.getProjects.totalPages);
         }
         console.log("if", data?.getProjects);
@@ -75,7 +74,11 @@ export const ProjectListWrapper = ({ listRefresh }: ProjectListWrapperProps) => 
     const handlePageSizeChange = (event: SelectChangeEvent<number>) => {
         const newSize = Number(event.target.value);
         setPageSize(newSize);
+<<<<<<< HEAD
         //   setCurrentPage(1);        
+=======
+         
+>>>>>>> 0c310140a0ecf8c82b4de8f04ac66bcf5a5433c8
     };
 
 
@@ -256,7 +259,7 @@ export const ProjectListWrapper = ({ listRefresh }: ProjectListWrapperProps) => 
                 }}
             />
 
-            <Box component="div" className='ag-theme-quartz' sx={{ height: '100%', mt: 2 }}>
+            <Box component="div" className='ag-theme-quartz' sx={{ height: '450px', mt: 2,  overflowX:"auto", overflowY: 'auto' }}>
                 <AgGridReact
                     rowData={data?.getProjects?.projects || []}
                     columnDefs={colDefs}
@@ -266,7 +269,7 @@ export const ProjectListWrapper = ({ listRefresh }: ProjectListWrapperProps) => 
 
             </Box>
 
-            <Box style={{ display: 'flex', justifyContent: 'center', marginTop: 2 }}>
+            <Box style={{ display: 'flex', justifyContent: 'center', marginTop: 30 }}>
                 <PaginationComponent
                     totalPage={totalPages}
                     currentPage={currentPage}

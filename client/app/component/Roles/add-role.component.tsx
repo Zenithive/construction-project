@@ -8,9 +8,9 @@ import * as Yup from 'yup';
 /* eslint-disable-next-line */
 export interface RolesComponentProps {
   visible: boolean;
-  closeAddRole: CallableFunction;
+  closeAddRole: ()=> void;
   projId: string;
-  roleId: string;
+  roleId?: string;
 }
 
 export interface RoleFormValues {

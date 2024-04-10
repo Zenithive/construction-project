@@ -1,12 +1,11 @@
 import { Col, Row, Table, Tooltip } from '@nextui-org/react';
 import React, { useEffect, useMemo, useState } from 'react';
-import { Box } from '../styles/box';
 import { USER_COLUMNS } from './users.data';
 import { RenderCell } from './user.render.cell';
 import { useQuery } from '@apollo/client';
 import { GET_USERS } from '../../api/user/queries';
 import { UserTypes } from './add-user';
-import { ListItemText, Menu, MenuItem, Select } from '@mui/material';
+import { ListItemText, Menu, MenuItem, Select ,Box} from '@mui/material';
 import { PAGE } from 'client/app/constants/page.constant';
 import { PaginationComponent } from '../Pagination/pagination.component';
 // Sachin Import 
@@ -170,8 +169,8 @@ export const UserLiserWrapper = ({ listRefresh, setUSERDATA }: UserLiserWrapperP
 
 
    return (
-      <Box css={{ height: '100%', width: '100%' }}>
-         <div className="ag-theme-quartz" >
+      <Box>
+         <Box component="div" className='ag-theme-quartz' sx={{ height: '400px', mt: 2,  overflowY: 'auto' }}>
             <AgGridReact
                rowData={data?.getUsers.users || []}
                defaultColDef={defaultColDef}
@@ -179,8 +178,8 @@ export const UserLiserWrapper = ({ listRefresh, setUSERDATA }: UserLiserWrapperP
                columnDefs={columnDefs}
 
             />
-         </div>
-         <Box style={{ display: 'flex', justifyContent: 'center', marginTop: 2 }}>
+         </Box>
+         <Box style={{ display: 'flex', justifyContent: 'center', marginTop: 30 }}>
             <PaginationComponent
                totalPage={totalPages}
                currentPage={currentPage}
@@ -189,7 +188,6 @@ export const UserLiserWrapper = ({ listRefresh, setUSERDATA }: UserLiserWrapperP
                handlePageChange={handlePageChange}
             />
          </Box>
-
       </Box>
 
    );
