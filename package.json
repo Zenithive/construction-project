@@ -5,7 +5,7 @@
   "scripts": {
     "start": "nx run-many --parallel --target=serve --projects=api,client",
     "start-prod": "nx run-many --parallel --target=serve --projects=api,client --prod",
-    "build": "nx run-many --parallel --target=build --projects=api,client",
+    "build": "nx run-many --parallel --target=build --projects=api,client --no-cache",
     "build-prod": "nx run-many --parallel --target=build --projects=api,client --prod --no-cache",
     "build-client": "nx build client",
     "build-api": "nx build api",
