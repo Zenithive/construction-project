@@ -21,8 +21,8 @@ services:
         NODE_ENV: production
         MONGO_URL: mongodb://mongo_db:27017
         DB_NAME: rof
-        SERVER_URL: http://13.232.197.251:3000/
-        SERVER_API: http://13.232.197.251:3000/api/
+        SERVER_URL: http://zenithive.co.uk:3000/
+        SERVER_API: http://zenithive.co.uk:3000/api/
         APS_CLIENT_ID : EbAv1ybr2Va7nowXrmnXPq3ymEhKMG5k
         APS_CLIENT_SECRET : i8uk12vSGTjBMqAL
       depends_on:
