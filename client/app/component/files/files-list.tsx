@@ -1,9 +1,8 @@
 import {Col, Row, Tooltip} from '@nextui-org/react';
 import { GridOptions } from 'ag-grid-community';
-import React, { useEffect, useState } from 'react';
-import {RenderCell} from './file-render-cell';
-import { useLazyQuery, useMutation, useQuery } from '@apollo/client';
-import { GET_FILES, GET_FILES_BY_FOLDER_ID } from '../../api/file/queries';
+import React, { useEffect } from 'react';
+import { useMutation, useQuery } from '@apollo/client';
+import { GET_FILES_BY_FOLDER_ID } from '../../api/file/queries';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 import { AgGridReact } from 'ag-grid-react'; // React Grid Logic
@@ -13,10 +12,8 @@ import { Box, IconButton, Link } from '@mui/material';
 import { EditIcon } from '../icons/table/edit-icon';
 import { DeleteIcon } from '../icons/table/delete-icon';
 
-// Sachin Import  ******************
-
-import {DELETE_FILE_MEMBERSH} from 'client/app/api/file/mutations'
-import { FolderIdInterface } from 'client/app/files/page';
+import {DELETE_FILE_MEMBERSH} from '../../api/file/mutations'
+import { FolderIdInterface } from '../../files/page';
 
 export interface FilesListWrapperProps{
    listRefresh: boolean;
@@ -37,6 +34,7 @@ export const FilesListWrapper = ({listRefresh,folderIdHook}:FilesListWrapperProp
 
 
      // Function to handle project deletion
+     // eslint-disable-next-line @typescript-eslint/no-explicit-any
      const handleDeleteFiles = async (fileId: string, newData: any) => {
         try {
            // Execute the deleteFile mutation with the fieldId as variable
@@ -94,7 +92,7 @@ export const FilesListWrapper = ({listRefresh,folderIdHook}:FilesListWrapperProp
          underline="none"
          target="_blank"
          rel="noopener"
-         href={`/viewer?id=${data.apsUrnKey}`}
+         href={data.apsUrnKey ? `/viewer?id=${data.revisionId}` : `/web-viewer?id=${data.revisionId}`}
          >
          {value}
       </Link>
@@ -138,7 +136,6 @@ export const FilesListWrapper = ({listRefresh,folderIdHook}:FilesListWrapperProp
     };
     
    useEffect(()=>{
-      console.log("folderIdHook.folderId", folderIdHook.folderId)
       refetch();
       
    }, [listRefresh, refetch, folderIdHook.folderId]);

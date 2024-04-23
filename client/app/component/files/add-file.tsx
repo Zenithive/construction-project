@@ -1,19 +1,16 @@
 import {Divider, Modal, Text} from '@nextui-org/react';
 import Button from '@mui/material/Button';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import * as Yup from 'yup';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'; 
 import { UploadFileComponent } from './upload.file.component';
 import ToastMessage from '../toast-message/ToastMessage';
-import { Box, Grid, TextField } from '@mui/material';
+import { Box, Grid, LinearProgress, TextField } from '@mui/material';
 import { FormikHelpers, useFormik } from 'formik';
-import { useLazyQuery, useMutation } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 import { SAVE_FILE_DATA } from '../../api/file/mutations';
-import { toggleUploadModalInterface , FolderIdInterface } from 'client/app/files/page';
-// import { Folder } from '../../../../api/src/app/folder/folder.schema';
-// import { Folder } from '@mui/icons-material';
-import { useQuery } from '@apollo/client';
-import { GET_FILES_BY_FOLDER_ID } from 'client/app/api/file/queries';
+import { toggleUploadModalInterface , FolderIdInterface } from '../../files/page';
+import { GENERATE_APS_URN_KEY } from '../../api/file/queries';
 
 
 const FileObjSchema = Yup.object().shape({
@@ -79,8 +76,40 @@ export const AddFile = ({setListRefresh, toggleUploadModalHook,folderIdHook }:Ad
    }
    const [saveFileData, { data, error, loading }] = useMutation(SAVE_FILE_DATA);
    const [visible, setVisible] = React.useState(false);
+   const [fileIdForURN, setFileIdForURN] = React.useState("");
    const openFileDataModal = () => setVisible(true);
    const fileUploadDialogOpen = () => setIsUploadFileOpen(true);
+
+   const GenerateApsUrnKey = ({fileId}: {fileId: string}) => {
+      const { data, error } = useQuery(GENERATE_APS_URN_KEY , {
+         variables : {fileId: (fileId || "")},
+         skip: !fileId
+      });
+
+      useEffect(()=>{
+         if (data || error) {
+            setFileIdForURN("");
+            setListRefresh((boolFlag:boolean)=>!boolFlag);
+         }
+
+      }, [data, error]);
+
+      return (
+         <>
+            <ToastMessage 
+               severity="success" 
+               openFlag={data?.createProject?._id ? true : false } 
+               message="File's APS URN key generated."
+            ></ToastMessage>
+
+            <ToastMessage 
+               severity="error" 
+               openFlag={error ? true : false } 
+               message='Problem while generating APS URN key of file.'
+            ></ToastMessage>
+         </>
+      );
+   }
 
    const [isUploadFileOpen, setIsUploadFileOpen] = useState(false);
     const [fileData, setFileData] = useState({} as FileMetadataType);
@@ -90,12 +119,7 @@ export const AddFile = ({setListRefresh, toggleUploadModalHook,folderIdHook }:Ad
       formik.resetForm();
    };
 
-
-       
-
    useEffect(()=>{
-      console.log("fileData", fileData)
-      console.log("folderIdHook.folderId", folderIdHook.folderId)
       if(fileData && fileData?.fileName){
          setInitFileData();
          openFileDataModal();
@@ -124,19 +148,19 @@ export const AddFile = ({setListRefresh, toggleUploadModalHook,folderIdHook }:Ad
       const res = await saveFileData({
          variables: {
             ...values,
-
-            folderId : folderIdHook.folderId,  // this is  folderId
-            
-            
+            folderId : folderIdHook.folderId,
          },
       });
       
-
-
-      const fileName:string|null = res.data?.uploadFile?.fileName;
-      if(fileName){
+      const uploadFile = res.data?.uploadFile;
+      if(uploadFile && uploadFile.fileName){
+         console.log("uploadFile", uploadFile)
+         if(uploadFile.apsUrnKey === "PENDING"){
+            setFileIdForURN(uploadFile.fileId);
+         }else{
+            setListRefresh((boolFlag:boolean)=>!boolFlag);
+         }
          closeHandler();
-         setListRefresh((boolFlag:boolean)=>!boolFlag);
       }
       
       setSubmitting(false);
@@ -155,7 +179,7 @@ export const AddFile = ({setListRefresh, toggleUploadModalHook,folderIdHook }:Ad
          </Button>   
 
          <UploadFileComponent closeSet={()=>{setIsUploadFileOpen(false);toggleUploadModalHook.setIsUploadModalOpen(false);closeHandler()}} open={isUploadFileOpen} fileSet={setFileData} ></UploadFileComponent>
-
+         <GenerateApsUrnKey fileId={fileIdForURN} />
          <Modal
             closeButton
             aria-labelledby="modal-title"
@@ -257,9 +281,11 @@ export const AddFile = ({setListRefresh, toggleUploadModalHook,folderIdHook }:Ad
             </Modal.Body>
             <Divider css={{my: '$5'}} />
             <Modal.Footer>
-               <Button disabled={loading} style={{borderRadius: 10}} variant="contained" type='submit' form="save-file-form">
+               {loading ? 
+               (<Box sx={{ width: '100%' }}><LinearProgress /></Box>)
+               :(<Button disabled={loading} style={{borderRadius: 10}} variant="contained" type='submit' form="save-file-form">
                   Add File
-               </Button>
+               </Button>)}
             </Modal.Footer>
          </Modal>
       </>

@@ -15,6 +15,8 @@ export const SAVE_FILE_DATA = gql`
       projectId
       userId
       folderId
+      apsUrnKey
+      fileId
     }
   }
 `;
