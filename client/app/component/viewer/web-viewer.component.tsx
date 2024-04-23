@@ -1,7 +1,6 @@
 'use client'
 
 import { Box } from '@mui/material';
-import WebViewer from '@pdftron/webviewer';
 import { useEffect, useRef, useState } from 'react';
 import ToastMessage from '../toast-message/ToastMessage';
 import { CONFIG } from '../../constants/config.constant';
@@ -26,7 +25,8 @@ export default function WebViewerComponent(props: ViewerCompoentProps) {
 
         const callView = async () => {
             try {
-                const docx = await WebViewer(
+                const WebViewer = await import('@pdftron/webviewer');
+                const docx = await WebViewer.default(
                     {
                         path: '/lib',
                         licenseKey: CONFIG.pdftron_web_viewer_key,//'demo:1713377310356:7fec63a3030000000019570e975695a71a7b7a7e9b6c8c3c5f510461a8',
