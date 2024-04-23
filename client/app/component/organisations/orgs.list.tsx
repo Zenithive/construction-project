@@ -62,10 +62,11 @@ export const OrgsListWrapper = ({ listRefresh, setOrganizationData }: OrgsListWr
       refetch({ variables: { pageSize, currentPage } });
    }, [pageSize, currentPage, refetch]);
 
+   
    const handlePageSizeChange = (event: SelectChangeEvent<number>) => {
       const newSize = Number(event.target.value);
       setPageSize(newSize);
-  
+      setCurrentPage(1);
    };
 
 
