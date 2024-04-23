@@ -74,11 +74,8 @@ export const ProjectListWrapper = ({ listRefresh }: ProjectListWrapperProps) => 
     const handlePageSizeChange = (event: SelectChangeEvent<number>) => {
         const newSize = Number(event.target.value);
         setPageSize(newSize);
-<<<<<<< HEAD
         //   setCurrentPage(1);        
-=======
          
->>>>>>> 0c310140a0ecf8c82b4de8f04ac66bcf5a5433c8
     };
 
 

@@ -182,7 +182,7 @@ export const FilesListWrapper = ({ listRefresh, folderIdHook }: FilesListWrapper
    const gridOptions: GridOptions = {
       // Other grid options...
       domLayout: 'autoHeight',
-   };
+   };  
 
 
 
@@ -198,7 +198,7 @@ export const FilesListWrapper = ({ listRefresh, folderIdHook }: FilesListWrapper
             />
          </Box>
 
-         <Box style={{ display: 'flex', justifyContent: 'center', marginTop: 2 }}>
+         <Box style={{ display: 'flex', justifyContent: 'center', marginTop: 30 }}>
             <PaginationComponent
                totalPage={totalPages}
                currentPage={currentPage}
