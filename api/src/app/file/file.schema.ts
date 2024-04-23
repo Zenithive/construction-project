@@ -141,12 +141,10 @@ export class DeleteFileInput {
   fileId!: string;
 }
 
-/// FOR DOWNLOAD {GET SINGLE FILE }   ***************
-
 @InputType()
 export class GetSingleFileInput {
   @Field()
-  urn!: string;
+  revisionId!: string;
 }
 
 

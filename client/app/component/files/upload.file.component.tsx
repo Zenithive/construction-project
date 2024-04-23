@@ -5,10 +5,9 @@ import { styled } from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { Box, Grid } from '@mui/material';
+import { Box, Grid, LinearProgress } from '@mui/material';
 import axios from 'axios';
-import { CONFIG } from '../../constants/config.constant';
-import { BooleanLiteral } from 'typescript';
+import { CONFIG } from '../../constants/config.constant'; 
 
 const UploadFIleSchema = Yup.object().shape({
    fileName: Yup.string().required('Required'),
@@ -38,6 +37,7 @@ const VisuallyHiddenInput = styled('input')({
 
 export const UploadFileComponent = (props: UploadFileProps) => {
    const [visible, setVisible] = useState(props.open || false);
+   const [isUploading, setIsUploading] = useState(false);
    const [tmpFile, setTmpFile] = useState(null as any);
 
    useEffect(()=>{
@@ -60,13 +60,16 @@ export const UploadFileComponent = (props: UploadFileProps) => {
 
    // eslint-disable-next-line @typescript-eslint/no-explicit-any
    const uploadFile = async (values: UploadFileTypes,{ setSubmitting, resetForm }:any) => {
+      setIsUploading(true);
       const formData = new FormData();
       formData.append("fileName", tmpFile[0]);
 
       axios.post(`${CONFIG.server_api}files/upload`, formData, { headers: {"Content-Type": "multipart/form-data" } }).then(response => {
          response.data && props.fileSet(response.data);
+         setIsUploading(false);
          closeHandler(false);
          resetForm();
+
        });
    }
 
@@ -168,9 +171,12 @@ export const UploadFileComponent = (props: UploadFileProps) => {
             </Modal.Body>
             <Divider css={{my: '$5'}} />
             <Modal.Footer>
-               <Button onClick={o} variant='contained' type='submit' sx={{borderRadius: 3}} form="upload-file-form">
-                  Upload Files
-               </Button>
+               {!isUploading ? 
+                  (<Button onClick={o} variant='contained' type='submit' sx={{borderRadius: 3}} form="upload-file-form">
+                     Upload Files
+                  </Button>) : 
+                  (<Box sx={{ width: '100%' }}><LinearProgress /></Box>)
+               }
             </Modal.Footer>
          </Modal>
       </>

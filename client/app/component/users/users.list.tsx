@@ -1,32 +1,19 @@
-import { Col, Row, Table, Tooltip } from '@nextui-org/react';
+import { Col, Row, Tooltip } from '@nextui-org/react';
 import React, { useEffect, useMemo, useState } from 'react';
-import { USER_COLUMNS } from './users.data';
-import { RenderCell } from './user.render.cell';
 import { useQuery } from '@apollo/client';
 import { GET_USERS } from '../../api/user/queries';
-import { UserTypes } from './add-user';
-import { ListItemText, Menu, MenuItem, Select ,Box} from '@mui/material';
-import { PAGE } from 'client/app/constants/page.constant';
+import { Box} from '@mui/material';
 import { PaginationComponent } from '../Pagination/pagination.component';
-// Sachin Import 
 
 import { AgGridReact } from 'ag-grid-react';
 import "ag-grid-community/styles/ag-grid.css"; // Core CSS
 import "ag-grid-community/styles/ag-theme-quartz.css"; // Theme
 import { EditIcon } from '../icons/table/edit-icon';
 import { DeleteIcon } from '../icons/table/delete-icon';
-import { EyeIcon } from '../icons/table/eye-icon';
 import { IconButton } from '@mui/material';
-import { DELETE_USER } from 'client/app/api/user/mutations';
 import { useMutation } from '@apollo/client';
-import { User } from '../../../../api/src/app/user/user.schema';
-import { tree } from 'next/dist/build/templates/app-page';
 import { SelectChangeEvent } from '@mui/material/Select';
-import Stack from '@mui/material/Stack';
-import Pagination from '@mui/material/Pagination';
-import { makeStyles } from '@mui/styles';
-import { lime } from '@mui/material/colors';
-
+import { DELETE_USER } from '../../api/user/mutations';
 
 
 export interface UserLiserWrapperProps {
