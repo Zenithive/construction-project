@@ -15,7 +15,6 @@ import { useMutation } from '@apollo/client';
 import { SelectChangeEvent } from '@mui/material/Select';
 import { DELETE_USER } from '../../api/user/mutations';
 
-
 export interface UserLiserWrapperProps {
    listRefresh: boolean;
    setUSERDATA: CallableFunction;

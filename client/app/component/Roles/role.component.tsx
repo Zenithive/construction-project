@@ -50,7 +50,7 @@ export function RolesComponent(props: RolesComponentProps) {
   const [GetRoles, { data: rolesData, error: rolesError, refetch: refetchRoles }] = useLazyQuery(GET_ROLES);
   const [getUsers, { data: usersData, loading: usersLoading, error: usersError }] = useLazyQuery(GET_USERS);
 
-
+  console.log("GET_USERS",GET_USERS);
   console.log("userData", usersData)
   const [deleterole] = useMutation(DELETE_Role);
 
@@ -157,6 +157,7 @@ export function RolesComponent(props: RolesComponentProps) {
       [roleId]: value as string[],
     }));
   };
+  
   const handleClose = () => {
     setAnchorEl(null);
   };

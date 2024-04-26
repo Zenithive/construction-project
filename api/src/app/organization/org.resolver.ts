@@ -9,6 +9,11 @@ export class OrgResolver {
     private orgService: OrgService,
   ) {}
 
+  @Query(() => [Org])
+  async getAllOrganisation() {
+    return this.orgService.getAllOrganisation();
+  }
+
   @Query(() => PaginationResultss)
   async getAllOrg(@Args('input') org:PaginationInputss) {
     return this.orgService.getAllOrg(org);
