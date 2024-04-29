@@ -16,6 +16,9 @@ import { useMutation } from "@apollo/client";
 import { DELETE_Role } from "../../api/Roles/mutations";
 import Chip from '@mui/material/Chip';
 import { UPDATE_Role } from "../../api/Roles/mutations";
+import { Avatar } from '@mui/material';
+import { getUserInitials } from '../../services/user.service';
+
 
 
 /* eslint-disable-next-line */
@@ -24,7 +27,7 @@ export interface RolesComponentProps {
   closeRoleModel: CallableFunction;
   clearProjId: CallableFunction;
   projId: string;
-  userData: { userId: string; firstName: string; }[];
+  userData: { userId: string; firstName: string; lastName: string}[];
   roleId: string;
   roleName: string;
 
@@ -42,14 +45,13 @@ const MenuProps = {
 };
 
 export function RolesComponent(props: RolesComponentProps) {
-
   const [showAddRole, setShowAddRole] = useState(false);
   const [roles, setRoles] = useState<any[]>([]);
   const [selectedRoleUsers, setSelectedRoleUsers] = useState<{ [key: string]: string[] }>({});
   const [anchorEl, setAnchorEl] = useState(null);
   const [GetRoles, { data: rolesData, error: rolesError, refetch: refetchRoles }] = useLazyQuery(GET_ROLES);
   const [getUsers, { data: usersData, loading: usersLoading, error: usersError }] = useLazyQuery(GET_USERS);
-
+  
   console.log("GET_USERS",GET_USERS);
   console.log("userData", usersData)
   const [deleterole] = useMutation(DELETE_Role);
@@ -162,6 +164,7 @@ export function RolesComponent(props: RolesComponentProps) {
     setAnchorEl(null);
   };
 
+  
   return (
     <Modal
       aria-labelledby="simple-modal-title"
@@ -221,9 +224,10 @@ export function RolesComponent(props: RolesComponentProps) {
                     </IconButton>
                   </Tooltip>
                 ) : ""}</Grid>
+
                 <Grid item xs={3}>{rolesData.roleName}</Grid>
                 <Grid item xs={8} sx={{ pr: 4 }}>
-                  <Select
+                <Select
                     sx={{ width: '100%' }}
                     labelId="demo-multiple-checkbox-label"
                     id="demo-multiple-checkbox"
@@ -233,9 +237,17 @@ export function RolesComponent(props: RolesComponentProps) {
                     input={<OutlinedInput label="Users" id="select-multiple-chip" />}
                     renderValue={(selected) => (
                       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                        {selectedRoleUsers[rolesData.roleId]?.map((userId) => (
-                          <Chip key={userId} label={usersData?.getUsers.users.find((user: any) => user.userId === userId)?.firstName} />
-                        ))}
+                        {selectedRoleUsers[rolesData.roleId]?.map((userId) => {
+                          const user = usersData?.getUsers.users.find((user: any) => user.userId === userId);
+                          const initials = user ? getUserInitials(user) : '';
+                          return (
+                            <Chip key={userId} 
+                              avatar={
+                                <Avatar>{initials}</Avatar>
+                              }
+                              label={`${user?.firstName} ${user?.lastName}`} />
+                          );
+                        })}
                       </Box>
                     )}
                     MenuProps={MenuProps}
@@ -244,11 +256,15 @@ export function RolesComponent(props: RolesComponentProps) {
                       return (
                         <MenuItem key={users.userId} value={users.userId}>
                           <Checkbox checked={(selectedRoleUsers[rolesData.roleId] || []).includes(users.userId)} />
-                          <ListItemText primary={users.firstName} />
+                          <Avatar>
+                            {getUserInitials(users)}
+                          </Avatar>
+                          <ListItemText primary={`${users.firstName} ${users.lastName}`} />
                         </MenuItem>
                       );
                     })}
                   </Select>
+
                 </Grid>
 
               </Grid>
