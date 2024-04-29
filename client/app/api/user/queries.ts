@@ -7,6 +7,7 @@ export const GET_USERS = gql`
       email
       lastName
       firstName
+      orgId
       status
       userId
       phoneNo

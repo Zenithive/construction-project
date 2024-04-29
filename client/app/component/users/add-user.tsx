@@ -1,20 +1,17 @@
 import { Divider, Modal, Text } from '@nextui-org/react';
 import React, { useEffect } from 'react';
-import { Autocomplete, Box, Button, Grid, TextField, MenuItem, OutlinedInput, MenuProps } from '@mui/material';
+import { Autocomplete, Box, Button, Grid, TextField    } from '@mui/material';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { useLazyQuery, useMutation } from '@apollo/client';
+import {  useMutation } from '@apollo/client';
 import { SUBSCRIPTION_LIST } from '../../constants/subscription.constant';
 import { CREATE_USER_BY_ADMIN } from '../../api/user/mutations';
 import ToastMessage from '../toast-message/ToastMessage';
 import { EDITE_USER } from '../../api/user/mutations';
-import { GET_ORGANISATIONS } from 'client/app/api/organisation/queries';
 import { useQuery } from '@apollo/client';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
-import IconButton from '@mui/material/IconButton';
-import ClearIcon from '@mui/icons-material/Clear';
-import { OrganisationTypes } from '../organisations/add-organisation';
 import { GET_ALL_ORG } from 'client/app/api/organisation/queries';
+import {Stack} from "@mui/material"
+
 
 
 
@@ -24,9 +21,7 @@ const UserSchema = Yup.object().shape({
    lastName: Yup.string().required('Required'),
    firstName: Yup.string().required('Required'),
    subscriptionId: Yup.number().required('Required'),
-   //billToOrgId: Yup.string().required('Required'),
    orgId: Yup.string().required('Required'),
-   orgName: Yup.string().required("Required"),
 });
 
 export interface UserTypes {
@@ -37,14 +32,12 @@ export interface UserTypes {
    phoneNo: string | "";
    subscriptionId: number;
    orgId: string;
-   orgName: string;
 }
 
 export interface AddUserProps {
    setListRefresh: React.Dispatch<React.SetStateAction<boolean>>
    userData: UserTypes | null;
    setUSERDATA: CallableFunction;
-   // organizationData:CallableFunction;
 }
 
 export const AddUser = ({ setListRefresh, userData, setUSERDATA }: AddUserProps) => {
@@ -57,7 +50,6 @@ export const AddUser = ({ setListRefresh, userData, setUSERDATA }: AddUserProps)
       phoneNo: userData?.phoneNo || "",
       subscriptionId: userData?.subscriptionId || 1,
       orgId: userData?.orgId || '',
-      orgName: userData?.orgName || '',
    }
 
 
@@ -68,9 +60,7 @@ export const AddUser = ({ setListRefresh, userData, setUSERDATA }: AddUserProps)
          console.log("userData", userData)
          formik.setValues(userData);
          formik.setFieldValue("subscriptionId", (userData.subscriptionId && userData.subscriptionId > -1) ? userData.subscriptionId : "");
-         // formik.setFieldValue("orgId", userData.orgId ? [userData.orgId] : []);
          handler();
-         //userData ? UpdateUsers : 
       }
    }, [userData]);
 
@@ -81,7 +71,7 @@ export const AddUser = ({ setListRefresh, userData, setUSERDATA }: AddUserProps)
    const handler = () => setVisible(true);
 
    const { data: organizationData, loading: orgLoading, error: orgError, refetch: refetchOrg } = useQuery(GET_ALL_ORG, {
-      skip: !visible
+      skip: !visible,
    });
 
    useEffect(() => {
@@ -92,35 +82,22 @@ export const AddUser = ({ setListRefresh, userData, setUSERDATA }: AddUserProps)
       }
    }, [visible]);
 
-   // useEffect(() => {
-   //    if (organizationData && organizationData.getAllOrganisation) {
-   //       const tmpOrgList = organizationData.getAllOrganisation.map((elem:any)=>{
-   //          return {
-   //             key: elem.orgId,
-   //             value: elem.orgName
-   //          }
-   //       });
-   //       setOrgListKeyPair(tmpOrgList)
-   //    }
-   //    // else{
-   //    //    setOrgListKeyPair([])
-
-   //    // }
-   // }, [organizationData]);
-
    useEffect(() => {
       if (organizationData && organizationData.getAllOrganisation) {
-          const tmpOrgList = organizationData.getAllOrganisation.map((elem: any) => {
-              return {
-                  key: elem.orgId,
-                  value: elem.orgName
-              }
-          });
-          console.log("orgListKeyPair:", tmpOrgList); 
-          setOrgListKeyPair(tmpOrgList);
+         const tmpOrgList = organizationData.getAllOrganisation.map((elem:any)=>{
+            return {
+               key: elem.orgId,
+               value: elem.orgName
+            }
+         });
+         console.log("orgListKeyPair:", tmpOrgList); 
+         setOrgListKeyPair(tmpOrgList)
       }
-  }, [organizationData]);
+      else{
+         setOrgListKeyPair([])
 
+      }
+   }, [organizationData]);
 
    const closeHandler = () => {
       setVisible(false);
@@ -129,7 +106,7 @@ export const AddUser = ({ setListRefresh, userData, setUSERDATA }: AddUserProps)
    };
    const [createUserByAdmin, { data, error, loading }] = useMutation(CREATE_USER_BY_ADMIN);
 
-   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
    const addNewUser = async (values: UserTypes, { setSubmitting }: any) => {
       console.log("createUser", createUserByAdmin)
       console.log("values", values)
@@ -141,6 +118,7 @@ export const AddUser = ({ setListRefresh, userData, setUSERDATA }: AddUserProps)
             firstName: values.firstName,
             lastName: values.lastName,
             phoneNo: values.phoneNo,
+            orgId:values.orgId,
             subscriptionId: values.subscriptionId
          },
       });
@@ -168,6 +146,7 @@ export const AddUser = ({ setListRefresh, userData, setUSERDATA }: AddUserProps)
             firstName: values.firstName,
             lastName: values.lastName,
             phoneNo: values.phoneNo,
+            orgId: values.orgId,
             subscriptionId: values.subscriptionId
          },
       });
@@ -188,8 +167,9 @@ export const AddUser = ({ setListRefresh, userData, setUSERDATA }: AddUserProps)
       if (userData) {
          UpdateUsers(values, { setSubmitting });
       } else {
-
-         addNewUser(values, { setSubmitting });
+         const selectedOrg = orgListKeyPair.find((org) => org.key === values.orgId);
+         const orgId = selectedOrg ? selectedOrg.key : '';
+         addNewUser({ ...values, orgId }, { setSubmitting });
       }
    }
 
@@ -308,99 +288,38 @@ export const AddUser = ({ setListRefresh, userData, setUSERDATA }: AddUserProps)
                            helperText={formik.touched.phoneNo && formik.errors.phoneNo}
                         />
                      </Grid>
-
-                     {/* <Grid item xs={8} sx={{ pr: 4 }}>
-                        <Select
-                           sx={{ width: '100%' }}
-                           label="Organization" 
-                           labelId="org-select-label"
-                           id="org-select"
-                           value={formik.values.orgId}
-                           onChange={formik.handleChange}
-                           onBlur={formik.handleBlur}
-                           input={<OutlinedInput label="Organization" id="org-select-outlined" />}
-                           MenuProps={MenuProps}
-                        >
-                           {organizationData?.getAllOrg?.orgs?.map((org: { orgId: string; orgName: string }) => (
-                                 <MenuItem key={org.orgId} value={org.orgId}>
-                                    {org.orgName}
-                                 </MenuItem>
-                           ))}
-                        </Select>
-                     </Grid> */}
-                     {/* <Grid item xs={12}>
-                    <Autocomplete
-                           multiple
-                           options={GET_ORGANISATIONS}
-                           value={formik.values.orgId ? [formik.values.orgId] : []} 
-                           onChange={(event, values) => formik.setFieldValue('orgId', values.map(value => value.orgId))}
-                           onBlur={formik.handleBlur}
-                           getOptionLabel={(option) => option.orgName}
-                           filterOptions={(options, { inputValue }) =>
-                              options.filter(option =>
-                                 option.orgName.toLowerCase().includes(inputValue.toLowerCase()) && inputValue.length >= 3
-                              )
-                           }
-                           renderInput={(params) => <TextField {...params} label="Organization" variant="outlined" />}
-                           />
-                        </Grid> */}
                      <Grid item xs={12}>
-                        <Autocomplete
-                           options={orgListKeyPair || []}
-                           value={orgListKeyPair.find((org: any) => org.key === formik.values.orgId) || null}
-                           onChange={(event, value) => formik.setFieldValue('orgId', value?.key || '')}
-                           getOptionLabel={(option) => option?.value || ''}
-                           renderInput={(params) => (<TextField
-                              {...params}
-                              id='orgId'
-                              name="orgId"
-                              value={formik.values.orgId}
-                              label="Organisation"
-                              error={formik.touched.orgId && Boolean(formik.errors.orgId)}
-                              helperText={formik.touched.orgId && formik.errors.orgId}
-                           />)}
-                           
-                        />
-
-                     </Grid>
-
-                     {/* <Grid item xs={12}>
+                     <Stack spacing={3} sx={{ width: 550 }}>
+                        {orgListKeyPair.length ? (
                            <Autocomplete
-                              options={orgData?.getAllOrg?.orgs || []}
-                              value={orgData?.getAllOrg?.orgs?.find((org:any) => org.orgId === formik.values.orgId) || null}
-                              onChange={(event, value) => formik.setFieldValue('orgId', value?.orgId || '')}
-                              getOptionLabel={(option) => option.orgName || ''}
+                              disablePortal
+                              onChange={(e, value) => formik.setFieldValue("orgId", value?.key ? value.key : "")}
+                              getOptionLabel={(option) => option.value}
+                              value={orgListKeyPair.find((org) => org.key === formik.values.orgId) || null}
+                              includeInputInList
+                              options={orgListKeyPair || []}
                               renderInput={(params) => (
-                                 <TextField
+                              <TextField
                                  {...params}
-                                 label="Organization"
-                                 variant="outlined"
-                                 InputProps={{
-                                    ...params.InputProps,
-                                    endAdornment: (
-                                       <>
-                                       {params.InputProps.endAdornment}
-                                       {formik.values.orgId && (
-                                          <IconButton onClick={() => formik.setFieldValue('orgId', '')} edge="end">
-                                             <ClearIcon />
-                                          </IconButton>
-                                       )}
-                                       </>
-                                    ),
-                                 }}
-                                 />
+                                 id='orgId'
+                                 name="orgId"
+                                 value={formik.values.orgId}
+                                 label="Organisation"
+                                 error={formik.touched.orgId && Boolean(formik.errors.orgId)}
+                                 helperText={formik.touched.orgId && formik.errors.orgId}
+                              />
                               )}
                            />
-                           </Grid> */}
-
-
+                        ) : (
+                           ""
+                        )}
+                        </Stack>
+                     </Grid>
                      <Grid item xs={12}>
                         <Autocomplete
                            disablePortal
                            onChange={(e, value) => formik.setFieldValue("subscriptionId", (value?.key && value.key > -1) ? value.key : "")}
                            getOptionLabel={(option) => option.value}
-
-
                            defaultValue={defaultSubscriptionOption}
                            componentName='subscriptionId'
                            includeInputInList
