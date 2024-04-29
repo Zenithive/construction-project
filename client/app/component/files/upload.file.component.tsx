@@ -1,8 +1,9 @@
-import {Divider, Modal, Text} from '@nextui-org/react';
+import { Divider, Modal, Text } from '@nextui-org/react';
 import Button from '@mui/material/Button';
 import React, { useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import CloseIcon from '@mui/icons-material/Close';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { Box, Grid } from '@mui/material';
@@ -11,7 +12,8 @@ import { CONFIG } from '../../constants/config.constant';
 import { BooleanLiteral } from 'typescript';
 
 const UploadFIleSchema = Yup.object().shape({
-   fileName: Yup.string().required('Required'),
+   // fileName: Yup.string().required('Required'),
+   fileName: Yup.array().min(1, 'At least one file is required')
 });
 
 const VisuallyHiddenInput = styled('input')({
@@ -24,26 +26,31 @@ const VisuallyHiddenInput = styled('input')({
    left: 0,
    whiteSpace: 'nowrap',
    width: 1,
- });
+});
 
- interface UploadFileProps{
+interface UploadFileProps {
    fileSet: CallableFunction;
    closeSet: CallableFunction;
    open: boolean;
- }
+}
 
- export interface UploadFileTypes {
-   fileName: string;
- }
+export interface UploadFileTypes {
+   // fileName: string;
+   fileName: File[];
+}
 
 export const UploadFileComponent = (props: UploadFileProps) => {
    const [visible, setVisible] = useState(props.open || false);
-   const [tmpFile, setTmpFile] = useState(null as any);
+   // const [tmpFile, setTmpFile] = useState(null as any);
+   const [selectedFiles, setSelectedFiles] = useState<FileList>([]);
+   const [fileNames, setFileNames] = useState<string[]>([]);
 
-   useEffect(()=>{
-      if(visible !== props.open){
+   useEffect(() => {
+      if (visible !== props.open) {
          formik.resetForm();
-         setTmpFile(null);
+         // setTmpFile(null);
+         setSelectedFiles([]);
+         setFileNames([]);
          setVisible(props.open)
       }
    }, [props.open]);
@@ -55,38 +62,88 @@ export const UploadFileComponent = (props: UploadFileProps) => {
    };
 
    const initValue = {
-      fileName: ""
+      // fileName: ""
+      fileName: []
    }
 
    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-   const uploadFile = async (values: UploadFileTypes,{ setSubmitting, resetForm }:any) => {
-      const formData = new FormData();
-      formData.append("fileName", tmpFile[0]);
+   // const uploadFile = async (values: UploadFileTypes, { setSubmitting, resetForm }: any) => {
+   //    const formData = new FormData();
+   //    formData.append("fileName", tmpFile[0]);
+   //    
 
-      axios.post(`${CONFIG.server_api}files/upload`, formData, { headers: {"Content-Type": "multipart/form-data" } }).then(response => {
-         response.data && props.fileSet(response.data);
-         closeHandler(false);
-         resetForm();
-       });
-   }
+   //    axios.post(`${CONFIG.server_api}files/upload`, formData, { 
+   // headers: { "Content-Type": "multipart/form-data" } }).then(response => {
+   //       response.data && props.fileSet(response.data);
+   //       closeHandler(false);
+   //       resetForm();
+   //    });
+   // }
+
+   // const onSubmitHandler = (event: React.FormEvent<HTMLFormElement>) => {
+   //    event.preventDefault(); // Prevent default form submission
+   //    formik.handleSubmit(event); // Call formik's handleSubmit method
+   //  };
+
+   const uploadFile = async () => {
+      // console.log("Hello")
+      // const formData = new FormData();
+      // selectedFiles.forEach(file => formData.append('files[]', file));
+
+      if (selectedFiles.length > 0) {
+         const formData = new FormData();
+         formData.append('fileName', selectedFiles[0]);
+
+         try {
+            const response = await axios.post(`${CONFIG.server_api}files/upload`, formData, {
+               headers: { 'Content-Type': 'multipart/form-data' }
+            });
+
+            props.fileSet(response.data); // Assuming the response contains the file info or reference
+            closeHandler(false);
+            formik.resetForm();
+         } catch (error) {
+            console.error('Error uploading files:', error);
+            // Handle error as needed
+         }
+      }
+      else {
+         console.error('No file selected');
+         // Optionally handle the case where no file is selected
+      }
+   };
 
    const formik = useFormik({
       initialValues: initValue,
       validationSchema: UploadFIleSchema,
       onSubmit: uploadFile,
-    });
+   });
 
-    const onFileChange = (event: React.ChangeEvent<HTMLInputElement> ) => {
-      formik.handleChange(event);
-      if(event && event?.target){
-         setTmpFile(event?.target?.files);
+   const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+
+      //formik.handleChange(event);       
+      // if (event && event?.target) {
+      //    setTmpFile(event?.target?.files);
+      // }
+
+      if (event && event.target && event.target.files) {
+         const filesArray = Array.from(event.target.files);
+         setSelectedFiles(event.target.files);
+         setFileNames(filesArray.map(file => file.name));
+         formik.setFieldValue('fileName', filesArray.map(file => file.name));
+
       }
 
-    }
+   }
 
-    const o = () => {
-      console.log('O');
-    }
+   const removeFile = (fileName: string) => {
+      const updatedFiles = selectedFiles.filter(file => file.name !== fileName);
+      setSelectedFiles(updatedFiles);
+      setFileNames(updatedFiles.map(file => file.name));
+      formik.setFieldValue('fileName', updatedFiles);
+   }
+
+
 
    return (
       <>
@@ -97,14 +154,14 @@ export const UploadFileComponent = (props: UploadFileProps) => {
             open={visible}
             onClose={closeHandler.bind(this, true)}
          >
-            <Modal.Header css={{justifyContent: 'start'}}>
+            <Modal.Header css={{ justifyContent: 'start' }}>
                <Text id="modal-title" h4>
                   Upload new Files
                </Text>
             </Modal.Header>
-            <Divider css={{my: '$5'}} />
-            <Modal.Body css={{py: '$10'}}>
-               <Box
+            <Divider css={{ my: '$5' }} />
+            <Modal.Body css={{ py: '$10' }}>
+               {/* <Box
                   id='upload-file-form'
                   component="form"
                   noValidate
@@ -112,22 +169,24 @@ export const UploadFileComponent = (props: UploadFileProps) => {
                   sx={{ mt: 3 }}
                >
                   <Grid container spacing={2}>
-                     <Grid item xs={12}>
+                     <Grid item xs={12}>  
                         <Button
                            component="label"
                            variant="contained"
                            startIcon={<CloudUploadIcon />}
                         >
-                           {formik.values.fileName || "Upload file"}
+                           {formik.values.fileName
+
+                              || "Upload file"}
                            <VisuallyHiddenInput type="file" name="fileName" onChange={onFileChange} />
                            {/* <VisuallyHiddenInput type="file" name="fileName" onChange={(event)=>{
                                  if(event && event?.target && event?.target.files) setTmpFile(event?.target?.files[0] || "")
                               }} 
                            /> */}
-                        </Button>
+               {/* </Button> */}
 
-                        
-                        {/* <TextField
+
+               {/* <TextField
                            required
                            fullWidth
                            id="projName"
@@ -140,9 +199,52 @@ export const UploadFileComponent = (props: UploadFileProps) => {
                            error={formik.touched.projName && Boolean(formik.errors.projName)}
                            helperText={formik.touched.projName && formik.errors.projName}
                         /> */}
+
+               {/* {formik.values.fileName && ( */}
+               {/* <CloseIcon onClick={() => { */}
+               {/* formik.setFieldValue('fileName', ''); */}
+               {/* setTmpFile(null); */}
+               {/* }} /> */}
+               {/* )} */}
+               {/* </Grid> */}
+               {/* </Grid> */}
+               {/* </Box> */}
+
+               <Box
+                  id='upload-file-form'
+                  component="form"
+                  noValidate
+                  onSubmit={formik.handleSubmit}
+                  // onSubmit={onSubmitHandler}
+                  sx={{ mt: 3 }}
+               >
+                  <Grid container spacing={2}>
+                     <Grid item xs={12}>
+                        {fileNames.map((fileName, index) => (
+                           <Box key={index} sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              <span>{fileName}</span>
+                              <CloseIcon onClick={() => removeFile(fileName)} />
+                           </Box>
+                        ))}
+                     </Grid>
+                     <Grid item xs={12}>
+                        <Button
+                           component="label"
+                           variant="contained"
+                           startIcon={<CloudUploadIcon />}
+
+                        >
+                           Upload file
+                           <VisuallyHiddenInput multiple={true} type="file" name="fileName" onChange={onFileChange} />
+                        </Button>
                      </Grid>
                   </Grid>
                </Box>
+
+
+
+
+
                {/* <Flex
                   direction={'column'}
                   css={{
@@ -166,11 +268,13 @@ export const UploadFileComponent = (props: UploadFileProps) => {
                   </Flex>
                </Flex> */}
             </Modal.Body>
-            <Divider css={{my: '$5'}} />
+            <Divider css={{ my: '$5' }} />
             <Modal.Footer>
-               <Button onClick={o} variant='contained' type='submit' sx={{borderRadius: 3}} form="upload-file-form">
+               <Button variant='contained' type='submit' sx={{ borderRadius: 3 }} form="upload-file-form" >
                   Upload Files
                </Button>
+
+               {/* {JSON.stringify(formik)} */}
             </Modal.Footer>
          </Modal>
       </>

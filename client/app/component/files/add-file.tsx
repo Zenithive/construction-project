@@ -28,7 +28,7 @@ const FileObjSchema = Yup.object().shape({
    originalName: string;
    path: string;
    size: number;
-   extension: string;
+   // extension: string;
    folderId: string;
    
  }
@@ -40,7 +40,7 @@ const FileObjSchema = Yup.object().shape({
    orginatorId: string;
    createdDate?: Date;
    updatedDate?: Date;
-   extension: string;
+   // extension: string;
    size: number;
    status: string;
    docRef: string;
@@ -66,7 +66,7 @@ export const AddFile = ({setListRefresh, toggleUploadModalHook,folderIdHook }:Ad
       originalname: "",
       path: "",
       orginatorId: "",
-      extension: "",
+      // extension: "",
       size: 0,
       status: "",
       docRef: "",
@@ -113,7 +113,7 @@ export const AddFile = ({setListRefresh, toggleUploadModalHook,folderIdHook }:Ad
       formik.setFieldValue("fileName", fileData.fileName);
       formik.setFieldValue("originalname", fileData.originalName || "");
       formik.setFieldValue("path", fileData.path);
-      formik.setFieldValue("extension", fileData.extension || "");
+      // formik.setFieldValue("extension", fileData.extension || "");
       formik.setFieldValue("size", fileData.size);
       // formik.setFieldValue("folderId", fileData.folderId);
    }

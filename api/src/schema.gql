@@ -13,13 +13,13 @@ input CreateFolderInput {
 }
 
 input CreateNewPermission {
-  createdBy: DateTime! = "2024-03-27T05:11:05.513Z"
+  createdBy: DateTime! = "2024-04-29T13:20:24.754Z"
   orginatorId: String!
   permissionId: String!
   permissionKey: String!
   permissionLabel: String!
   projId: String!
-  updatedBy: DateTime! = "2024-03-27T05:11:05.513Z"
+  updatedBy: DateTime! = "2024-04-29T13:20:24.754Z"
   value: Boolean!
 }
 
@@ -35,12 +35,12 @@ input CreateNewRole {
 
 input CreateOrgInput {
   contact: String!
-  creationDate: DateTime! = "2024-03-27T05:11:05.163Z"
+  creationDate: DateTime! = "2024-04-29T13:20:23.863Z"
   orgId: String!
   orgName: String!
   region: String!
   status: String! = "Open"
-  updatedDate: DateTime! = "2024-03-27T05:11:05.163Z"
+  updatedDate: DateTime! = "2024-04-29T13:20:23.863Z"
   website: String
 }
 
@@ -56,7 +56,7 @@ input CreateProjectInput {
 }
 
 input CreateUserByAdmin {
-  creationDate: DateTime! = "2024-03-27T05:11:03.804Z"
+  creationDate: DateTime! = "2024-04-29T13:20:19.629Z"
   email: String
   emailVerified: Boolean! = false
   firstName: String
@@ -66,21 +66,22 @@ input CreateUserByAdmin {
   phoneNo: String
   status: String! = "Active"
   subscriptionId: Float = 1
-  updatedDate: DateTime! = "2024-03-27T05:11:03.804Z"
+  updatedDate: DateTime! = "2024-04-29T13:20:19.629Z"
   userId: String!
 }
 
 input CreateUserInput {
-  creationDate: DateTime! = "2024-03-27T05:11:03.804Z"
+  creationDate: DateTime! = "2024-04-29T13:20:19.628Z"
   email: String!
   emailVerified: Boolean! = false
   firstName: String
   isPasswordReset: Boolean! = false
   lastName: String
   password: String!
+  phoneNo: String = ""
   status: String = "Active"
   subscriptionId: Float! = 1
-  updatedDate: DateTime! = "2024-03-27T05:11:03.804Z"
+  updatedDate: DateTime! = "2024-04-29T13:20:19.629Z"
   userId: String!
 }
 
@@ -101,7 +102,25 @@ input DeleteProjectInput {
   projId: String!
 }
 
+input DeleteRoleInput {
+  roleId: String!
+}
+
 input DeleteUserInput {
+  userId: String!
+}
+
+input EditUserByAdmin {
+  email: String
+  emailVerified: Boolean! = false
+  firstName: String
+  isPasswordReset: Boolean! = true
+  lastName: String
+  password: String! = ""
+  phoneNo: String
+  status: String! = "Active"
+  subscriptionId: Float = 1
+  updatedDate: DateTime! = "2024-04-29T13:20:19.629Z"
   userId: String!
 }
 
@@ -167,8 +186,11 @@ type Mutation {
   deleteOrganisation(input: DeleteOrganisationInput!): Org!
   deleteProject(input: DeleteProjectInput!): Project!
   deleteUser(input: DeleteUserInput!): User!
+  deleterole(input: DeleteRoleInput!): Role!
   editOrg(input: UpdateOrgInput!): Org!
+  editUser(input: EditUserByAdmin!): User!
   loginUser(input: LoginInput!): Token!
+  updateRole(input: UpdateRoleInput!): Role!
   updateUpermissions(input: CreateNewPermission!): Permission!
   updateUser(input: UpdateUserInput!): User!
   uploadFile(input: UploadFileInput!): File!
@@ -183,6 +205,55 @@ type Org {
   status: String!
   updatedDate: DateTime!
   website: String!
+}
+
+input PaginationInput {
+  currentPage: Float!
+  pageSize: Float!
+}
+
+input PaginationInputF {
+  currentPage: Float!
+  folderId: String!
+  pageSize: Float!
+}
+
+input PaginationInputs {
+  currentPage: Float!
+  pageSize: Float!
+}
+
+input PaginationInputss {
+  currentPage: Float!
+  pageSize: Float!
+}
+
+type PaginationResult {
+  currentPage: Int!
+  projects: [Project!]!
+  totalPages: Int!
+  totalProjects: Int!
+}
+
+type PaginationResultF {
+  currentPage: Int!
+  files: [File!]!
+  totalFiles: Int!
+  totalPages: Int!
+}
+
+type PaginationResults {
+  currentPage: Int!
+  totalPages: Int!
+  totalUsers: Int!
+  users: [User!]!
+}
+
+type PaginationResultss {
+  currentPage: Int!
+  orgs: [Org!]!
+  totalOrgs: Int!
+  totalPages: Int!
 }
 
 type Permission {
@@ -208,16 +279,17 @@ type Project {
 }
 
 type Query {
-  getAllOrg: [Org!]!
+  getAllOrg(input: PaginationInputss!): PaginationResultss!
+  getFileByFolderId(input: PaginationInputF!): PaginationResultF!
   getFiles: [File!]!
   getFolders: [Folder!]!
   getOneFile(input: GetSingleFileInput!): File!
   getPermissions: [Permission!]!
-  getProjects: [Project!]!
+  getProjects(input: PaginationInput!): PaginationResult!
   getRoles(input: GetRolesByProjId!): [Role!]!
   getUser(input: UserId!): User!
   getUserByEmail(input: Email!): User!
-  getUsers: [User!]!
+  getUsers(input: PaginationInputs!): PaginationResults!
   logout: Message!
   securedResource: String!
 }
@@ -246,13 +318,18 @@ type Token {
 
 input UpdateOrgInput {
   contact: String!
-  creationDate: DateTime! = "2024-03-27T05:11:05.164Z"
+  creationDate: DateTime! = "2024-04-29T13:20:23.863Z"
   orgId: String!
   orgName: String!
   region: String!
   status: String! = "Open"
-  updatedDate: DateTime! = "2024-03-27T05:11:05.164Z"
+  updatedDate: DateTime! = "2024-04-29T13:20:23.863Z"
   website: String
+}
+
+input UpdateRoleInput {
+  roleId: String!
+  users: [String!]!
 }
 
 input UpdateUserInput {
@@ -273,6 +350,7 @@ input UploadFileInput {
   extension: String!
   fileId: String
   fileName: String!
+  folderId: String!
   orginatorId: String!
   originalname: String!
   path: String!

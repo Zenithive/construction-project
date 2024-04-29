@@ -1,6 +1,7 @@
 // file-upload.controller.ts
-import { Controller, Get, Post, Param, Res, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Param, Res, UseInterceptors, UploadedFile, UploadedFiles } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import { multerOptions } from './multer.config';
 
 import { Response } from 'express';
@@ -9,35 +10,68 @@ import { join } from 'path';
 import { FileService } from './file.service';
 import { error } from 'console';
 
+// @Controller('files')
+// export class FileUploadController {
+//   constructor(private readonly fileService: FileService) { }
+
+
+  // @Post("upload")
+  // @UseInterceptors(FileInterceptor('fileName', multerOptions))
+  // uploadFile(@UploadedFile() file: Express.Multer.File) {
+  //   console.log("fileName", file)
+  //   // You can return the file info or store it and return a reference
+  //   const { filename } = file;
+  //   const extension = filename.split(".")[filename.split(".").length - 1]
+  //   return {
+  //     originalName: file.originalname,
+  //     fileName: file.filename,
+  //     extension: extension,
+  //     path: file.path,
+  //     size: file.size,
+  //     // folderId: file.folderId
+  //   };
+  // }
+
+
+
+
+// import { Controller, Post, UseInterceptors, UploadedFiles } from '@nestjs/common';
+// import { FilesInterceptor } from '@nestjs/platform-express';
+// import { multerOptions } from './multerOptions'; // Import your Multer options
+
 @Controller('files')
 export class FileUploadController {
   constructor(private readonly fileService: FileService) { }
 
-
-  @Post("upload")
-  @UseInterceptors(FileInterceptor('fileName', multerOptions))
-  uploadFile(@UploadedFile() file: Express.Multer.File) {
-    console.log("fileName", file)
-    // You can return the file info or store it and return a reference
-    const { filename } = file;
-    const extension = filename.split(".")[filename.split(".").length - 1]
-    return {
+  @Post('upload') 
+  @UseInterceptors(FilesInterceptor('fileName', 10, multerOptions)) // 'files' is the field name for multiple files
+  uploadFiles(@UploadedFiles() files: Express.Multer.File[]) {  
+    console.log("fileName", files);
+    // Process each file in the files array
+    const uploadedFiles = files.map(file => ({
       originalName: file.originalname,
       fileName: file.filename,
-      extension: extension,
-      path: file.path,  
+      extension: file.filename.split('.').pop(), // Get file extension
+      path: file.path,
       size: file.size,
-      // folderId: file.folderId
-    };
+    
+    }));
+    return uploadedFiles;
   }
-  
-  /// Code for download  file     //////////  /////// / /  / / / 
+
+
+
+
+
+
+  /// Code for download  file
 
 
   @Get("downloadFile/:apsUrnKey")
   async downloadFile(@Res() response: Response, @Param('apsUrnKey') apsUrnKey: string) {
 
     try {
+
       const file = await this.fileService.getFileByApsUrn(apsUrnKey); // Fetch file by apsUrnKey
 
       // console.log(file)
@@ -61,10 +95,7 @@ export class FileUploadController {
       console.error('Error downloading file:', error);
       response.send('Error downloading file');
     }
-
-
-
-  }
+ }
 
 }
 
