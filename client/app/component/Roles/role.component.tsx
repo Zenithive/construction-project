@@ -164,6 +164,16 @@ export function RolesComponent(props: RolesComponentProps) {
     setAnchorEl(null);
   };
 
+  const handleClearSelection = (roleId: string) => {
+    console.log("Clearing selection for roleId:", roleId); 
+    setSelectedRoleUsers((prevUsers: { [key: string]: string[] }) => ({
+      ...prevUsers,
+      [roleId]: [],
+    }));
+  };
+  
+  
+  
   
   return (
     <Modal
@@ -228,42 +238,38 @@ export function RolesComponent(props: RolesComponentProps) {
                 <Grid item xs={3}>{rolesData.roleName}</Grid>
                 <Grid item xs={8} sx={{ pr: 4 }}>
                 <Select
-                    sx={{ width: '100%' }}
-                    labelId="demo-multiple-checkbox-label"
-                    id="demo-multiple-checkbox"
-                    multiple
-                    value={selectedRoleUsers[rolesData.roleId] || []}
-                    onChange={(event, child) => handleChange(event, rolesData.roleId, child)}
-                    input={<OutlinedInput label="Users" id="select-multiple-chip" />}
-                    renderValue={(selected) => (
-                      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                        {selectedRoleUsers[rolesData.roleId]?.map((userId) => {
-                          const user = usersData?.getUsers.users.find((user: any) => user.userId === userId);
-                          const initials = user ? getUserInitials(user) : '';
-                          return (
-                            <Chip key={userId} 
-                              avatar={
-                                <Avatar>{initials}</Avatar>
-                              }
-                              label={`${user?.firstName} ${user?.lastName}`} />
-                          );
-                        })}
-                      </Box>
-                    )}
-                    MenuProps={MenuProps}
-                  >
-                    {usersData?.getUsers?.users?.map((users: any) => {
-                      return (
+                      sx={{ width: '100%' }}
+                      labelId="demo-multiple-checkbox-label"
+                      id="demo-multiple-checkbox"
+                      multiple
+                      value={selectedRoleUsers[rolesData.roleId] || []}
+                      onChange={(event, child) => handleChange(event, rolesData.roleId, child)}
+                      input={<OutlinedInput label="Users" id="select-multiple-chip" />}
+                      renderValue={(selected) => (
+                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                          {selectedRoleUsers[rolesData.roleId]?.map((userId) => {
+                            const user = usersData?.getUsers.users.find((user: any) => user.userId === userId);
+                            const initials = user ? getUserInitials(user) : '';
+                            return (
+                              <Chip key={userId} 
+                                avatar={<Avatar>{initials}</Avatar>}
+                                label={`${user?.firstName} ${user?.lastName}`}
+                                onDelete={() => handleClearSelection(rolesData.roleId)} />
+                            );
+                          })}
+                        </Box>
+                      )}
+                      MenuProps={MenuProps}
+                    >
+                      {usersData?.getUsers?.users?.map((users: any) => (
                         <MenuItem key={users.userId} value={users.userId}>
                           <Checkbox checked={(selectedRoleUsers[rolesData.roleId] || []).includes(users.userId)} />
-                          <Avatar>
-                            {getUserInitials(users)}
-                          </Avatar>
+                          <Avatar>{getUserInitials(users)}</Avatar>
                           <ListItemText primary={`${users.firstName} ${users.lastName}`} />
                         </MenuItem>
-                      );
-                    })}
-                  </Select>
+                      ))}
+
+                    </Select>
 
                 </Grid>
 
