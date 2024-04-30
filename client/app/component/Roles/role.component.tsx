@@ -18,7 +18,7 @@ import Chip from '@mui/material/Chip';
 import { UPDATE_Role } from "../../api/Roles/mutations";
 import { Avatar } from '@mui/material';
 import { getUserInitials } from '../../services/user.service';
-
+import CancelIcon from '@mui/icons-material/Cancel';
 
 
 /* eslint-disable-next-line */
@@ -59,9 +59,7 @@ export function RolesComponent(props: RolesComponentProps) {
   const handleDeleteRole = async (roleId: string) => {
     console.log("roleId", roleId)
     try {
-      // Execute the deleteProject mutation with the projectId as variable
       await deleterole({ variables: { roleId } });
-      // Refetch projects after deletion
       refetchRoles();
     } catch (error) {
       console.error('Error deleting Role:', error);
@@ -164,17 +162,22 @@ export function RolesComponent(props: RolesComponentProps) {
     setAnchorEl(null);
   };
 
-  const handleClearSelection = (roleId: string) => {
-    console.log("Clearing selection for roleId:", roleId); 
-    setSelectedRoleUsers((prevUsers: { [key: string]: string[] }) => ({
-      ...prevUsers,
-      [roleId]: [],
-    }));
+
+  const handleClearSelection = (roleId: string, userId: string) => {
+    setSelectedRoleUsers((prevUsers: { [key: string]: string[] }) => {
+   
+      if (prevUsers.hasOwnProperty(roleId) && Array.isArray(prevUsers[roleId])) {
+        return {
+          ...prevUsers,
+          [roleId]: prevUsers[roleId].filter((id: string) => id !== userId),
+        };
+      } else {
+        return prevUsers;
+      }
+    });
   };
   
-  
-  
-  
+    
   return (
     <Modal
       aria-labelledby="simple-modal-title"
@@ -254,7 +257,11 @@ export function RolesComponent(props: RolesComponentProps) {
                               <Chip key={userId} 
                                 avatar={<Avatar>{initials}</Avatar>}
                                 label={`${user?.firstName} ${user?.lastName}`}
-                                onDelete={() => handleClearSelection(rolesData.roleId)} />
+                                clickable
+                                deleteIcon={
+                                  <CancelIcon onMouseDown={(e)=>e.stopPropagation()}/>
+                                } 
+                                onDelete={()=>handleClearSelection(rolesData.roleId,userId)}/>
                             );
                           })}
                         </Box>
@@ -264,8 +271,16 @@ export function RolesComponent(props: RolesComponentProps) {
                       {usersData?.getUsers?.users?.map((users: any) => (
                         <MenuItem key={users.userId} value={users.userId}>
                           <Checkbox checked={(selectedRoleUsers[rolesData.roleId] || []).includes(users.userId)} />
-                          <Avatar>{getUserInitials(users)}</Avatar>
-                          <ListItemText primary={`${users.firstName} ${users.lastName}`} />
+                          <Avatar sx={{ fontSize:11 ,width:35 ,height:35, marginRight:1 }}>{getUserInitials(users)}</Avatar>
+                          <ListItemText
+                                  primary={
+                                    <div>
+                                      <span style={{ fontSize: '14px' }}>{users.firstName}</span>{" "}
+                                      <span style={{ fontSize: '14px' }}>{users.lastName}</span>
+                                    </div>
+                                  }
+                                />
+
                         </MenuItem>
                       ))}
 
