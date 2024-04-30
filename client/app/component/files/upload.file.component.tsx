@@ -41,14 +41,14 @@ export interface UploadFileTypes {
 
 export const UploadFileComponent = (props: UploadFileProps) => {
    const [visible, setVisible] = useState(props.open || false);
-   // const [tmpFile, setTmpFile] = useState(null as any);
    const [selectedFiles, setSelectedFiles] = useState<FileList>([]);
+   // const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
    const [fileNames, setFileNames] = useState<string[]>([]);
 
    useEffect(() => {
       if (visible !== props.open) {
          formik.resetForm();
-         // setTmpFile(null);
+
          setSelectedFiles([]);
          setFileNames([]);
          setVisible(props.open)
@@ -62,7 +62,7 @@ export const UploadFileComponent = (props: UploadFileProps) => {
    };
 
    const initValue = {
-      // fileName: ""
+   
       fileName: []
    }
 
@@ -91,21 +91,26 @@ export const UploadFileComponent = (props: UploadFileProps) => {
       // selectedFiles.forEach(file => formData.append('files[]', file));
 
       if (selectedFiles.length > 0) {
-         const formData = new FormData();
-         formData.append('fileName', selectedFiles[0]);
-
-         try {
-            const response = await axios.post(`${CONFIG.server_api}files/upload`, formData, {
-               headers: { 'Content-Type': 'multipart/form-data' }
-            });
-
-            props.fileSet(response.data); // Assuming the response contains the file info or reference
-            closeHandler(false);
-            formik.resetForm();
-         } catch (error) {
-            console.error('Error uploading files:', error);
-            // Handle error as needed
+         // formData.append('fileName', selectedFiles[0]);
+         // selectedFiles.forEach(file => formData.append('fileName', file));  ForEach Loop  
+         
+         for (let i = 0; i < selectedFiles.length; i++) {   // for Loop method
+            const formData = new FormData();
+            formData.append('files', selectedFiles[i]);
+            try {
+               const response = await axios.post(`${CONFIG.server_api}files/upload`, formData, {
+                  headers: { 'Content-Type': 'multipart/form-data' }
+               });
+   
+               props.fileSet(response.data); // Assuming the response contains the file info or reference
+               closeHandler(false);
+               formik.resetForm();
+            } catch (error) {
+               console.error('Error uploading files:', error);
+               // Handle error as needed
+            }
          }
+
       }
       else {
          console.error('No file selected');
@@ -131,6 +136,7 @@ export const UploadFileComponent = (props: UploadFileProps) => {
          setSelectedFiles(event.target.files);
          setFileNames(filesArray.map(file => file.name));
          formik.setFieldValue('fileName', filesArray.map(file => file.name));
+         // formik.setFieldValue('fileName', filesArray);
 
       }
 
