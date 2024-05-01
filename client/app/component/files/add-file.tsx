@@ -28,7 +28,7 @@ export interface FileMetadataType {
    originalName: string;
    path: string;
    size: number;
-    extension: string;
+   extension: string;
    folderId: string;
 
 }
@@ -40,7 +40,7 @@ export interface FileSchemaType {
    orginatorId: string;
    createdDate?: Date;
    updatedDate?: Date;
-    extension: string;
+   extension: string;
    size: number;
    status: string;
    docRef: string;
@@ -54,8 +54,7 @@ export interface FileSchemaType {
 export interface AddFilesProps {
    setListRefresh: React.Dispatch<React.SetStateAction<boolean>>;
    toggleUploadModalHook: toggleUploadModalInterface;
-   // toggleUploadModalHook: { setIsUploadModalOpen: CallableFunction };
-   folderIdHook: FolderIdInterface; ////////
+   folderIdHook: FolderIdInterface; /////
 
 }
 
@@ -67,7 +66,7 @@ export const AddFile = ({ setListRefresh, toggleUploadModalHook, folderIdHook }:
       originalname: "",
       path: "",
       orginatorId: "",
-       extension: "",
+      extension: "",
       size: 0,
       status: "",
       docRef: "",
@@ -84,16 +83,27 @@ export const AddFile = ({ setListRefresh, toggleUploadModalHook, folderIdHook }:
    const [saveFileData, { data, error, loading }] = useMutation(SAVE_FILE_DATA);
    const openFileDataModal = () => setVisible(true);
    const fileUploadDialogOpen = () => setIsUploadFileOpen(true);
+   const [allFilesUploaded, setAllFilesUploaded] = useState(false); // Flag for all files uploaded
+   // const [uploadedFileNames, setUploadedFileNames] = useState<string[]>([]); // new code
 
    const closeHandler = () => {
       setVisible(false);
       formik.resetForm();
    };
 
+   // useEffect(() => {
+   //    // Update uploaded file names when all files are uploaded
+   //    if (allFilesUploaded && fileData.fileName) {
+   //       setUploadedFileNames((prevFileNames) => [...prevFileNames, fileData.fileName]);
+   //    }
+   // }, [allFilesUploaded, fileData.fileName]);
+
+   
+
    useEffect(() => {
       console.log("fileData", fileData)
       console.log("folderIdHook.folderId", folderIdHook.folderId)
-      if (fileData && fileData?.fileName) {
+      if (allFilesUploaded ) {
          setInitFileData();
          openFileDataModal();
          // setVisible(true);
@@ -101,20 +111,20 @@ export const AddFile = ({ setListRefresh, toggleUploadModalHook, folderIdHook }:
 
       if (toggleUploadModalHook.isUploadModalOpen) {
          fileUploadDialogOpen();
-         // setIsUploadFileOpen(true);
+
       } else {
          toggleUploadModalHook.setIsUploadModalOpen(false);
       }
-   },  [fileData, toggleUploadModalHook.isUploadModalOpen, folderIdHook.folderId]);
+   }, [fileData, toggleUploadModalHook.isUploadModalOpen, folderIdHook.folderId, isUploadFileOpen, allFilesUploaded]);
 
    const setInitFileData = () => {
 
       formik.setFieldValue("fileName", fileData.fileName);
       formik.setFieldValue("originalname", fileData.originalName || "");
       formik.setFieldValue("path", fileData.path);
-       formik.setFieldValue("extension", fileData.extension || "");
+      formik.setFieldValue("extension", fileData.extension || "");
       formik.setFieldValue("size", fileData.size);
-       formik.setFieldValue("folderId", fileData.folderId);
+      formik.setFieldValue("folderId", fileData.folderId);
    }
 
    const submitForm = async (values: FileSchemaType, { setSubmitting }: FormikHelpers<FileSchemaType>,) => {
@@ -148,7 +158,7 @@ export const AddFile = ({ setListRefresh, toggleUploadModalHook, folderIdHook }:
       <>
          <Button component="label"
             onClick={fileUploadDialogOpen}
-            // onClick={() => toggleUploadModalHook.setIsUploadModalOpen(true)}
+
             sx={{ borderRadius: 3 }} variant="contained" startIcon={<CloudUploadIcon />}>
             Upload file
          </Button>
@@ -158,7 +168,8 @@ export const AddFile = ({ setListRefresh, toggleUploadModalHook, folderIdHook }:
             toggleUploadModalHook.setIsUploadModalOpen(false);
             closeHandler()
          }} open={isUploadFileOpen} fileSet={setFileData}
-         // toggleUploadModalHook={toggleUploadModalHook}
+         setAllFilesUploaded={setAllFilesUploaded}
+
          ></UploadFileComponent>
 
          <Modal
@@ -204,6 +215,7 @@ export const AddFile = ({ setListRefresh, toggleUploadModalHook, folderIdHook }:
                            name="fileName"
                            autoComplete="fileName"
                            value={formik.values.fileName}
+                           // value={uploadedFileNames.join(', ')} //new code
                            onChange={formik.handleChange}
                            onBlur={formik.handleBlur}
                            error={formik.touched.fileName && Boolean(formik.errors.fileName)}
