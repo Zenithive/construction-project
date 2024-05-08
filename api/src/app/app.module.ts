@@ -17,6 +17,7 @@ import { ApsForgeModule } from './aps-forge/aps.forge.module';
 import { FolderModule } from './folder/folder.module';
 import { RoleModule } from './role/role.module';
 import { PermissionModule } from './permissions/permissions.module';
+import { SelectedProjectModule } from './selected_projects/selected_projects.module';
 
 const { DB_NAME, MONGO_URL } = process.env;
 
@@ -45,7 +46,8 @@ const { DB_NAME, MONGO_URL } = process.env;
     ApsForgeModule,
     FolderModule,
     RoleModule,
-    PermissionModule
+    PermissionModule,
+    SelectedProjectModule
   ],
   controllers: [AppController],
   providers: [AppService],

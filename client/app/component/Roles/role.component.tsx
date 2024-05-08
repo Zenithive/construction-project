@@ -19,6 +19,7 @@ import { UPDATE_Role } from "../../api/Roles/mutations";
 import { Avatar } from '@mui/material';
 import { getUserInitials } from '../../services/user.service';
 import CancelIcon from '@mui/icons-material/Cancel';
+import { relative } from "path";
 
 
 /* eslint-disable-next-line */
@@ -185,7 +186,7 @@ export function RolesComponent(props: RolesComponentProps) {
       open={props.visible}
       onClose={closeHandler}
     >
-      <Box sx={{ bgcolor: "white", width: "80%", marginX: "auto", marginY: 4, borderRadius: 3 }}>
+      <Box sx={{ bgcolor: "white", width: "80%", marginX: "auto", marginY: 4, borderRadius: 3,maxHeight: '80vh'  }}>
         <Box sx={{ paddingX: 3, paddingY: 2, }} component={"div"}>
           <Grid container spacing={2} sx={{ pt: 1 }}>
             <Grid item xs={1}>
@@ -222,7 +223,7 @@ export function RolesComponent(props: RolesComponentProps) {
           <AddRolesComponent projId={props.projId} visible={showAddRole} closeAddRole={closeAddRole} />
         </Box>
 
-        <Box sx={{ pb: 4, overflow: 'hidden' }}>
+        <Box sx={{ pb: 4, overflowY: 'auto', overflowX: 'hidden', maxHeight: '450px' }}>
           {roles.map((rolesData, index) => (
             <React.Fragment key={index}>
               <Grid sx={{ display: 'flex', py: 1 }} container spacing={3}>
@@ -293,14 +294,14 @@ export function RolesComponent(props: RolesComponentProps) {
 
             </React.Fragment>
           ))}
-          <Box sx={{ pb: 2, overflow: 'hidden' }}>
+        </Box>
+        <Box sx={{ pb: 2 }}>
           </Box>
-          <Box sx={{ display: 'flex', justifyContent: 'end', pr: 4, pt: 2 }}>
-            <Button variant="contained" color="primary" onClick={handleUpdate}>
+          <Box sx={{ display: 'flex', justifyContent: 'end', pr: 4, pt: 0 }}>
+            <Button variant="contained" color="primary" sx={{position:"relative",bottom:"25px"}} onClick={handleUpdate}>
               Update
             </Button>
           </Box>
-        </Box>
       </Box>
     </Modal>
   );

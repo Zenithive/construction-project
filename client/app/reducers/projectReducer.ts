@@ -1,13 +1,15 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "./store";
-//import {USER_ACTIONS} from "./actions/user.actions";
+import {USER_ACTIONS} from "./actions/user.actions";
+
 
 export interface ProjectSchema {
   projId: string;
   projName: string;
+  userId:string;
 }
 export interface ProjectState {
-  project: Array<ProjectSchema>; // Define the structure of your user object
+  project: Array<ProjectSchema>; 
 }
 
 const initialState: ProjectState = {
@@ -25,10 +27,11 @@ export const projectSliece = createSlice({
 
       const projIdToRemove = action.payload;
 
-      state.project = state.project.filter(obj => obj.projId !== projIdToRemove.projId);
+      state.project = state.project.filter(obj => obj.projId !== projIdToRemove.projId || obj.userId !== projIdToRemove.userId);
     }
   }
 });
+
 
 export const { addproject, removeproject } = projectSliece.actions;
 
