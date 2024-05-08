@@ -7,11 +7,11 @@ import { useFormik } from 'formik';
 import { Stack } from "@mui/material"
 import { useAppDispatch } from '../../reducers/hook.redux';
 import { addproject, removeproject } from 'client/app/reducers/projectReducer';
-import { ADD_SELECTED_PROJECTS,REMOVE_SELECTED_PROJECTS } from 'client/app/api/selected_projects/mutations';
+import { ADD_SELECTED_PROJECTS,REMOVE_SELECTED_PROJECTS } from 'client/app/api/selected-projects/mutations';
 import { useMutation } from '@apollo/client';
 import { UserSchema, selectUserSession } from '../../reducers/userReducer';
 import { useAppSelector } from '../../reducers/hook.redux';
-import { GET_SELECTED_PROJECTS } from 'client/app/api/selected_projects/queries';
+import { GET_SELECTED_PROJECTS } from 'client/app/api/selected-projects/queries';
 import { _TRN_EmbeddedTimestampVerificationResultGetUnsupportedFeatures } from 'client/public/lib/core/pdf/full/optimized/PDFNetCWasm';
 
 

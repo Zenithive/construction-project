@@ -5,7 +5,7 @@ import { BurguerButton } from './burguer-button';
 import { NotificationsDropdown } from './notifications-dropdown';
 import { UserDropdown } from './user-dropdown';
 import { _TRN_EmbeddedTimestampVerificationResultGetUnsupportedFeatures } from 'client/public/lib/core/pdf/full/optimized/PDFNetCWasm';
-import Project_Selected_Componet from './project_selected_componet';
+import Project_Selected_Componet from './project-selected-componet';
 
 
 

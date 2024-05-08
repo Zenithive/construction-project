@@ -1,6 +1,6 @@
 import { Resolver, Mutation, Args,Query } from '@nestjs/graphql';
-import { SelectedProjectService } from './selected_projects.service';
-import { SelectedProject, AddSelectedProjectInput, RemoveSelectedProjectInput } from './selected_project.schema';
+import { SelectedProjectService } from './selected-projects.service';
+import { SelectedProject, AddSelectedProjectInput, RemoveSelectedProjectInput } from './selected-project.schema';
 
 @Resolver(() => SelectedProject)
 export class SelectedProjectResolver {

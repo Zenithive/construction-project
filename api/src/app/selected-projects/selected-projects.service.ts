@@ -2,7 +2,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { SelectedProject, SelectedProjectDocument, RemoveSelectedProjectInput } from './selected_project.schema';
+import { SelectedProject, SelectedProjectDocument, RemoveSelectedProjectInput } from './selected-project.schema';
 
 @Injectable()
 export class SelectedProjectService {
