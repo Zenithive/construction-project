@@ -2,7 +2,7 @@ import React, { Suspense } from 'react';
 import { GET_ALL_PROJECTS } from 'client/app/api/project/queries';
 import { useQuery } from '@apollo/client';
 import { useEffect } from 'react';
-import { Autocomplete, Button, Grid, TextField } from '@mui/material';
+import { Autocomplete, Button, Grid, TextField ,Checkbox,ListSubheader, ListItemText, ListItemIcon, ListItem, List, Divider} from '@mui/material';
 import { useFormik } from 'formik';
 import { Stack } from "@mui/material"
 import { useAppDispatch } from '../../reducers/hook.redux';
@@ -13,6 +13,15 @@ import { UserSchema, selectUserSession } from '../../reducers/userReducer';
 import { useAppSelector } from '../../reducers/hook.redux';
 import { GET_SELECTED_PROJECTS } from 'client/app/api/selected-projects/queries';
 import { _TRN_EmbeddedTimestampVerificationResultGetUnsupportedFeatures } from 'client/public/lib/core/pdf/full/optimized/PDFNetCWasm';
+import {red} from "@mui/material/colors"
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import { styled } from '@mui/material/styles';
+import InputBase from '@mui/material/InputBase';
+import SearchIcon from '@mui/icons-material/Search';
+import { useState } from 'react';
+
 
 
  export const Project_Selected_Componet = () => {
@@ -29,8 +38,8 @@ import { _TRN_EmbeddedTimestampVerificationResultGetUnsupportedFeatures } from '
       });
     const [addSelectedProject] = useMutation(ADD_SELECTED_PROJECTS);
     const [removeSelectedProject] = useMutation(REMOVE_SELECTED_PROJECTS);
- 
- 
+
+     
     const formik = useFormik({
        initialValues: {
           projId: '',
@@ -81,8 +90,6 @@ import { _TRN_EmbeddedTimestampVerificationResultGetUnsupportedFeatures } from '
        console.log("formik.values === ", formik.values);
        console.log("projListKeyPair === ", projListKeyPair);
     }, [formik.values, projListKeyPair]);
-   
-  
  
     const handleProjectChange = (e: any, values: any) => {
        const selectedProjectKeys = values.map((selectedProject: any) => selectedProject.key);
@@ -109,7 +116,6 @@ import { _TRN_EmbeddedTimestampVerificationResultGetUnsupportedFeatures } from '
              },
            })
          );
-         console.log("addpromise",addProjectPromises)
          Promise.all(addProjectPromises)
            .then(() => {
              refetch();
@@ -151,33 +157,131 @@ import { _TRN_EmbeddedTimestampVerificationResultGetUnsupportedFeatures } from '
           formik.setFieldValue("projId", selectedProjectKeys);
        }
      };
-     
+
+     const handleKeyDown = (event:any) => {
+      if (event.key === 'Backspace') {
+          event.stopPropagation();
+      }
+  };
+  const handleSearchChange = (event:any, value:any) => {
+   const inputValue = (typeof value === 'string' ? value : '').toLowerCase();
+   const inputLength = inputValue.length;
+   return inputLength === 0
+       ? projListKeyPair
+       : projListKeyPair.filter(option =>
+           typeof option.value === 'string' && option.value.toLowerCase().includes(inputValue)
+       );
+};
+
+const CustomListbox = React.forwardRef(function CustomListbox(props, ref) {
+   const { children, ...other } = props;
+   return (
+       <List {...other} ref={ref}>
+           <ListSubheader>
+               <SearchIcon style={{ marginRight: '8px', color: '#757575' }} />
+               Search
+           </ListSubheader>
+           <Divider />
+           {children}
+       </List>
+   );
+});
      return (
         <Stack spacing={3} sx={{ width: 1200, background: "white", top: "5px", position: "relative", right: "25px" }}>
         {projListKeyPair.length ? (
-           <Autocomplete
+           <Autocomplete 
               disablePortal
               multiple
-               onChange={handleProjectChange}
+              onChange={handleProjectChange}
               getOptionLabel={(option) => option.value}
               value={projListKeyPair.filter((org) => formik.values.projId.includes( org.key))}
-              includeInputInList
-              options={projListKeyPair}
-              renderInput={(params) => (
-                 <TextField
-                    {...params}
-                    id='projId'
-                    name="projId"
-                    value={formik.values.projId}
-                    error={formik.touched.projId && Boolean(formik.errors.projId)}
-                    helperText={formik.touched.projId && formik.errors.projId=== 'string' ? formik.errors.projId : ''}
-                 />
-              )}
+              options={projListKeyPair.sort((a, b) => {
+               const aSelected = formik.values.projId.includes(a.key);
+               const bSelected = formik.values.projId.includes(b.key);
+               if (aSelected && !bSelected) return -1; 
+               if (!aSelected && bSelected) return 1;
+               return 0;   
+           })}
+         //   disableCloseOnSelect
+         disableCloseOnSelect={true}
+         disableClearable={true} 
+         autoHighlight={true}
+         Options={handleSearchChange} 
+           renderInput={(params) => (
+              <TextField
+                 {...params}
+                 id='projId'
+                 name="projId"
+                 value={formik.values.projId}
+                 InputProps={{
+                  ...params.InputProps,
+                  readOnly: true, 
+                  style: { cursor: 'pointer' } ,
+                  onKeyDown: handleKeyDown ,
+              }}
+                 error={formik.touched.projId && Boolean(formik.errors.projId)}
+                 helperText={formik.touched.projId && formik.errors.projId=== 'string' ? formik.errors.projId : ''}
+              /> 
+           )}
+          
+           ListboxComponent={CustomListbox}
+              renderOption={(props, option) => (
+               <li {...props} >
+                   <Checkbox  sx={{
+                           color: red[800],
+                           '&.Mui-checked': {
+                              color: red[600],
+                           },
+                        }}
+                       checked={formik.values.projId.includes(option.key)}
+                       onChange={(e) => {
+                           handleProjectChange(e, option);
+                       }}
+                   />
+                   {option.value}
+               </li>
+           )}
+           renderTags={(value, getTagProps) => (
+            <div>
+                {value.length <= 15 ? (
+                    value.map((option, index:number) => (
+                        <span
+                            key={index}
+                            {...getTagProps({ index })}
+                            style={{
+                                fontWeight: 'bold',
+                                marginRight: '8px', 
+                            }}
+                        >
+                            {option.value}{index < value.length - 1 ? ', ' : ''}
+                        </span>
+                    ))
+                ) : (
+                   
+                    <>
+                        {value.slice(0, 15).map((option, index:number) => (
+                            <span
+                                key={index}
+                                {...getTagProps({ index })}
+                                style={{
+                                    fontWeight: 'bold',
+                                    marginRight: '8px', 
+                                }}
+                            >
+                                {option.value}{index < 14 ? ', ' : ''}
+                            </span>
+                        ))}
+                        <span style={{ fontWeight: 'bold' }}>...</span>
+                    </>
+                )}
+            </div>
+        )}
            />
   
         ) : (
            ""
         )}
+
      </Stack>
        );
     };
