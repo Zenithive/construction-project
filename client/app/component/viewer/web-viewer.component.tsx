@@ -25,6 +25,7 @@ export default function WebViewerComponent(props: ViewerCompoentProps) {
 
         const callView = async () => {
             try {
+                console.log("CONFIG.pdftron_web_viewer_key", CONFIG.pdftron_web_viewer_key)
                 const WebViewer = await import('@pdftron/webviewer');
                 const docx = await WebViewer.default(
                     {

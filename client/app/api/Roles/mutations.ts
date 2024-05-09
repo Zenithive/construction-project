@@ -1,13 +1,14 @@
 import { gql } from "@apollo/client";
 
 export const CREATE_NEW_ROLE = gql`
-  mutation CreateNewRole($roleName: String!, $roleId: String!, $orginatorId: String!, $projId: String!,$orgId: String!) {
-    createNewRole(input: { roleName: $roleName, roleId: $roleId, orginatorId: $orginatorId, projId: $projId, orgId: $orgId }) {
+  mutation CreateNewRole($roleName: String!, $roleId: String!, $orginatorId: String!, $projId: String!,$orgId: String!, $users: [String!]!) {
+    createNewRole(input: { roleName: $roleName, roleId: $roleId, orginatorId: $orginatorId, projId: $projId, orgId: $orgId, users: $users }) {
       roleName
       roleId
       orginatorId,
       projId,
-      orgId
+      orgId,
+      users
     }
   }
 `;
@@ -19,11 +20,10 @@ export const DELETE_Role = gql`
     }
   }
 `;
-export const UPDATE_Role = gql`
-  mutation UpdateRole($roleId: String!,$users: [String!]!) {
-    updateRole(input:[{roleId: $roleId,users: $users}]) {
+export const UPDATE_ROLES_USERS = gql`
+  mutation UpdateRole($allRolesData: UpdateRoleInputArray!) {
+    updateRole(input: $allRolesData) {
       roleId
-      users
     }
   }
 `;

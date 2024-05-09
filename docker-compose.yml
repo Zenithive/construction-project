@@ -6,7 +6,7 @@ services:
       ports: 
         - 27018:27017
       volumes:
-        - mongo_db:/data/db
+        - mongo_db:/home/docker-home-volumne/db
 
     api:
       build: 
@@ -14,6 +14,8 @@ services:
         dockerfile: Dockerfile
       env_file:
         .env
+      volumes:
+        - server:/home/docker-home-volumne/server
       ports: 
         - 3000:3000
         - 4200:4200
@@ -30,4 +32,7 @@ services:
         - mongo_db
 
 volumes:
-  mongo_db: {}
+  mongo_db: 
+    external: true
+  server: 
+    external: true
