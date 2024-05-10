@@ -2,7 +2,7 @@ import React, { Suspense } from 'react';
 import { GET_ALL_PROJECTS } from 'client/app/api/project/queries';
 import { useQuery } from '@apollo/client';
 import { useEffect } from 'react';
-import { Autocomplete, Button, Grid, TextField ,Checkbox,ListSubheader, ListItemText, ListItemIcon, ListItem, List, Divider} from '@mui/material';
+import { Autocomplete, Button, Grid, TextField ,Checkbox,ListSubheader, ListItemText, ListItemIcon, ListItem, List, Divider,Chip} from '@mui/material';
 import { useFormik } from 'formik';
 import { Stack } from "@mui/material"
 import { useAppDispatch } from '../../reducers/hook.redux';
@@ -14,13 +14,7 @@ import { useAppSelector } from '../../reducers/hook.redux';
 import { GET_SELECTED_PROJECTS } from 'client/app/api/selected-projects/queries';
 import { _TRN_EmbeddedTimestampVerificationResultGetUnsupportedFeatures } from 'client/public/lib/core/pdf/full/optimized/PDFNetCWasm';
 import {red} from "@mui/material/colors"
-import Select, { SelectChangeEvent } from '@mui/material/Select';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import { styled } from '@mui/material/styles';
-import InputBase from '@mui/material/InputBase';
-import SearchIcon from '@mui/icons-material/Search';
-import { useState } from 'react';
+
 
 
 
@@ -77,7 +71,7 @@ import { useState } from 'react';
  
     }, [data]);
  
-    useEffect(() => {
+    useEffect(() => { 
        console.log("selectedProjectsData", selectedProjectsData)
        if (selectedProjectsData && selectedProjectsData.getSelectedProjects && projListKeyPair.length) {
           const selectedProjects = selectedProjectsData.getSelectedProjects.map((project: any) => project.projId,userDetails.userId);
@@ -173,19 +167,7 @@ import { useState } from 'react';
        );
 };
 
-const CustomListbox = React.forwardRef(function CustomListbox(props, ref) {
-   const { children, ...other } = props;
-   return (
-       <List {...other} ref={ref}>
-           <ListSubheader>
-               <SearchIcon style={{ marginRight: '8px', color: '#757575' }} />
-               Search
-           </ListSubheader>
-           <Divider />
-           {children}
-       </List>
-   );
-});
+
      return (
         <Stack spacing={3} sx={{ width: 1200, background: "white", top: "5px", position: "relative", right: "25px" }}>
         {projListKeyPair.length ? (
@@ -202,11 +184,10 @@ const CustomListbox = React.forwardRef(function CustomListbox(props, ref) {
                if (!aSelected && bSelected) return 1;
                return 0;   
            })}
-         //   disableCloseOnSelect
+       
          disableCloseOnSelect={true}
          disableClearable={true} 
-         autoHighlight={true}
-         Options={handleSearchChange} 
+         autoHighlight={true} 
            renderInput={(params) => (
               <TextField
                  {...params}
@@ -223,8 +204,7 @@ const CustomListbox = React.forwardRef(function CustomListbox(props, ref) {
                  helperText={formik.touched.projId && formik.errors.projId=== 'string' ? formik.errors.projId : ''}
               /> 
            )}
-          
-           ListboxComponent={CustomListbox}
+        
               renderOption={(props, option) => (
                <li {...props} >
                    <Checkbox  sx={{
@@ -243,7 +223,7 @@ const CustomListbox = React.forwardRef(function CustomListbox(props, ref) {
            )}
            renderTags={(value, getTagProps) => (
             <div>
-                {value.length <= 15 ? (
+                {value.length <= 14 ? (
                     value.map((option, index:number) => (
                         <span
                             key={index}
@@ -259,7 +239,7 @@ const CustomListbox = React.forwardRef(function CustomListbox(props, ref) {
                 ) : (
                    
                     <>
-                        {value.slice(0, 15).map((option, index:number) => (
+                        {value.slice(0, 14).map((option, index:number) => (
                             <span
                                 key={index}
                                 {...getTagProps({ index })}
@@ -268,7 +248,7 @@ const CustomListbox = React.forwardRef(function CustomListbox(props, ref) {
                                     marginRight: '8px', 
                                 }}
                             >
-                                {option.value}{index < 14 ? ', ' : ''}
+                                {option.value}{index < 13 ? ', ' : ''}
                             </span>
                         ))}
                         <span style={{ fontWeight: 'bold' }}>...</span>
@@ -283,6 +263,7 @@ const CustomListbox = React.forwardRef(function CustomListbox(props, ref) {
         )}
 
      </Stack>
+   
        );
     };
 

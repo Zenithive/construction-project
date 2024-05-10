@@ -24,12 +24,15 @@ export const projectSliece = createSlice({
       state.project = action.payload;
     },
     removeproject: (state, action: PayloadAction<ProjectSchema>) => {
-
       const projIdToRemove = action.payload;
-
-      state.project = state.project.filter(obj => obj.projId !== projIdToRemove.projId || obj.userId !== projIdToRemove.userId);
-    }
-  }
+  
+      if (Array.isArray(state.project)) {
+          state.project = state.project.filter(obj => obj.projId !== projIdToRemove.projId || obj.userId !== projIdToRemove.userId);
+      } else {
+          console.error('State project is not an array');
+      }
+  },
+  },
 });
 
 
