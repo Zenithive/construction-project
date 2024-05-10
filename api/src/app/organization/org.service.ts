@@ -10,6 +10,11 @@ import { Document } from 'mongoose';
 export class OrgService {
     constructor(@InjectModel(Org.name) private orgModel: Model<OrgDocument>) {}
 
+    
+    async getAllOrganisation(){
+      return this.orgModel.find().exec();
+  }
+
     async getAllOrg(paginationInput: PaginationInputss) {
       try {
           const { pageSize, currentPage } = paginationInput;

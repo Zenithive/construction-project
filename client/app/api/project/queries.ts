@@ -18,3 +18,18 @@ export const GET_PROJECTS = gql`
   }
 }
 `;
+
+export const GET_ALL_PROJECTS=gql`
+  query GetAllProject{
+    getAllProject{
+      projId
+      projName
+      region
+      status
+      website
+      orgName
+      orgId
+    }
+  }
+`;
+

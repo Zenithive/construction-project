@@ -15,7 +15,6 @@ import { useMutation } from '@apollo/client';
 import { SelectChangeEvent } from '@mui/material/Select';
 import { DELETE_USER } from '../../api/user/mutations';
 
-
 export interface UserLiserWrapperProps {
    listRefresh: boolean;
    setUSERDATA: CallableFunction;
@@ -50,9 +49,12 @@ export const UserLiserWrapper = ({ listRefresh, setUSERDATA }: UserLiserWrapperP
       refetch({ variables: { pageSize, currentPage } });
    }, [pageSize, currentPage, refetch]);
 
+   
+
    const handlePageSizeChange = (event: SelectChangeEvent<number>) => {
       const newSize = Number(event.target.value);
       setPageSize(newSize);
+      setCurrentPage(1);
 
    };
 

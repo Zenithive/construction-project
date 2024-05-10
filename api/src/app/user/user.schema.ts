@@ -40,6 +40,10 @@ export class User {
 
   @Prop()
   @Field()
+  orgId!: string;
+
+  @Prop()
+  @Field()
   subscriptionId!: number;
 
   @Prop()
@@ -122,6 +126,9 @@ export class CreateUserByAdmin {
 
   @Field({ nullable: true })
   phoneNo!: string;
+  
+  @Field({ nullable: true })
+  orgId!: string;
 
   @Field({ defaultValue: DEFAULT_VALUES.subscriptionId, nullable: true })
   subscriptionId!: number;
@@ -161,6 +168,9 @@ export class EditUserByAdmin {
 
   @Field({ nullable: true })
   phoneNo?: string;
+
+  @Field({ nullable: true })
+  orgId?: string;
 
   @Field({ defaultValue: DEFAULT_VALUES.subscriptionId, nullable: true })
   subscriptionId?: number;

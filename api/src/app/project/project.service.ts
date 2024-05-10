@@ -15,6 +15,9 @@ export class ProjectService {
       private roleService: RoleService
       ) {}
 
+      async getAllProject(){
+        return this.projModel.find().exec();
+    } 
     
     async getProjects(paginationInput: PaginationInput) {
       const { pageSize, currentPage } = paginationInput;

@@ -1,13 +1,17 @@
-import {Divider, Modal, Text} from '@nextui-org/react';
-import React,{useEffect} from 'react';
-import { Autocomplete, Box, Button, Grid, TextField } from '@mui/material';
+import { Divider, Modal, Text } from '@nextui-org/react';
+import React, { useEffect } from 'react';
+import { Autocomplete, Box, Button, Grid, TextField    } from '@mui/material';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { useMutation } from '@apollo/client';
+import {  useMutation } from '@apollo/client';
 import { SUBSCRIPTION_LIST } from '../../constants/subscription.constant';
 import { CREATE_USER_BY_ADMIN } from '../../api/user/mutations';
 import ToastMessage from '../toast-message/ToastMessage';
 import { EDITE_USER } from '../../api/user/mutations';
+import { useQuery } from '@apollo/client';
+import { GET_ALL_ORG } from 'client/app/api/organisation/queries';
+import {Stack} from "@mui/material"
+
 
 
 
@@ -17,7 +21,7 @@ const UserSchema = Yup.object().shape({
    lastName: Yup.string().required('Required'),
    firstName: Yup.string().required('Required'),
    subscriptionId: Yup.number().required('Required'),
-   //billToOrgId: Yup.string().required('Required'),
+   orgId: Yup.string().required('Required'),
 });
 
 export interface UserTypes {
@@ -27,40 +31,74 @@ export interface UserTypes {
    userId: string;
    phoneNo: string | "";
    subscriptionId: number;
- }
+   orgId: string;
+}
 
- export interface AddUserProps {
+export interface AddUserProps {
    setListRefresh: React.Dispatch<React.SetStateAction<boolean>>
-   userData:UserTypes|null;
-   setUSERDATA:CallableFunction;
- }
+   userData: UserTypes | null;
+   setUSERDATA: CallableFunction;
+}
 
-export const AddUser = ({setListRefresh,userData,setUSERDATA}:AddUserProps) => {
+export const AddUser = ({ setListRefresh, userData, setUSERDATA }: AddUserProps) => {
+
    const initValue: UserTypes = {
-      email:userData?.email||"",
-      lastName:userData?.lastName|| "",
-      firstName:userData?.firstName||"",
-      userId: userData?.userId||"",
-      phoneNo:userData?.phoneNo|| "",
-      subscriptionId:userData?.subscriptionId||1
+      email: userData?.email || "",
+      lastName: userData?.lastName || "",
+      firstName: userData?.firstName || "",
+      userId: userData?.userId || "",
+      phoneNo: userData?.phoneNo || "",
+      subscriptionId: userData?.subscriptionId || 1,
+      orgId: userData?.orgId || '',
    }
+
+
+
 
    useEffect(() => {
       if (userData) {
          console.log("userData", userData)
-         formik.setValues(userData); 
+         formik.setValues(userData);
          formik.setFieldValue("subscriptionId", (userData.subscriptionId && userData.subscriptionId > -1) ? userData.subscriptionId : "");
          handler();
-         //userData ? UpdateUsers : 
       }
    }, [userData]);
-   
+
 
    const defaultSubscriptionOption = SUBSCRIPTION_LIST.find((elem) => elem.key === initValue.subscriptionId);
    const [visible, setVisible] = React.useState(false);
+   const [orgListKeyPair, setOrgListKeyPair] = React.useState<{ key: string; value: string }[]>([]);
    const handler = () => setVisible(true);
 
- 
+   const { data: organizationData, loading: orgLoading, error: orgError, refetch: refetchOrg } = useQuery(GET_ALL_ORG, {
+      skip: !visible,
+   });
+
+   useEffect(() => {
+      if (visible) {
+         console.log("org", organizationData)
+         console.log("GET_ORG", GET_ALL_ORG);
+         refetchOrg();
+      }
+   }, [visible]);
+
+   useEffect(() => {
+      if (organizationData && organizationData.getAllOrganisation) {
+         const tmpOrgList = organizationData.getAllOrganisation.map((elem:any)=>{
+            return {
+               key: elem.orgId,
+               value: elem.orgName
+            }
+         });
+         console.log("orgListKeyPair:", tmpOrgList); 
+         setOrgListKeyPair(tmpOrgList)
+      }
+      else{
+         setOrgListKeyPair([])
+
+      }
+   }, [organizationData]);
+
    const closeHandler = () => {
       setVisible(false);
       formik && formik.resetForm();
@@ -68,10 +106,10 @@ export const AddUser = ({setListRefresh,userData,setUSERDATA}:AddUserProps) => {
    };
    const [createUserByAdmin, { data, error, loading }] = useMutation(CREATE_USER_BY_ADMIN);
 
-   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-   const addNewUser = async (values: UserTypes,{ setSubmitting }:any) => {
-      console.log("createUser",createUserByAdmin)
-      console.log("values",values)
+ 
+   const addNewUser = async (values: UserTypes, { setSubmitting }: any) => {
+      console.log("createUser", createUserByAdmin)
+      console.log("values", values)
       setSubmitting(true);
       const res = await createUserByAdmin({
          variables: {
@@ -80,25 +118,26 @@ export const AddUser = ({setListRefresh,userData,setUSERDATA}:AddUserProps) => {
             firstName: values.firstName,
             lastName: values.lastName,
             phoneNo: values.phoneNo,
+            orgId:values.orgId,
             subscriptionId: values.subscriptionId
          },
       });
 
 
-      const userEmail:string|null = res.data?.createUserByAdmin?.email;
-      if(userEmail){
+      const userEmail: string | null = res.data?.createUserByAdmin?.email;
+      if (userEmail) {
          closeHandler();
-         setListRefresh((flag:boolean)=>!flag);
+         setListRefresh((flag: boolean) => !flag);
       }
-      
+
       setSubmitting(false);
    }
 
-   const [editUser]=useMutation(EDITE_USER);
+   const [editUser] = useMutation(EDITE_USER);
 
-    const UpdateUsers = async (values: UserTypes,{ setSubmitting }:any) => {
-      console.log("editUser",editUser);
-      console.log("values",values)
+   const UpdateUsers = async (values: UserTypes, { setSubmitting }: any) => {
+      console.log("editUser", editUser);
+      console.log("values", values)
       setSubmitting(true);
       const res = await editUser({
          variables: {
@@ -107,28 +146,30 @@ export const AddUser = ({setListRefresh,userData,setUSERDATA}:AddUserProps) => {
             firstName: values.firstName,
             lastName: values.lastName,
             phoneNo: values.phoneNo,
+            orgId: values.orgId,
             subscriptionId: values.subscriptionId
          },
       });
-      console.log("res",res);
+      console.log("res", res);
 
-      const userEmail:string|null = res.data?.editUser?.email;
-      if(userEmail){
+      const userEmail: string | null = res.data?.editUser?.email;
+      if (userEmail) {
          closeHandler();
-         setListRefresh((flag:boolean)=>!flag);
+         setListRefresh((flag: boolean) => !flag);
          setUSERDATA(null);
       }
-      
+
       setSubmitting(false);
       console.log(UpdateUsers);
    }
 
-   const handleSubmitMethod = (values: UserTypes,{ setSubmitting }:any) => {
-      if(userData){
-         UpdateUsers(values,{ setSubmitting });
-      }else{
-
-         addNewUser(values,{ setSubmitting });
+   const handleSubmitMethod = (values: UserTypes, { setSubmitting }: any) => {
+      if (userData) {
+         UpdateUsers(values, { setSubmitting });
+      } else {
+         const selectedOrg = orgListKeyPair.find((org) => org.key === values.orgId);
+         const orgId = selectedOrg ? selectedOrg.key : '';
+         addNewUser({ ...values, orgId }, { setSubmitting });
       }
    }
 
@@ -136,12 +177,21 @@ export const AddUser = ({setListRefresh,userData,setUSERDATA}:AddUserProps) => {
       initialValues: initValue,
       validationSchema: UserSchema,
       onSubmit: handleSubmitMethod,
-    });
+   });
+
+   const MenuProps = {
+      PaperProps: {
+         style: {
+            maxHeight: 300,
+            width: 250,
+         },
+      },
+   };
 
 
    return (
       <>
-         <Button variant='contained' onClick={handler} sx={{borderRadius: 3}}>
+         <Button variant='contained' onClick={handler} sx={{ borderRadius: 3 }}>
             Add User
          </Button>
          <Modal
@@ -151,25 +201,25 @@ export const AddUser = ({setListRefresh,userData,setUSERDATA}:AddUserProps) => {
             open={visible}
             onClose={closeHandler}
          >
-            <Modal.Header css={{justifyContent: 'start'}}>
+            <Modal.Header css={{ justifyContent: 'start' }}>
                <Text id="modal-title" h4>
-               {userData ? "Edit User" : "Add User"}
+                  {userData ? "Edit User" : "Add User"}
                </Text>
 
-               <ToastMessage 
-                  severity="success" 
-                  openFlag={data?.createUserByAdmin?.email ? true : false } 
+               <ToastMessage
+                  severity="success"
+                  openFlag={data?.createUserByAdmin?.email ? true : false}
                   message='User created.'
                ></ToastMessage>
 
-               <ToastMessage 
-                  severity="error" 
-                  openFlag={error ? true : false } 
+               <ToastMessage
+                  severity="error"
+                  openFlag={error ? true : false}
                   message='Problem while creating user.'
                ></ToastMessage>
             </Modal.Header>
-            <Divider css={{my: '$5'}} />
-            <Modal.Body css={{py: '$10'}}>
+            <Divider css={{ my: '$5' }} />
+            <Modal.Body css={{ py: '$10' }}>
                <Box
                   id='add-user-form'
                   component="form"
@@ -237,39 +287,64 @@ export const AddUser = ({setListRefresh,userData,setUSERDATA}:AddUserProps) => {
                            error={formik.touched.phoneNo && Boolean(formik.errors.phoneNo)}
                            helperText={formik.touched.phoneNo && formik.errors.phoneNo}
                         />
-                     </Grid>  
+                     </Grid>
+                     <Grid item xs={12}>
+                     <Stack spacing={3} sx={{ width: 550 }}>
+                        {orgListKeyPair.length ? (
+                           <Autocomplete
+                              disablePortal
+                              onChange={(e, value) => formik.setFieldValue("orgId", value?.key ? value.key : "")}
+                              getOptionLabel={(option) => option.value}
+                              value={orgListKeyPair.find((org) => org.key === formik.values.orgId) || null}
+                              includeInputInList
+                              options={orgListKeyPair || []}
+                              renderInput={(params) => (
+                              <TextField
+                                 {...params}
+                                 id='orgId'
+                                 name="orgId"
+                                 value={formik.values.orgId}
+                                 label="Organisation"
+                                 error={formik.touched.orgId && Boolean(formik.errors.orgId)}
+                                 helperText={formik.touched.orgId && formik.errors.orgId}
+                              />
+                              )}
+                           />
+                        ) : (
+                           ""
+                        )}
+                        </Stack>
+                     </Grid>
                      <Grid item xs={12}>
                         <Autocomplete
                            disablePortal
                            onChange={(e, value) => formik.setFieldValue("subscriptionId", (value?.key && value.key > -1) ? value.key : "")}
                            getOptionLabel={(option) => option.value}
-                           
-                           
                            defaultValue={defaultSubscriptionOption}
                            componentName='subscriptionId'
                            includeInputInList
-                           options={SUBSCRIPTION_LIST}                           
+                           options={SUBSCRIPTION_LIST}
                            renderInput={
-                              (params) => 
-                              <TextField 
-                                 {...params}         
-                                 id='subscriptionId'
-                                 name="subscriptionId"                         
-                                 value={ formik.values.subscriptionId } 
-                                 label="Subscription" 
-                                 error={formik.touched.subscriptionId && Boolean(formik.errors.subscriptionId)}
-                                 helperText={formik.touched.subscriptionId && formik.errors.subscriptionId}
-                              />
+                              (params) =>
+                                 <TextField
+                                    {...params}
+                                    id='subscriptionId'
+                                    name="subscriptionId"
+                                    value={formik.values.subscriptionId}
+                                    label="Subscription"
+                                    error={formik.touched.subscriptionId && Boolean(formik.errors.subscriptionId)}
+                                    helperText={formik.touched.subscriptionId && formik.errors.subscriptionId}
+                                 />
                            }
-                           />
-                     </Grid>             
+                        />
+                     </Grid>
                   </Grid>
                </Box>
             </Modal.Body>
-            <Divider css={{my: '$5'}} />
+            <Divider css={{ my: '$5' }} />
             <Modal.Footer>
-               <Button disabled={loading} style={{borderRadius: 10}} variant="contained" type='submit' form="add-user-form">
-               {userData ? "Edit User" : "Add User"}
+               <Button disabled={loading} style={{ borderRadius: 10 }} variant="contained" type='submit' form="add-user-form">
+                  {userData ? "Edit User" : "Add User"}
                </Button>
             </Modal.Footer>
          </Modal>

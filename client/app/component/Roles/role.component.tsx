@@ -16,6 +16,10 @@ import { useMutation } from "@apollo/client";
 import { DELETE_Role } from "../../api/Roles/mutations";
 import Chip from '@mui/material/Chip';
 import { UPDATE_Role } from "../../api/Roles/mutations";
+import { Avatar } from '@mui/material';
+import { getUserInitials } from '../../services/user.service';
+import CancelIcon from '@mui/icons-material/Cancel';
+import { relative } from "path";
 
 
 /* eslint-disable-next-line */
@@ -24,7 +28,7 @@ export interface RolesComponentProps {
   closeRoleModel: CallableFunction;
   clearProjId: CallableFunction;
   projId: string;
-  userData: { userId: string; firstName: string; }[];
+  userData: { userId: string; firstName: string; lastName: string}[];
   roleId: string;
   roleName: string;
 
@@ -42,24 +46,21 @@ const MenuProps = {
 };
 
 export function RolesComponent(props: RolesComponentProps) {
-
   const [showAddRole, setShowAddRole] = useState(false);
   const [roles, setRoles] = useState<any[]>([]);
   const [selectedRoleUsers, setSelectedRoleUsers] = useState<{ [key: string]: string[] }>({});
   const [anchorEl, setAnchorEl] = useState(null);
   const [GetRoles, { data: rolesData, error: rolesError, refetch: refetchRoles }] = useLazyQuery(GET_ROLES);
   const [getUsers, { data: usersData, loading: usersLoading, error: usersError }] = useLazyQuery(GET_USERS);
-
-
+  
+  console.log("GET_USERS",GET_USERS);
   console.log("userData", usersData)
   const [deleterole] = useMutation(DELETE_Role);
 
   const handleDeleteRole = async (roleId: string) => {
     console.log("roleId", roleId)
     try {
-      // Execute the deleteProject mutation with the projectId as variable
       await deleterole({ variables: { roleId } });
-      // Refetch projects after deletion
       refetchRoles();
     } catch (error) {
       console.error('Error deleting Role:', error);
@@ -157,10 +158,27 @@ export function RolesComponent(props: RolesComponentProps) {
       [roleId]: value as string[],
     }));
   };
+  
   const handleClose = () => {
     setAnchorEl(null);
   };
 
+
+  const handleClearSelection = (roleId: string, userId: string) => {
+    setSelectedRoleUsers((prevUsers: { [key: string]: string[] }) => {
+   
+      if (prevUsers.hasOwnProperty(roleId) && Array.isArray(prevUsers[roleId])) {
+        return {
+          ...prevUsers,
+          [roleId]: prevUsers[roleId].filter((id: string) => id !== userId),
+        };
+      } else {
+        return prevUsers;
+      }
+    });
+  };
+  
+    
   return (
     <Modal
       aria-labelledby="simple-modal-title"
@@ -168,7 +186,7 @@ export function RolesComponent(props: RolesComponentProps) {
       open={props.visible}
       onClose={closeHandler}
     >
-      <Box sx={{ bgcolor: "white", width: "80%", marginX: "auto", marginY: 4, borderRadius: 3 }}>
+      <Box sx={{ bgcolor: "white", width: "80%", marginX: "auto", marginY: 4, borderRadius: 3,maxHeight: '80vh'  }}>
         <Box sx={{ paddingX: 3, paddingY: 2, }} component={"div"}>
           <Grid container spacing={2} sx={{ pt: 1 }}>
             <Grid item xs={1}>
@@ -205,7 +223,7 @@ export function RolesComponent(props: RolesComponentProps) {
           <AddRolesComponent projId={props.projId} visible={showAddRole} closeAddRole={closeAddRole} />
         </Box>
 
-        <Box sx={{ pb: 4, overflow: 'hidden' }}>
+        <Box sx={{ pb: 4, overflowY: 'auto', overflowX: 'hidden', maxHeight: '450px' }}>
           {roles.map((rolesData, index) => (
             <React.Fragment key={index}>
               <Grid sx={{ display: 'flex', py: 1 }} container spacing={3}>
@@ -220,34 +238,55 @@ export function RolesComponent(props: RolesComponentProps) {
                     </IconButton>
                   </Tooltip>
                 ) : ""}</Grid>
+
                 <Grid item xs={3}>{rolesData.roleName}</Grid>
                 <Grid item xs={8} sx={{ pr: 4 }}>
-                  <Select
-                    sx={{ width: '100%' }}
-                    labelId="demo-multiple-checkbox-label"
-                    id="demo-multiple-checkbox"
-                    multiple
-                    value={selectedRoleUsers[rolesData.roleId] || []}
-                    onChange={(event, child) => handleChange(event, rolesData.roleId, child)}
-                    input={<OutlinedInput label="Users" id="select-multiple-chip" />}
-                    renderValue={(selected) => (
-                      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                        {selectedRoleUsers[rolesData.roleId]?.map((userId) => (
-                          <Chip key={userId} label={usersData?.getUsers.users.find((user: any) => user.userId === userId)?.firstName} />
-                        ))}
-                      </Box>
-                    )}
-                    MenuProps={MenuProps}
-                  >
-                    {usersData?.getUsers?.users?.map((users: any) => {
-                      return (
+                <Select
+                      sx={{ width: '100%' }}
+                      labelId="demo-multiple-checkbox-label"
+                      id="demo-multiple-checkbox"
+                      multiple
+                      value={selectedRoleUsers[rolesData.roleId] || []}
+                      onChange={(event, child) => handleChange(event, rolesData.roleId, child)}
+                      input={<OutlinedInput label="Users" id="select-multiple-chip" />}
+                      renderValue={(selected) => (
+                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                          {selectedRoleUsers[rolesData.roleId]?.map((userId) => {
+                            const user = usersData?.getUsers.users.find((user: any) => user.userId === userId);
+                            const initials = user ? getUserInitials(user) : '';
+                            return (
+                              <Chip key={userId} 
+                                avatar={<Avatar>{initials}</Avatar>}
+                                label={`${user?.firstName} ${user?.lastName}`}
+                                clickable
+                                deleteIcon={
+                                  <CancelIcon onMouseDown={(e)=>e.stopPropagation()}/>
+                                } 
+                                onDelete={()=>handleClearSelection(rolesData.roleId,userId)}/>
+                            );
+                          })}
+                        </Box>
+                      )}
+                      MenuProps={MenuProps}
+                    >
+                      {usersData?.getUsers?.users?.map((users: any) => (
                         <MenuItem key={users.userId} value={users.userId}>
                           <Checkbox checked={(selectedRoleUsers[rolesData.roleId] || []).includes(users.userId)} />
-                          <ListItemText primary={users.firstName} />
+                          <Avatar sx={{ fontSize:11 ,width:35 ,height:35, marginRight:1 }}>{getUserInitials(users)}</Avatar>
+                          <ListItemText
+                                  primary={
+                                    <div>
+                                      <span style={{ fontSize: '14px' }}>{users.firstName}</span>{" "}
+                                      <span style={{ fontSize: '14px' }}>{users.lastName}</span>
+                                    </div>
+                                  }
+                                />
+
                         </MenuItem>
-                      );
-                    })}
-                  </Select>
+                      ))}
+
+                    </Select>
+
                 </Grid>
 
               </Grid>
@@ -255,14 +294,14 @@ export function RolesComponent(props: RolesComponentProps) {
 
             </React.Fragment>
           ))}
-          <Box sx={{ pb: 2, overflow: 'hidden' }}>
+        </Box>
+        <Box sx={{ pb: 2 }}>
           </Box>
-          <Box sx={{ display: 'flex', justifyContent: 'end', pr: 4, pt: 2 }}>
-            <Button variant="contained" color="primary" onClick={handleUpdate}>
+          <Box sx={{ display: 'flex', justifyContent: 'end', pr: 4, pt: 0 }}>
+            <Button variant="contained" color="primary" sx={{position:"relative",bottom:"25px"}} onClick={handleUpdate}>
               Update
             </Button>
           </Box>
-        </Box>
       </Box>
     </Modal>
   );
