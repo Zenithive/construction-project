@@ -1,4 +1,4 @@
-import { Box, Button, Divider, Grid, IconButton, MenuItem, Modal, Menu, Typography, ListItemText } from "@mui/material";
+import { Box, Button, Divider, Grid, IconButton, Modal, Menu, Typography } from "@mui/material";
 import { Tooltip } from '@nextui-org/react';
 import { DeleteIcon } from '../icons/table/delete-icon';
 import ToastMessage from "../toast-message/ToastMessage";
@@ -9,17 +9,9 @@ import React, { useEffect, useState } from "react";
 import { useLazyQuery } from "@apollo/client";
 import { GET_ROLES } from "../../api/Roles/queries";
 import { GET_USERS } from "../../api/user/queries"
-import OutlinedInput from '@mui/material/OutlinedInput';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
-import Checkbox from '@mui/material/Checkbox';
 import { useMutation } from "@apollo/client";
 import { DELETE_Role } from "../../api/Roles/mutations";
-import Chip from '@mui/material/Chip';
-import { UPDATE_Role } from "../../api/Roles/mutations";
-import { Avatar } from '@mui/material';
-import { getUserInitials } from '../../services/user.service';
-import CancelIcon from '@mui/icons-material/Cancel';
-import { relative } from "path";
+import { RoleUsersList } from "./role-users-list.component";
 
 
 /* eslint-disable-next-line */
@@ -34,26 +26,15 @@ export interface RolesComponentProps {
 
 }
 
-const ITEM_HEIGHT = 40;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 250,
-    },
-  },
-};
-
 export function RolesComponent(props: RolesComponentProps) {
   const [showAddRole, setShowAddRole] = useState(false);
   const [roles, setRoles] = useState<any[]>([]);
-  const [selectedRoleUsers, setSelectedRoleUsers] = useState<{ [key: string]: string[] }>({});
+  
   const [anchorEl, setAnchorEl] = useState(null);
   const [GetRoles, { data: rolesData, error: rolesError, refetch: refetchRoles }] = useLazyQuery(GET_ROLES);
-  const [getUsers, { data: usersData, loading: usersLoading, error: usersError }] = useLazyQuery(GET_USERS);
-  
-  console.log("GET_USERS",GET_USERS);
+  const [getUsers, { data: usersData, error: usersError }] = useLazyQuery(GET_USERS);
+
+
   console.log("userData", usersData)
   const [deleterole] = useMutation(DELETE_Role);
 
@@ -67,41 +48,7 @@ export function RolesComponent(props: RolesComponentProps) {
     }
   };
 
-  const [updateRole] = useMutation(UPDATE_Role);
-
-  const handleUpdate = async () => {
-    try {
-
-      const arrayTmp = [];
-
-      for (const key in selectedRoleUsers) {
-        if (Object.prototype.hasOwnProperty.call(selectedRoleUsers, key)) {
-          const element = selectedRoleUsers[key];
-          arrayTmp.push({
-            roleId: key,
-            userIds: selectedRoleUsers[key]
-          })
-        }
-      }
-
-      console.log("arrayTmp", arrayTmp)
-      console.log("selectedRoleUsers", selectedRoleUsers)
-
-
-
-      await updateRole({
-        variables: arrayTmp
-      });
-
-      console.log("Roles updated successfully!");
-    } catch (error) {
-      console.error('Error updating roles:', error);
-    }
-  };
-
-
-
-
+  //const [updateRole] = useMutation(UPDATE_ROLES_USERS);
 
   useEffect(() => {
     if (props.projId) {
@@ -130,7 +77,7 @@ export function RolesComponent(props: RolesComponentProps) {
       rolesData.getRoles.forEach((role: any) => {
         initialSelectedRoleUsers[role.roleId] = [];
       });
-      setSelectedRoleUsers(initialSelectedRoleUsers);
+      //setSelectedRoleUsers(initialSelectedRoleUsers);
       setRoles(rolesData.getRoles);
     }
   }, [rolesData]);
@@ -145,39 +92,10 @@ export function RolesComponent(props: RolesComponentProps) {
     props.closeRoleModel()
     props.clearProjId()
   }
-
-
-
-  const handleChange = (event: SelectChangeEvent<string[]>, roleId: string, child: any) => {
-    const {
-      target: { value },
-    } = event;
-
-    setSelectedRoleUsers((prevUsers: { [key: string]: string[] }) => ({
-      ...prevUsers,
-      [roleId]: value as string[],
-    }));
-  };
   
   const handleClose = () => {
     setAnchorEl(null);
   };
-
-
-  const handleClearSelection = (roleId: string, userId: string) => {
-    setSelectedRoleUsers((prevUsers: { [key: string]: string[] }) => {
-   
-      if (prevUsers.hasOwnProperty(roleId) && Array.isArray(prevUsers[roleId])) {
-        return {
-          ...prevUsers,
-          [roleId]: prevUsers[roleId].filter((id: string) => id !== userId),
-        };
-      } else {
-        return prevUsers;
-      }
-    });
-  };
-  
     
   return (
     <Modal
@@ -220,7 +138,11 @@ export function RolesComponent(props: RolesComponentProps) {
         <Divider sx={{ my: '$5' }} />
 
         <Box sx={{ px: 3 }}>
-          <AddRolesComponent projId={props.projId} visible={showAddRole} closeAddRole={closeAddRole} />
+          <AddRolesComponent 
+            projId={props.projId} 
+            visible={showAddRole}
+            closeAddRole={closeAddRole} 
+            usersData={usersData?.getUsers?.users || []} />
         </Box>
 
         <Box sx={{ pb: 4, overflowY: 'auto', overflowX: 'hidden', maxHeight: '450px' }}>
@@ -241,52 +163,7 @@ export function RolesComponent(props: RolesComponentProps) {
 
                 <Grid item xs={3}>{rolesData.roleName}</Grid>
                 <Grid item xs={8} sx={{ pr: 4 }}>
-                <Select
-                      sx={{ width: '100%' }}
-                      labelId="demo-multiple-checkbox-label"
-                      id="demo-multiple-checkbox"
-                      multiple
-                      value={selectedRoleUsers[rolesData.roleId] || []}
-                      onChange={(event, child) => handleChange(event, rolesData.roleId, child)}
-                      input={<OutlinedInput label="Users" id="select-multiple-chip" />}
-                      renderValue={(selected) => (
-                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                          {selectedRoleUsers[rolesData.roleId]?.map((userId) => {
-                            const user = usersData?.getUsers.users.find((user: any) => user.userId === userId);
-                            const initials = user ? getUserInitials(user) : '';
-                            return (
-                              <Chip key={userId} 
-                                avatar={<Avatar>{initials}</Avatar>}
-                                label={`${user?.firstName} ${user?.lastName}`}
-                                clickable
-                                deleteIcon={
-                                  <CancelIcon onMouseDown={(e)=>e.stopPropagation()}/>
-                                } 
-                                onDelete={()=>handleClearSelection(rolesData.roleId,userId)}/>
-                            );
-                          })}
-                        </Box>
-                      )}
-                      MenuProps={MenuProps}
-                    >
-                      {usersData?.getUsers?.users?.map((users: any) => (
-                        <MenuItem key={users.userId} value={users.userId}>
-                          <Checkbox checked={(selectedRoleUsers[rolesData.roleId] || []).includes(users.userId)} />
-                          <Avatar sx={{ fontSize:11 ,width:35 ,height:35, marginRight:1 }}>{getUserInitials(users)}</Avatar>
-                          <ListItemText
-                                  primary={
-                                    <div>
-                                      <span style={{ fontSize: '14px' }}>{users.firstName}</span>{" "}
-                                      <span style={{ fontSize: '14px' }}>{users.lastName}</span>
-                                    </div>
-                                  }
-                                />
-
-                        </MenuItem>
-                      ))}
-
-                    </Select>
-
+                  <RoleUsersList roleUsers={rolesData.users} allUsers={usersData?.getUsers?.users || []}></RoleUsersList>
                 </Grid>
 
               </Grid>
@@ -295,13 +172,6 @@ export function RolesComponent(props: RolesComponentProps) {
             </React.Fragment>
           ))}
         </Box>
-        <Box sx={{ pb: 2 }}>
-          </Box>
-          <Box sx={{ display: 'flex', justifyContent: 'end', pr: 4, pt: 0 }}>
-            <Button variant="contained" color="primary" sx={{position:"relative",bottom:"25px"}} onClick={handleUpdate}>
-              Update
-            </Button>
-          </Box>
       </Box>
     </Modal>
   );

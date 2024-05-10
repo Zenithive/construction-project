@@ -29,8 +29,8 @@ export interface UserTypes {
    lastName: string;
    firstName: string;
    userId: string;
-   phoneNo: string | "";
-   subscriptionId: number;
+   phoneNo?: string | "";
+   subscriptionId?: number;
    orgId: string;
 }
 
