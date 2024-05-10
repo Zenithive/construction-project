@@ -31,7 +31,7 @@ export interface UserTypes {
    userId: string;
    phoneNo?: string | "";
    subscriptionId?: number;
-   orgId: string;
+   orgId?: string;
 }
 
 export interface AddUserProps {

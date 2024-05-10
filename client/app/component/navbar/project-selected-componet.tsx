@@ -12,7 +12,6 @@ import { useMutation } from '@apollo/client';
 import { UserSchema, selectUserSession } from '../../reducers/userReducer';
 import { useAppSelector } from '../../reducers/hook.redux';
 import { GET_SELECTED_PROJECTS } from 'client/app/api/selected-projects/queries';
-import { _TRN_EmbeddedTimestampVerificationResultGetUnsupportedFeatures } from 'client/public/lib/core/pdf/full/optimized/PDFNetCWasm';
 import {red} from "@mui/material/colors"
 
 
@@ -126,10 +125,10 @@ import {red} from "@mui/material/colors"
         deselectedProjects.forEach((project: any) => {
           tmpObjRemove[project.key] = { projId: project.key, userId: userDetails.userId };
         });
-        dispatch(removeproject(Object.values(tmpObjRemove)));
-
+        
         const temp = {...tmpObjRemove}
         const removeProjectPromises = Object.values(temp).map((project: any) => {
+           dispatch(removeproject(project));
           return removeSelectedProject({
             variables: {
               input:{
@@ -227,7 +226,6 @@ import {red} from "@mui/material/colors"
                     value.map((option, index:number) => (
                         <span
                             key={index}
-                            {...getTagProps({ index })}
                             style={{
                                 fontWeight: 'bold',
                                 marginRight: '8px', 
@@ -242,7 +240,6 @@ import {red} from "@mui/material/colors"
                         {value.slice(0, 14).map((option, index:number) => (
                             <span
                                 key={index}
-                                {...getTagProps({ index })}
                                 style={{
                                     fontWeight: 'bold',
                                     marginRight: '8px', 
