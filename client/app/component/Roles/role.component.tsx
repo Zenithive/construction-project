@@ -20,14 +20,13 @@ export interface RolesComponentProps {
   closeRoleModel: CallableFunction;
   clearProjId: CallableFunction;
   projId: string;
-  userData: { userId: string; firstName: string; }[];
+  userData: { userId: string; firstName: string; lastName: string}[];
   roleId: string;
   roleName: string;
 
 }
 
 export function RolesComponent(props: RolesComponentProps) {
-
   const [showAddRole, setShowAddRole] = useState(false);
   const [roles, setRoles] = useState<any[]>([]);
   
@@ -42,9 +41,7 @@ export function RolesComponent(props: RolesComponentProps) {
   const handleDeleteRole = async (roleId: string) => {
     console.log("roleId", roleId)
     try {
-      // Execute the deleteProject mutation with the projectId as variable
       await deleterole({ variables: { roleId } });
-      // Refetch projects after deletion
       refetchRoles();
     } catch (error) {
       console.error('Error deleting Role:', error);
@@ -99,7 +96,7 @@ export function RolesComponent(props: RolesComponentProps) {
   const handleClose = () => {
     setAnchorEl(null);
   };
-
+    
   return (
     <Modal
       aria-labelledby="simple-modal-title"
@@ -107,7 +104,7 @@ export function RolesComponent(props: RolesComponentProps) {
       open={props.visible}
       onClose={closeHandler}
     >
-      <Box sx={{ bgcolor: "white", width: "80%", marginX: "auto", marginY: 4, borderRadius: 3 }}>
+      <Box sx={{ bgcolor: "white", width: "80%", marginX: "auto", marginY: 4, borderRadius: 3,maxHeight: '80vh'  }}>
         <Box sx={{ paddingX: 3, paddingY: 2, }} component={"div"}>
           <Grid container spacing={2} sx={{ pt: 1 }}>
             <Grid item xs={1}>
@@ -148,7 +145,7 @@ export function RolesComponent(props: RolesComponentProps) {
             usersData={usersData?.getUsers?.users || []} />
         </Box>
 
-        <Box sx={{ pb: 4, overflow: 'hidden' }}>
+        <Box sx={{ pb: 4, overflowY: 'auto', overflowX: 'hidden', maxHeight: '450px' }}>
           {roles.map((rolesData, index) => (
             <React.Fragment key={index}>
               <Grid sx={{ display: 'flex', py: 1 }} container spacing={3}>
@@ -163,6 +160,7 @@ export function RolesComponent(props: RolesComponentProps) {
                     </IconButton>
                   </Tooltip>
                 ) : ""}</Grid>
+
                 <Grid item xs={3}>{rolesData.roleName}</Grid>
                 <Grid item xs={8} sx={{ pr: 4 }}>
                   <RoleUsersList roleUsers={rolesData.users} allUsers={usersData?.getUsers?.users || []}></RoleUsersList>

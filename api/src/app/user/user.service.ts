@@ -57,11 +57,6 @@ async getUsers(paginationInput: PaginationInputs) {
   }
 }
 
-
-
-
-
-
   async getUser(id: UserId) {
     return this.userModel.findOne({ _id: id })   
   }
@@ -119,6 +114,7 @@ async getUsers(paginationInput: PaginationInputs) {
         lastName: user.lastName,
         status: user.status,
         phoneNo: user.phoneNo,
+        orgId:user.orgId,
         subscriptionId: user.subscriptionId,
         updatedDate: user.updatedDate,
         emailVerified:user.emailVerified,
@@ -127,7 +123,7 @@ async getUsers(paginationInput: PaginationInputs) {
     }, { new: true });
     console.log(existinguser);
     if (!existinguser) {
-      throw new Error('Organization not found');
+      throw new Error('User not found');
     }
     return existinguser.save();
   }

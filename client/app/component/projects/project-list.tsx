@@ -71,18 +71,19 @@ export const ProjectListWrapper = ({ listRefresh }: ProjectListWrapperProps) => 
         refetch({ variables: { pageSize, currentPage } });
     }, [pageSize, currentPage, refetch]);
 
+   
     const handlePageSizeChange = (event: SelectChangeEvent<number>) => {
         const newSize = Number(event.target.value);
-        setPageSize(newSize);
+            setPageSize(newSize);
+            setCurrentPage(1);
          
     };
-
-
+   
     const handlePageChange = (newPage: number) => {
         setCurrentPage(newPage);
     };
 
-
+    
 
     const gridOptions: GridOptions = {
         // Other grid options...

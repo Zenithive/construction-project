@@ -17,3 +17,16 @@ export const GET_ORGANISATIONS = gql`
   }
   }
 `;
+
+export const GET_ALL_ORG=gql`
+query GetAllOrganisation{
+  getAllOrganisation{
+      region
+      status
+      website
+      orgName
+      contact
+      orgId
+  }
+}
+`;
