@@ -38,7 +38,6 @@ export const AddOrganisation = ({setListRefresh,organizationData,setOrganization
       orgId: organizationData?.orgId || "1r"
     }
 
-
     useEffect(()=>{
       console.log(organizationData)
       if (organizationData) {
