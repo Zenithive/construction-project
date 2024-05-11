@@ -1,6 +1,4 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { RootState } from "./store";
-import {USER_ACTIONS} from "./actions/user.actions";
 
 
 export interface ProjectSchema {

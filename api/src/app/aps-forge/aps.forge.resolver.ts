@@ -1,6 +1,4 @@
-import { Resolver, Mutation, Query, Args } from '@nestjs/graphql'
 import { ApsForgeService } from './aps.forge.service'
-import { ApsForge, CreateApsForgeInput } from './aps.forge.schema'
 import { Controller, Get, HttpStatus, Res } from '@nestjs/common';
 import { Response } from 'express';
 

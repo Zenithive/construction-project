@@ -2,7 +2,7 @@
 import { Select, MenuItem, Pagination } from '@mui/material';
 import { Box } from '../styles/box';
 import Stack from '@mui/material/Stack';
-import { PAGE } from 'client/app/constants/page.constant';
+import { PAGE } from '../../constants/page.constant';
 import { SelectChangeEvent } from '@mui/material/Select';
 
 

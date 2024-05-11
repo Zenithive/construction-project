@@ -1,7 +1,7 @@
 import { Divider, Modal, Text } from '@nextui-org/react';
 import React, { useEffect } from 'react';
 import { Autocomplete, Box, Button, Grid, TextField    } from '@mui/material';
-import { useFormik } from 'formik';
+import { FormikHelpers, useFormik } from 'formik';
 import * as Yup from 'yup';
 import {  useMutation } from '@apollo/client';
 import { SUBSCRIPTION_LIST } from '../../constants/subscription.constant';
@@ -9,10 +9,9 @@ import { CREATE_USER_BY_ADMIN } from '../../api/user/mutations';
 import ToastMessage from '../toast-message/ToastMessage';
 import { EDITE_USER } from '../../api/user/mutations';
 import { useQuery } from '@apollo/client';
-import { GET_ALL_ORG } from 'client/app/api/organisation/queries';
+import { GET_ALL_ORG } from '../../api/organisation/queries';
 import {Stack} from "@mui/material"
-
-
+import { OrganisationTypes } from '../organisations/add-organisation';
 
 
 const UserSchema = Yup.object().shape({
@@ -70,7 +69,7 @@ export const AddUser = ({ setListRefresh, userData, setUSERDATA }: AddUserProps)
    const [orgListKeyPair, setOrgListKeyPair] = React.useState<{ key: string; value: string }[]>([]);
    const handler = () => setVisible(true);
 
-   const { data: organizationData, loading: orgLoading, error: orgError, refetch: refetchOrg } = useQuery(GET_ALL_ORG, {
+   const { data: organizationData, refetch: refetchOrg } = useQuery(GET_ALL_ORG, {
       skip: !visible,
    });
 
@@ -84,7 +83,7 @@ export const AddUser = ({ setListRefresh, userData, setUSERDATA }: AddUserProps)
 
    useEffect(() => {
       if (organizationData && organizationData.getAllOrganisation) {
-         const tmpOrgList = organizationData.getAllOrganisation.map((elem:any)=>{
+         const tmpOrgList = organizationData.getAllOrganisation.map((elem:OrganisationTypes)=>{
             return {
                key: elem.orgId,
                value: elem.orgName
@@ -107,7 +106,7 @@ export const AddUser = ({ setListRefresh, userData, setUSERDATA }: AddUserProps)
    const [createUserByAdmin, { data, error, loading }] = useMutation(CREATE_USER_BY_ADMIN);
 
  
-   const addNewUser = async (values: UserTypes, { setSubmitting }: any) => {
+   const addNewUser = async (values: UserTypes, { setSubmitting }: FormikHelpers<UserTypes>) => {
       console.log("createUser", createUserByAdmin)
       console.log("values", values)
       setSubmitting(true);
@@ -135,7 +134,7 @@ export const AddUser = ({ setListRefresh, userData, setUSERDATA }: AddUserProps)
 
    const [editUser] = useMutation(EDITE_USER);
 
-   const UpdateUsers = async (values: UserTypes, { setSubmitting }: any) => {
+   const UpdateUsers = async (values: UserTypes, { setSubmitting }: FormikHelpers<UserTypes>) => {
       console.log("editUser", editUser);
       console.log("values", values)
       setSubmitting(true);
@@ -163,13 +162,13 @@ export const AddUser = ({ setListRefresh, userData, setUSERDATA }: AddUserProps)
       console.log(UpdateUsers);
    }
 
-   const handleSubmitMethod = (values: UserTypes, { setSubmitting }: any) => {
+   const handleSubmitMethod = (values: UserTypes, formikProps: FormikHelpers<UserTypes>) => {
       if (userData) {
-         UpdateUsers(values, { setSubmitting });
+         UpdateUsers(values, formikProps);
       } else {
          const selectedOrg = orgListKeyPair.find((org) => org.key === values.orgId);
          const orgId = selectedOrg ? selectedOrg.key : '';
-         addNewUser({ ...values, orgId }, { setSubmitting });
+         addNewUser({ ...values, orgId }, formikProps);
       }
    }
 
@@ -178,15 +177,6 @@ export const AddUser = ({ setListRefresh, userData, setUSERDATA }: AddUserProps)
       validationSchema: UserSchema,
       onSubmit: handleSubmitMethod,
    });
-
-   const MenuProps = {
-      PaperProps: {
-         style: {
-            maxHeight: 300,
-            width: 250,
-         },
-      },
-   };
 
 
    return (

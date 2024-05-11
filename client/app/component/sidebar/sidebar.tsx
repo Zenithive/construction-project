@@ -1,5 +1,5 @@
 'use client'
-import React, {useState} from 'react';
+import React from 'react';
 import {Box} from '../styles/box';
 import {Sidebar} from './sidebar.styles';
 import {Flex} from '../styles/flex';

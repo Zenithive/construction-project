@@ -19,7 +19,7 @@ export class UserService {
 
 async getUsers(paginationInput: PaginationInputs) {
   try {
-    let { pageSize, currentPage } = paginationInput;
+    const { pageSize, currentPage } = paginationInput;
 
     let users;
     let totalUsers = -1;

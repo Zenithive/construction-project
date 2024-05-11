@@ -18,6 +18,7 @@ export interface ProjectTypes {
    website: string;
    orgName: string;
    orgId: string;
+   projId?: string;
  }
 
 export interface AddProjectProps {
