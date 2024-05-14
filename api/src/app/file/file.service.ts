@@ -65,20 +65,6 @@ export class FileService {
     }
 
     
-
-
-//     async getFileByFolderId(folderId: string) {
-//         if (folderId) {
-//             const folderIds = await this.folderService.getFolderTreeIds(folderId); // Call
-//             // console.log("folderIds", folderIds)
-//             const files = await this.fileModel.find({ folderId: { $in: folderIds } }).exec();
-//             return files;
-//         }
-//         return this.fileModel.find({ status: { $ne: 'Inactive' } }).exec();
-//     }
-// }
-
-
 async getFileByFolderId( paginationInputF: PaginationInputF) {
     const { pageSize, currentPage, folderId } = paginationInputF;
     const skip = pageSize * (currentPage - 1);

@@ -122,7 +122,7 @@ export const FilesListWrapper = ({ listRefresh, folderIdHook }: FilesListWrapper
          </Col>
          <Col css={{ d: 'flex' }}>
             <Tooltip
-               content="Delete Project"
+               content="Delete File"
                color="error"
                onClick={() => handleDeleteFiles(data.fileId, data)} // me *********
             >

@@ -35,8 +35,6 @@ interface UploadFileProps {
    closeSet: CallableFunction;
    open: boolean;
    setAllFilesUploaded: CallableFunction;
-
-
 }
 
 export interface UploadFileTypes {
@@ -60,7 +58,7 @@ export const UploadFileComponent = (props: UploadFileProps) => {
          // If all files are uploaded, set the flag to true
          props.setAllFilesUploaded(true);
          closeHandler(false);
-            formik.resetForm();
+         formik.resetForm();
       }
    }, [totalUploadedFiles, selectedFiles]);
 
@@ -80,7 +78,7 @@ export const UploadFileComponent = (props: UploadFileProps) => {
    const closeHandler = (resetFileFlag: boolean) => {
       setVisible(false);
       props.closeSet(false)
-      resetFileFlag && props.fileSet("");
+      // resetFileFlag && props.fileSet("");
    };
 
    const initValue = {
@@ -91,11 +89,12 @@ export const UploadFileComponent = (props: UploadFileProps) => {
    const uploadFile = async () => {
       if (selectedFiles.length > 0) {
          try {
+            const tmpArray: any[] = [];
             setUploading(true); // Start loading when uploading begins
             setLoading(true); // Start loading when uploading begins
 
             selectedFiles.forEach(async (file) => {
-               const formData = new FormData();
+               const formData = new FormData(); 
                formData.append('fileName', file)
                const response = await axios.post(`${CONFIG.server_api}files/upload`, formData, {
                   headers: { 'Content-Type': 'multipart/form-data' },
@@ -105,17 +104,16 @@ export const UploadFileComponent = (props: UploadFileProps) => {
                   }
                });
 
-               props.fileSet(response.data);
+               tmpArray.push(response.data);
+               props.fileSet(tmpArray);
                setTotalUploadedFiles(prevState => prevState + 1); // Increment totalUploadedFiles by 1
             });
 
+         }
 
-            
-         } 
-         
          catch (error) {
             console.error('Error uploading files:', error);
-         
+
             setLoading(false); // Stop loading after uploading finishes
             setUploading(false); // Set uploading flag to false
             setUploadProgress(0); // Reset upload progress
@@ -174,12 +172,25 @@ export const UploadFileComponent = (props: UploadFileProps) => {
                >
                   <Grid container spacing={2}>
                      <Grid item xs={12}>
+                        
+
                         {fileNames.map((fileName, index) => (
                            <Box key={index} sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                               <span>{fileName}</span>
-                              <CloseIcon onClick={() => removeFile(fileName)} />
+                              {selectedFiles[index] && uploading && ( // Check if file is uploading
+                                 <Box sx={{ position: 'relative', width: '30px', height: '30px' }}>
+                                    <CircularProgress size={30} color="primary" variant="determinate" value={uploadProgress} />
+                                    <span style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', color: 'black', fontSize: '0.6rem' }}>{uploadProgress}%</span>
+                                 </Box>
+                              )}
+                              {!uploading && ( // Show close icon only when not uploading
+                                 <CloseIcon onClick={() => removeFile(fileName)} />
+                              )}
                            </Box>
                         ))}
+
+
+
                      </Grid>
                      <Grid item xs={12}>
                         {!uploading ? (

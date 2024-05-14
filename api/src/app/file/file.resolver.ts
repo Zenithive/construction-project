@@ -26,6 +26,25 @@ export class FileResolver {
   }
 
 
+// @Mutation(() => [File]) // Assuming File is your GraphQL type for files
+// async uploadMultipleFiles(@Args('input') input: UploadMultipleFilesInput): Promise<File[]> {
+//   const { files } = input;
+//   const uploadedFiles: File[] = [];
+
+//   for (const fileObject of files) {
+//     fileObject.fileId = uuidv4();
+//     fileObject.revisionId = uuidv4();
+//     // You can optionally handle folderId here if needed
+//     console.log('fileObject', fileObject);
+//     const uploadedFile = await this.fileService.uploadFile(fileObject);
+//     uploadedFiles.push(uploadedFile);
+//   }
+
+//   return uploadedFiles;
+// }
+
+
+
 
   @Mutation(() => File)
   async deleteFile(@Args('input') deleteFileInput: DeleteFileInput) {
