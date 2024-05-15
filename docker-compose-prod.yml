@@ -4,7 +4,7 @@ services:
       image: mongo:latest
       restart: always
       volumes:
-        - mongo_db:/data/db
+        - /home/docker-volumne/db:mongo_db
       ports: 
         - 27018:27017
 
@@ -14,6 +14,8 @@ services:
         dockerfile: Dockerfile.production
       env_file:
         .env.production
+      volumes:
+        - /home/docker-volumne/server:server
       ports: 
         - 3000:3000
         - 4200:4200
@@ -30,4 +32,7 @@ services:
         - mongo_db
 
 volumes:
-  mongo_db: {}
+  mongo_db: 
+    external: true
+  server: 
+    external: true
