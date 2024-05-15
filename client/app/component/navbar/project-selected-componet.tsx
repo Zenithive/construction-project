@@ -130,14 +130,11 @@ import { ProjectTypes } from '../projects/add-project';
         deselectedProjects.forEach((project: any) => {
           tmpObjRemove[project.key] = { projId: project.key, userId: userDetails.userId };
         });
-
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
-        dispatch(removeproject(Object.values(tmpObjRemove)));
-
+        
         const temp = {...tmpObjRemove}
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const removeProjectPromises = Object.values(temp).map((project: any) => {
+           dispatch(removeproject(project));
           return removeSelectedProject({
             variables: {
               input:{

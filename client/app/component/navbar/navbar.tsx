@@ -10,8 +10,8 @@ import Project_Selected_Componet from './project-selected-componet';
 
 interface Props {
    children: React.ReactNode;
-   projId: string;
-   userId: string;
+   projId?: string;
+   userId?: string;
 }
 
 export const NavbarWrapper = ({ children}: Props) => {

@@ -27,7 +27,7 @@ services:
         SERVER_API: http://zenithive.co.uk:3000/api/
         APS_CLIENT_ID : EbAv1ybr2Va7nowXrmnXPq3ymEhKMG5k
         APS_CLIENT_SECRET : i8uk12vSGTjBMqAL
-        PDFTronWebViewerKey: demo:1713377310356:7fec63a3030000000019570e975695a71a7b7a7e9b6c8c3c5f510461a8
+        PDFTronWebViewerKey: demo:1715368856424:7fcdcf250300000000b8633dea5148478e0b8c60334c950fa36119aa99
       depends_on:
         - mongo_db
 
