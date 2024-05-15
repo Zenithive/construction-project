@@ -18,7 +18,7 @@ import { ProjectTypes } from '../projects/add-project';
 
 
 
- export const Project_Selected_Componet = () => {
+ export const ProjectSelectedComponent = () => {
 
     const dispatch = useAppDispatch();
     const [projListKeyPair, setprojListKeyPair] = React.useState<{ key: string; value: string }[]>([]);
@@ -166,7 +166,7 @@ import { ProjectTypes } from '../projects/add-project';
 
 
      return (
-        <Stack spacing={3} sx={{ width: 1200, background: "white", top: "5px", position: "relative", right: "25px" }}>
+        <Stack spacing={3} sx={{ width: '100%', background: "white", position: "relative", borderRadius: 2, left: 0 }}>
         {projListKeyPair.length ? (
            <Autocomplete 
               disablePortal
@@ -262,4 +262,4 @@ import { ProjectTypes } from '../projects/add-project';
        );
     };
 
-    export default Project_Selected_Componet;
+    export default ProjectSelectedComponent;
