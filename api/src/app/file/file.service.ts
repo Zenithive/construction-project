@@ -1,7 +1,7 @@
 import { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { DeleteFileInput, File, FileDocument, UploadFileInput } from './file.schema';
+import { File, FileDocument, UploadFileInput } from './file.schema';
 //import { FileStorageUtil } from '../util/file-storage.util';
 import { ApsForgeService } from '../aps-forge/aps.forge.service';
 import { FolderService } from '../folder/folder.service'

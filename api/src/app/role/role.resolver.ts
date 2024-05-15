@@ -5,7 +5,6 @@ import {
   CreateNewRole,
   GetRolesByProjId,
   DeleteRoleInput,
-  UpdateRoleInput,
   UpdateRoleInputArray,
 } from './role.schema';
 

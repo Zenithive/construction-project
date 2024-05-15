@@ -69,9 +69,8 @@ export const UserLiserWrapper = ({ listRefresh, setUSERDATA }: UserLiserWrapperP
    const [deleteUser] = useMutation(DELETE_USER);
 
    // Function to handle project deletion
-   const handleDeleteProject = async (userId: any, newdata: any) => {
+   const handleDeleteProject = async (userId: string) => {
       console.log("userId", userId)
-      console.log("newdata", newdata);
       try {
          // Execute the deleteProject mutation with the projectId as variable
          await deleteUser({ variables: { userId } });
@@ -83,10 +82,11 @@ export const UserLiserWrapper = ({ listRefresh, setUSERDATA }: UserLiserWrapperP
    };
 
    //for edite
-   const [visible, setVisible] = React.useState(false);
+   //const [visible, setVisible] = React.useState(false);
+   // eslint-disable-next-line @typescript-eslint/no-explicit-any
    const handleEditUser = (datas: any) => {
       console.log(datas);
-      setVisible(true)
+      //setVisible(true)
       setUSERDATA(datas);
    }
 
@@ -112,7 +112,7 @@ export const UserLiserWrapper = ({ listRefresh, setUSERDATA }: UserLiserWrapperP
             <Tooltip
                content="Delete User"
                color="error"
-               onClick={() => handleDeleteProject(data.userId, data)}
+               onClick={() => handleDeleteProject(data.userId)}
             >
                <IconButton>
                   <DeleteIcon size={20} fill="#FF0080" />
@@ -139,6 +139,7 @@ export const UserLiserWrapper = ({ listRefresh, setUSERDATA }: UserLiserWrapperP
          sortable: true,
          filter: true,
          // Use valueGetter to concatenate firstname and lastname into one field
+         // eslint-disable-next-line @typescript-eslint/no-explicit-any
          valueGetter: (params: any) => {
             return `${params.data.firstName}` + ` ${params.data.lastName}`
          }

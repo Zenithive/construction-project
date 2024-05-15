@@ -1,4 +1,4 @@
-import { Input, Link, Navbar, Text } from '@nextui-org/react';
+import {Link, Navbar } from '@nextui-org/react';
 import React, { Suspense } from 'react';
 import { Box } from '../styles/box';
 import { BurguerButton } from './burguer-button';
@@ -11,12 +11,10 @@ import Project_Selected_Componet from './project-selected-componet';
 interface Props {
    children: React.ReactNode;
    projId?: string;
-   userId?:String;
+   userId?: string;
 }
 
 export const NavbarWrapper = ({ children}: Props) => {
-
-   
 
    const collapseItems = [
       'Profile',

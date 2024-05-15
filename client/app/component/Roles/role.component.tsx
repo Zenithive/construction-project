@@ -28,6 +28,7 @@ export interface RolesComponentProps {
 
 export function RolesComponent(props: RolesComponentProps) {
   const [showAddRole, setShowAddRole] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [roles, setRoles] = useState<any[]>([]);
   
   const [anchorEl, setAnchorEl] = useState(null);
@@ -74,6 +75,7 @@ export function RolesComponent(props: RolesComponentProps) {
   useEffect(() => {
     if (rolesData && rolesData.getRoles) {
       const initialSelectedRoleUsers: { [key: string]: string[] } = {};
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       rolesData.getRoles.forEach((role: any) => {
         initialSelectedRoleUsers[role.roleId] = [];
       });

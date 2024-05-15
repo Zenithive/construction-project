@@ -4,16 +4,15 @@ import { TreeItem } from '@mui/x-tree-view/TreeItem';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import AddIcon from '@mui/icons-material/Add';
-import { Box, Button, CircularProgress, Grid, IconButton, ListItemIcon, ListItemText, Menu, MenuItem, TextField, Typography, colors } from '@mui/material';
+import { Box, CircularProgress, Grid, IconButton, ListItemIcon, ListItemText, Menu, MenuItem, TextField, Typography, colors } from '@mui/material';
 import { Folder, MoreVert, CloudUpload, CreateNewFolder, Check, Close } from '@mui/icons-material';
-import { useFormik } from 'formik';
+import { FormikHelpers, useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useMutation, useQuery } from '@apollo/client';
 import { CREATE_NEW_FOLDER } from '../../api/folder/mutations';
 import { GET_FOLDERS } from '../../api/folder/queries';
 
-import { UploadFileComponent } from './upload.file.component'; // Sachin code 
-import { toggleUploadModalInterface, FolderIdInterface } from 'client/app/files/page';
+import { toggleUploadModalInterface, FolderIdInterface } from '../../files/page';
 
 
 export interface FileMetadataType{   ///
@@ -60,6 +59,10 @@ interface TreeListingProps{
     andChangeFlag: CallableFunction;
 }
 
+interface FolderNameForm{
+    folderName:string;
+}
+
 interface FolderTreeInterface{
     toggleUploadModalHook: toggleUploadModalInterface;
     folderIdHook: FolderIdInterface;
@@ -70,13 +73,8 @@ export const FolderTree = ({toggleUploadModalHook, folderIdHook}: FolderTreeInte
     const { data, refetch } = useQuery(GET_FOLDERS);
     const [ listRefresh, setListRefresh ] = useState(false);
     const [firstFolderFlag, setFirstFolderFlag] = useState(false);
-    const [isUploadFileOpen, setIsUploadFileOpen] = useState(false); /// Sachin Code
-    const [fileData, setFileData] = useState({} as FileMetadataType); /// Sachin code
-    
     
     const fileUploadDialogOpen = () => {
-        
-        
         toggleUploadModalHook.setIsUploadModalOpen(true);
     } /// Sachin Code
 
@@ -157,7 +155,6 @@ export const FolderTree = ({toggleUploadModalHook, folderIdHook}: FolderTreeInte
 
     const TreeListing = ({folderData,folderHook, newflag, andChangeFlag, parentFolder}: TreeListingProps)=>{
        
-        const [localFolderFlag, setLocalFolderFlag] = useState(false);
 
         const EmpatyFolderView = () => (
             <>
@@ -173,7 +170,7 @@ export const FolderTree = ({toggleUploadModalHook, folderIdHook}: FolderTreeInte
                     <TreeItemListComponent key={item.id} item={item} folderHook={folderHook} />
                 ) : <EmpatyFolderView></EmpatyFolderView>}
                 
-                {(newflag || localFolderFlag) ? <AddNewFolder toggleAddFolder={andChangeFlag} parentFolder={parentFolder} /> : ""}
+                {(newflag) ? <AddNewFolder toggleAddFolder={andChangeFlag} parentFolder={parentFolder} /> : ""}
             </>
         );
     }
@@ -193,10 +190,10 @@ export const FolderTree = ({toggleUploadModalHook, folderIdHook}: FolderTreeInte
 
     
     const AddNewFolder = ({toggleAddFolder, parentFolder}:AddNewFolderProps) => {
-        const [createNewFolder, { data, error, loading }] = useMutation(CREATE_NEW_FOLDER);
+        const [createNewFolder, { loading }] = useMutation(CREATE_NEW_FOLDER);
 
         const parentFolderId = parentFolder.id || "-1";
-        const addFolderSubmit = async (values: {folderName:string},{ setSubmitting, resetForm }:any) => {
+        const addFolderSubmit = async (values: FolderNameForm,{ setSubmitting, resetForm }:FormikHelpers<FolderNameForm>) => {
             console.log("values", values)
             const folderRespond = await createNewFolder({
                 variables: {
@@ -297,8 +294,10 @@ export const FolderTree = ({toggleUploadModalHook, folderIdHook}: FolderTreeInte
     const parentStpl = () => {
         setFirstFolderFlag(false);
     };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const formatData = (rowData: any) => {
         const newData:Array<FolderMetaData> = []
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const folderMap:any = {};
         if(rowData && rowData?.getFolders){
             for (let index = 0; index < rowData?.getFolders.length; index++) {

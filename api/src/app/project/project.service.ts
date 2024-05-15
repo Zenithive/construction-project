@@ -1,7 +1,7 @@
 import { Model } from 'mongoose';
 import {  Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Project, ProjectDocument, CreateProjectInput,PaginationInput ,PaginationResult} from './project.schema';
+import { Project, ProjectDocument, CreateProjectInput,PaginationInput} from './project.schema';
 import { v4 as uuidv4 } from 'uuid'; 
 import { PermissionService } from '../permissions/permissions.service';
 import { RoleService } from '../role/role.service';

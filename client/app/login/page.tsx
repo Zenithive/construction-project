@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation'
 import ToastMessage from '../component/toast-message/ToastMessage';
 import { useAppDispatch } from '../reducers/hook.redux';
 import { addUser } from '../reducers/userReducer';
-import { addproject,removeproject } from '../reducers/projectReducer';
+import { removeproject } from '../reducers/projectReducer';
 /* eslint-disable-next-line */
 export interface LoginProps {}
 

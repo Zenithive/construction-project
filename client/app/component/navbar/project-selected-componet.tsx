@@ -1,18 +1,19 @@
-import React, { Suspense } from 'react';
-import { GET_ALL_PROJECTS } from 'client/app/api/project/queries';
+import React from 'react';
+import { GET_ALL_PROJECTS } from '../../api/project/queries';
 import { useQuery } from '@apollo/client';
 import { useEffect } from 'react';
-import { Autocomplete, Button, Grid, TextField ,Checkbox,ListSubheader, ListItemText, ListItemIcon, ListItem, List, Divider,Chip} from '@mui/material';
+import { Autocomplete, TextField ,Checkbox} from '@mui/material';
 import { useFormik } from 'formik';
 import { Stack } from "@mui/material"
 import { useAppDispatch } from '../../reducers/hook.redux';
-import { addproject, removeproject } from 'client/app/reducers/projectReducer';
-import { ADD_SELECTED_PROJECTS,REMOVE_SELECTED_PROJECTS } from 'client/app/api/selected-projects/mutations';
+import { addproject, removeproject } from '../../reducers/projectReducer';
+import { ADD_SELECTED_PROJECTS,REMOVE_SELECTED_PROJECTS } from '../../api/selected-projects/mutations';
 import { useMutation } from '@apollo/client';
 import { UserSchema, selectUserSession } from '../../reducers/userReducer';
 import { useAppSelector } from '../../reducers/hook.redux';
-import { GET_SELECTED_PROJECTS } from 'client/app/api/selected-projects/queries';
+import { GET_SELECTED_PROJECTS } from '../../api/selected-projects/queries';
 import {red} from "@mui/material/colors"
+import { ProjectTypes } from '../projects/add-project';
 
 
 
@@ -20,11 +21,10 @@ import {red} from "@mui/material/colors"
  export const Project_Selected_Componet = () => {
 
     const dispatch = useAppDispatch();
-    const [visible, setVisible] = React.useState(false);
     const [projListKeyPair, setprojListKeyPair] = React.useState<{ key: string; value: string }[]>([]);
-    const { data, loading, error, refetch } = useQuery(GET_ALL_PROJECTS);
+    const { data, refetch } = useQuery(GET_ALL_PROJECTS);
     const userDetails: UserSchema = useAppSelector(selectUserSession);
-    const { data: selectedProjectsData, loading: selectedProjectsLoading, error: selectedProjectsError,refetch:refetchselectedProjectData} = useQuery(GET_SELECTED_PROJECTS, {
+    const { data: selectedProjectsData, refetch:refetchselectedProjectData} = useQuery(GET_SELECTED_PROJECTS, {
         variables: { 
         userId: userDetails.userId, 
         },
@@ -45,17 +45,15 @@ import {red} from "@mui/material/colors"
      
  
     useEffect(() => {
-       if (visible) {
           console.log("proj", data)
           console.log("GET_ALL_PROJECT", GET_ALL_PROJECTS);
           refetch();
-       }
-    }, [visible,refetch]);
+    }, [refetch]);
     
  
     useEffect(() => {
        if (data && data.getAllProject) {
-          const tmpProjectList = data.getAllProject.map((elem: any) => {
+          const tmpProjectList = data.getAllProject.map((elem: ProjectTypes) => {
              return {
                 key: elem.projId,
                 value: elem.projName,
@@ -73,7 +71,7 @@ import {red} from "@mui/material/colors"
     useEffect(() => { 
        console.log("selectedProjectsData", selectedProjectsData)
        if (selectedProjectsData && selectedProjectsData.getSelectedProjects && projListKeyPair.length) {
-          const selectedProjects = selectedProjectsData.getSelectedProjects.map((project: any) => project.projId,userDetails.userId);
+          const selectedProjects = selectedProjectsData.getSelectedProjects.map((project: ProjectTypes) => project.projId,userDetails.userId);
           formik.setFieldValue('projId', selectedProjects);
           refetchselectedProjectData();
        }
@@ -84,7 +82,9 @@ import {red} from "@mui/material/colors"
        console.log("projListKeyPair === ", projListKeyPair);
     }, [formik.values, projListKeyPair]);
  
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleProjectChange = (e: any, values: any) => {
+       // eslint-disable-next-line @typescript-eslint/no-explicit-any
        const selectedProjectKeys = values.map((selectedProject: any) => selectedProject.key);
        const currentSelectedProjectKeys = formik.values.projId;
  
@@ -92,12 +92,15 @@ import {red} from "@mui/material/colors"
        const tmpObjRemove:{[key:string]:{projId: string;userId:string}}={};
      
        if (selectedProjectKeys.length > currentSelectedProjectKeys.length) { 
+         // eslint-disable-next-line @typescript-eslint/no-explicit-any
          const newlySelectedProjects = values.filter((project: any) => !currentSelectedProjectKeys.includes(project.key));
+         // eslint-disable-next-line @typescript-eslint/no-explicit-any
          newlySelectedProjects.forEach((project: any) => {
            tmpObj[project.key] = { projId: project.key, projName: project.value,userId:userDetails.userId };
          });
          
          dispatch(addproject(Object.values(tmpObj)));
+         // eslint-disable-next-line @typescript-eslint/no-explicit-any
          const addProjectPromises = Object.values(tmpObj).map((project: any) =>
            addSelectedProject({
              variables: {
@@ -120,13 +123,16 @@ import {red} from "@mui/material/colors"
        }      
        else {
        const deselectedProjects = projListKeyPair.filter(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (option: any) => !selectedProjectKeys.includes(option.key) && currentSelectedProjectKeys.includes(option.key)
         );
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         deselectedProjects.forEach((project: any) => {
           tmpObjRemove[project.key] = { projId: project.key, userId: userDetails.userId };
         });
         
         const temp = {...tmpObjRemove}
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const removeProjectPromises = Object.values(temp).map((project: any) => {
            dispatch(removeproject(project));
           return removeSelectedProject({
@@ -151,20 +157,12 @@ import {red} from "@mui/material/colors"
        }
      };
 
+     // eslint-disable-next-line @typescript-eslint/no-explicit-any
      const handleKeyDown = (event:any) => {
       if (event.key === 'Backspace') {
           event.stopPropagation();
       }
   };
-  const handleSearchChange = (event:any, value:any) => {
-   const inputValue = (typeof value === 'string' ? value : '').toLowerCase();
-   const inputLength = inputValue.length;
-   return inputLength === 0
-       ? projListKeyPair
-       : projListKeyPair.filter(option =>
-           typeof option.value === 'string' && option.value.toLowerCase().includes(inputValue)
-       );
-};
 
 
      return (

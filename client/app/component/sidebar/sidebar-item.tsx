@@ -17,6 +17,7 @@ export const SidebarItem = ({icon, title, isActive, href = ''}: Props) => {
 
    const handleClick = () => {
       if (window.innerWidth < 768) {
+         console.log("collapsed", collapsed);
          setCollapsed();
       }
    };

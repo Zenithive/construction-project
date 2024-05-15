@@ -14,11 +14,7 @@ export interface ViewerCompoentProps {
 export default function WebViewerComponent(props: ViewerCompoentProps) {
     const { revisionId } = props;
     const viewerRef = useRef<HTMLDivElement>(null)
-    const [viewer, setViewer] = useState<any>(null)
     const [error, setError] = useState(false);
-    const beenInitialised = useRef<Boolean>(false);
-
-
 
 
     useEffect(() => {
@@ -27,7 +23,8 @@ export default function WebViewerComponent(props: ViewerCompoentProps) {
             try {
                 console.log("CONFIG.pdftron_web_viewer_key", CONFIG.pdftron_web_viewer_key)
                 const WebViewer = await import('@pdftron/webviewer');
-                const docx = await WebViewer.default(
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
+                const docx: any = await WebViewer.default(
                     {
                         path: '/lib',
                         licenseKey: CONFIG.pdftron_web_viewer_key,//'demo:1713377310356:7fec63a3030000000019570e975695a71a7b7a7e9b6c8c3c5f510461a8',
@@ -36,10 +33,11 @@ export default function WebViewerComponent(props: ViewerCompoentProps) {
                     },
                     viewerRef.current as HTMLDivElement,
                 )
-                const { Core, UI } = docx;
-                const { documentViewer, annotationManager, Annotations, Tools } = Core;
+                // const { Core, UI } = docx;
+                // const { documentViewer, annotationManager, Annotations, Tools } = Core;
             } catch (error) {
                 console.log('viewer error ==> ', error)
+                setError(true);
             }
         }
 
