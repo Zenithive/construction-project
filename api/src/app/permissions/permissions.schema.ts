@@ -26,6 +26,10 @@ export class Permission {
 
   @Prop()
   @Field()
+  roleId!: string;
+
+  @Prop()
+  @Field()
   value!: boolean;
 
   @Prop()
@@ -65,6 +69,15 @@ export class CreateNewPermission {
   @Field()
   updatedBy: Date = new Date();;
 
+  @Field()
+  projId!: string;
+
+  @Field()
+  roleId!: string;
+}
+
+@InputType()
+export class GetPermissionByProjId {
   @Field()
   projId!: string;
 }

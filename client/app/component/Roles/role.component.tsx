@@ -106,7 +106,7 @@ export function RolesComponent(props: RolesComponentProps) {
       open={props.visible}
       onClose={closeHandler}
     >
-      <Box sx={{ bgcolor: "white", width: "80%", marginX: "auto", marginY: 4, borderRadius: 3,maxHeight: '80vh'  }}>
+      <Box sx={{ bgcolor: "white", width: "80%", marginX: "auto", marginY: 4, borderRadius: 3, maxHeight: '80vh'  }}>
         <Box sx={{ paddingX: 3, paddingY: 2, }} component={"div"}>
           <Grid container spacing={2} sx={{ pt: 1 }}>
             <Grid item xs={1}>
