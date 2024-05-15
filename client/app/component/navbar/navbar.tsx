@@ -1,12 +1,10 @@
-import {Link, Navbar } from '@nextui-org/react';
+import { Link, Navbar } from '@nextui-org/react';
 import React, { Suspense } from 'react';
 import { Box } from '../styles/box';
 import { BurguerButton } from './burguer-button';
 import { NotificationsDropdown } from './notifications-dropdown';
 import { UserDropdown } from './user-dropdown';
-import Project_Selected_Componet from './project-selected-componet';
-
-
+import ProjectSelectedComponent from './project-selected-componet';
 
 interface Props {
    children: React.ReactNode;
@@ -14,7 +12,7 @@ interface Props {
    userId?: string;
 }
 
-export const NavbarWrapper = ({ children}: Props) => {
+export const NavbarWrapper = ({ children }: Props) => {
 
    const collapseItems = [
       'Profile',
@@ -29,7 +27,7 @@ export const NavbarWrapper = ({ children}: Props) => {
       'Log Out',
    ];
 
-  
+
    return (
       <Suspense fallback={<p>Loading...</p>}>
          <Box
@@ -54,6 +52,7 @@ export const NavbarWrapper = ({ children}: Props) => {
 
                   '& .nextui-navbar-container': {
                      'border': 'none',
+                     'padding-left': '6px',
                      'maxWidth': '100%',
                      background: "$customBackGround",
 
@@ -68,39 +67,19 @@ export const NavbarWrapper = ({ children}: Props) => {
                   <BurguerButton />
                </Navbar.Content>
                <Navbar.Content
-                  hideIn={'md'}
+               hideIn={'md'}
                   css={{
                      width: '100%',
                   }}
                >
-                  
-                <Project_Selected_Componet/>
-
-                  
+                  <ProjectSelectedComponent />
                </Navbar.Content>
                <Navbar.Content>
-                  {/* <Navbar.Content hideIn={'md'}>
-                     <Flex align={'center'} css={{gap: '$4'}}>
-                        <FeedbackIcon />
-                        <Text span>Feedback?</Text>
-                     </Flex>
-                  </Navbar.Content> */}
 
                   <Navbar.Content>
                      <NotificationsDropdown />
                   </Navbar.Content>
 
-                  {/* <Navbar.Content hideIn={'md'}>
-                     <SupportIcon />
-                  </Navbar.Content>
-                  <Navbar.Content>
-                     <Link
-                        href="https://github.com/"
-                        target={'_blank'}
-                     >
-                        <GithubIcon />
-                     </Link>
-                  </Navbar.Content> */}
                   <Navbar.Content>
                      <UserDropdown />
                   </Navbar.Content>
