@@ -4,7 +4,7 @@ import {Flex} from '../component/styles/flex';
 import {FilesListWrapper} from '../component/files/files-list';
 import {FolderTree} from '../component/files/folder.tree';
 import {AddFile} from '../component/files/add-file';
-import { Box, Link } from '@mui/material';
+import { Box } from '@mui/material';
 
 /* eslint-disable-next-line */
 export interface FilesProps {}
@@ -88,16 +88,6 @@ export default function Files(props: FilesProps) {
              <AddFile setListRefresh={setListRefresh} toggleUploadModalHook={toggleUploadModalHook} 
              folderIdHook={folderIdHook} 
              />
-             
-             <Link
-               variant="body2" 
-               underline="none"
-               target="_blank"
-               rel="noopener"
-               href={`/web-viewer?id=a3686222-24dd-4f46-99aa-35f8df773b04`}
-               >
-               Open File
-            </Link>
           </Flex>
        </Flex>
 

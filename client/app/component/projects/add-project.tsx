@@ -10,7 +10,6 @@ import { UserSchema, selectUserSession } from '../../reducers/userReducer';
 import { useAppSelector } from '../../reducers/hook.redux';
 
 
-
 export interface ProjectTypes {
    projName: string;
    region: string;
@@ -134,6 +133,7 @@ export const AddProject = ({setListRefresh}:AddProjectProps) => {
                      <TextField
                         required
                         fullWidth
+                        InputProps={{sx: {borderRadius: 3}}}
                         id="projName"
                         label="Project Name"
                         name="projName"
@@ -149,6 +149,7 @@ export const AddProject = ({setListRefresh}:AddProjectProps) => {
                      <TextField
                         required
                         fullWidth
+                        InputProps={{sx: {borderRadius: 3}}}
                         name="region"
                         label="Region"
                         id="region"
@@ -163,6 +164,7 @@ export const AddProject = ({setListRefresh}:AddProjectProps) => {
                   <Grid item xs={12}>
                      <TextField
                         required
+                        InputProps={{sx: {borderRadius: 3}}}
                         fullWidth
                         name="status"
                         label="Status"
@@ -179,6 +181,7 @@ export const AddProject = ({setListRefresh}:AddProjectProps) => {
                      <TextField
                         required
                         fullWidth
+                        InputProps={{sx: {borderRadius: 3}}}
                         name="website"
                         label="Website"
                         id="website"
@@ -195,6 +198,7 @@ export const AddProject = ({setListRefresh}:AddProjectProps) => {
                         required
                         fullWidth
                         name="orgName"
+                        InputProps={{sx: {borderRadius: 3}}}
                         label="Organisation Name"
                         id="orgName"
                         autoComplete="orgName"

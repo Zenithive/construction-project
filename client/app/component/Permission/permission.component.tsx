@@ -20,44 +20,43 @@ export function PermissionComponent(props: PermissionComponentProps) {
   const permistionList = [
     {
       name: "Can Upload File",
-      kye: "canUploadFile"
+      key: "canUploadFile"
     },
     {
       name: "Can Download File",
-      kye: "canDownloadFile"
+      key: "canDownloadFile"
     },
     {
       name: "Can Delete file",
-      kye: "canDeleteFile"
+      key: "canDeleteFile"
     },
     {
       name: "Can Create Folder",
-      kye: "canCreateFolder"
+      key: "canCreateFolder"
     },
     {
       name: "Can delete Folder",
-      kye: "canDeleteFolder"
+      key: "canDeleteFolder"
     },
     {
       name: "Can create Project",
-      kye: "canCreateProject"
+      key: "canCreateProject"
     },
     {
       name: "Can delete Project",
-      kye: "canDeleteProject"
+      key: "canDeleteProject"
     },
     {
       name: "Can Upload File",
-      kye: "canUploadFile"
+      key: "canUploadFile"
     },
     {
       name: "Can Upload File",
-      kye: "canUploadFile"
+      key: "canUploadFile"
     }
   ];
 
   useEffect(()=>{
-    console.log("props.projId", props.projId)
     if(props.projId){
       GetRoles({variables: {
         projId: props.projId

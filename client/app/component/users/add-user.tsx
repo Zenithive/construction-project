@@ -222,6 +222,7 @@ export const AddUser = ({ setListRefresh, userData, setUSERDATA }: AddUserProps)
                         <TextField
                            required
                            fullWidth
+                           InputProps={{sx: {borderRadius: 3}}}
                            id="firstName"
                            label="First Name"
                            name="firstName"
@@ -237,6 +238,7 @@ export const AddUser = ({ setListRefresh, userData, setUSERDATA }: AddUserProps)
                         <TextField
                            required
                            fullWidth
+                           InputProps={{sx: {borderRadius: 3}}}
                            name="lastName"
                            label="Last Name"
                            id="lastName"
@@ -252,6 +254,7 @@ export const AddUser = ({ setListRefresh, userData, setUSERDATA }: AddUserProps)
                         <TextField
                            required
                            fullWidth
+                           InputProps={{sx: {borderRadius: 3}}}
                            name="email"
                            label="Email"
                            id="email"
@@ -267,6 +270,7 @@ export const AddUser = ({ setListRefresh, userData, setUSERDATA }: AddUserProps)
                         <TextField
                            required
                            fullWidth
+                           InputProps={{sx: {borderRadius: 3}}}
                            name="phoneNo"
                            label="Phon No"
                            id="phoneNo"
@@ -292,6 +296,7 @@ export const AddUser = ({ setListRefresh, userData, setUSERDATA }: AddUserProps)
                               <TextField
                                  {...params}
                                  id='orgId'
+                                 InputProps={{sx: {borderRadius: 3}}}
                                  name="orgId"
                                  value={formik.values.orgId}
                                  label="Organisation"
@@ -319,6 +324,7 @@ export const AddUser = ({ setListRefresh, userData, setUSERDATA }: AddUserProps)
                                  <TextField
                                     {...params}
                                     id='subscriptionId'
+                                    InputProps={{sx: {borderRadius: 3}}}
                                     name="subscriptionId"
                                     value={formik.values.subscriptionId}
                                     label="Subscription"

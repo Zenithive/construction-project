@@ -48,7 +48,7 @@ export const PaginationComponent = ({ totalPage, currentPage, pageSize, handlePa
                         left: "350%",
                         backgroundColor: "rgb(26,119,210)",
                         color: "white",
-                        borderRadius: "5px",
+                        borderRadius: 3,
                         border: "none",
                         textAlign: "center"
                     }}

@@ -16,7 +16,10 @@
     "docker-compose-prod-up": "docker-compose -f docker-compose-prod.yml up -d --build",
     "docker-compose-prod-down": "docker-compose -f docker-compose-prod.yml down",
     "lint": "nx run-many --target=lint",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "migrate-status": "migrate-mongo status",
+    "migrate-up": "migrate-mongo up",
+    "migrate-down": "migrate-mongo down"
   },
   "private": true,
   "devDependencies": {
