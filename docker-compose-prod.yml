@@ -4,7 +4,7 @@ services:
       image: mongo:latest
       restart: always
       volumes:
-        - /home/docker-volumne/db:mongo_db
+        - /home/docker-volumne/db:/data/db:rw
       ports: 
         - 27018:27017
 
@@ -15,7 +15,7 @@ services:
       env_file:
         .env.production
       volumes:
-        - /home/docker-volumne/server:server
+        - /home/docker-volumne/server:/app/server:rw
       ports: 
         - 3000:3000
         - 4200:4200
@@ -30,9 +30,3 @@ services:
         PDFTronWebViewerKey: demo:1715368856424:7fcdcf250300000000b8633dea5148478e0b8c60334c950fa36119aa99
       depends_on:
         - mongo_db
-
-volumes:
-  mongo_db: 
-    external: true
-  server: 
-    external: true
