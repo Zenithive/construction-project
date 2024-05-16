@@ -6,6 +6,8 @@ WORKDIR /app
 # Copy the shared package.json and package-lock.json
 COPY package*.json ./
 
+RUN npm install husky -g
+
 # Install dependencies
 RUN npm install
 

@@ -59,8 +59,6 @@ export default function Viewer() {
   }, [urn])
 
 
-
-  // *********** SACHIN CODE TO GET FILE FROM DB ************
   const [GetOneFile, { loading, error, data }] = useLazyQuery(GET_ONE_FILE);
 
   const [fileData, setFileData] = useState({

@@ -75,10 +75,22 @@ export class DeleteRoleInput {
 
 @InputType()
 export class UpdateRoleInput {
-  @Field()
+  @Field(() => String)
   roleId!: string;
 
-  @Field(() => [String])
-  users!: string[];
+  @Field(() => [UserIdz])
+  userIds!: UserIdz[];
+}
+
+@InputType()
+export class UserIdz {
+  @Field(() => String)
+  usrId!: string;
+}
+
+@InputType()
+export class UpdateRoleInputArray {
+  @Field(() => [UpdateRoleInput],{nullable: true})
+  allRolesData!: UpdateRoleInput[];
 }
 export const RoleSchema = SchemaFactory.createForClass(Role);

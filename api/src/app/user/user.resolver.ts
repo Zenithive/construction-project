@@ -30,7 +30,8 @@ export class UserResolver {
 
   @Query(() => Message)
   async logout(@Context() context: GraphQLExecutionContext) {
-    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
     const response = context.req.res as Response;
     response.cookie('tokenId', '', { 
       httpOnly: true, // Set security options as needed
@@ -66,6 +67,7 @@ export class UserResolver {
   @Mutation(() => Token)
   @UseGuards(AuthGuard)
   async loginUser(@Args('input') loginData: LoginInput, @Context("user") user : User, @Context() context: GraphQLExecutionContext) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const response = context.req.res as Response;
     // context.getContext() .req.res as Response;

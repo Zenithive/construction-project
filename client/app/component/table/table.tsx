@@ -38,7 +38,8 @@ export const TableWrapper = () => {
             <Table.Body items={users}>
                {(item) => (
                   <Table.Row>
-                     {(columnKey:any) => (
+                     {// eslint-disable-next-line @typescript-eslint/no-explicit-any
+                     (columnKey:any) => (
                         <Table.Cell>
                            {RenderCell({user: item, columnKey: columnKey})}
                         </Table.Cell>

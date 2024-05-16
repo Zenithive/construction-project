@@ -12,7 +12,8 @@ interface Props {
 }
 
 export const RenderCell = ({user, columnKey}: Props) => {
-   // @ts-ignore
+   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+   // @ts-expect-error
    const cellValue = user[columnKey];
    switch (columnKey) {
       case 'name':
@@ -42,7 +43,8 @@ export const RenderCell = ({user, columnKey}: Props) => {
          );
       case 'status':
          return (
-            // @ts-ignore
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-expect-error
             <StyledBadge type={String(user.status)}>{cellValue}</StyledBadge>
          );
 

@@ -16,6 +16,7 @@ export const Layout = ({children}: Props) => {
    const [sidebarOpen, setSidebarOpen] = React.useState(false);
    const [_, setLocked] = useLockedBody(false);
    const handleToggleSidebar = () => {
+      console.log("_", _)
       setSidebarOpen(!sidebarOpen);
       setLocked(!sidebarOpen);
    };

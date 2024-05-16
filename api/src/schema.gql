@@ -13,13 +13,13 @@ input CreateFolderInput {
 }
 
 input CreateNewPermission {
-  createdBy: DateTime! = "2024-05-16T05:33:06.806Z"
+  createdBy: DateTime! = "2024-03-27T05:11:05.513Z"
   orginatorId: String!
   permissionId: String!
   permissionKey: String!
   permissionLabel: String!
   projId: String!
-  updatedBy: DateTime! = "2024-05-16T05:33:06.806Z"
+  updatedBy: DateTime! = "2024-03-27T05:11:05.513Z"
   value: Boolean!
 }
 
@@ -35,12 +35,12 @@ input CreateNewRole {
 
 input CreateOrgInput {
   contact: String!
-  creationDate: DateTime! = "2024-05-16T05:33:05.876Z"
+  creationDate: DateTime! = "2024-03-27T05:11:05.163Z"
   orgId: String!
   orgName: String!
   region: String!
   status: String! = "Open"
-  updatedDate: DateTime! = "2024-05-16T05:33:05.876Z"
+  updatedDate: DateTime! = "2024-03-27T05:11:05.163Z"
   website: String
 }
 
@@ -56,7 +56,7 @@ input CreateProjectInput {
 }
 
 input CreateUserByAdmin {
-  creationDate: DateTime! = "2024-05-16T05:33:02.031Z"
+  creationDate: DateTime! = "2024-03-27T05:11:03.804Z"
   email: String
   emailVerified: Boolean! = false
   firstName: String
@@ -66,12 +66,12 @@ input CreateUserByAdmin {
   phoneNo: String
   status: String! = "Active"
   subscriptionId: Float = 1
-  updatedDate: DateTime! = "2024-05-16T05:33:02.031Z"
+  updatedDate: DateTime! = "2024-03-27T05:11:03.804Z"
   userId: String!
 }
 
 input CreateUserInput {
-  creationDate: DateTime! = "2024-05-16T05:33:02.031Z"
+  creationDate: DateTime! = "2024-03-27T05:11:03.804Z"
   email: String!
   emailVerified: Boolean! = false
   firstName: String
@@ -81,7 +81,7 @@ input CreateUserInput {
   phoneNo: String = ""
   status: String = "Active"
   subscriptionId: Float! = 1
-  updatedDate: DateTime! = "2024-05-16T05:33:02.031Z"
+  updatedDate: DateTime! = "2024-03-27T05:11:03.804Z"
   userId: String!
 }
 
@@ -107,20 +107,6 @@ input DeleteRoleInput {
 }
 
 input DeleteUserInput {
-  userId: String!
-}
-
-input EditUserByAdmin {
-  email: String
-  emailVerified: Boolean! = false
-  firstName: String
-  isPasswordReset: Boolean! = true
-  lastName: String
-  password: String! = ""
-  phoneNo: String
-  status: String! = "Active"
-  subscriptionId: Float = 1
-  updatedDate: DateTime! = "2024-05-16T05:33:02.031Z"
   userId: String!
 }
 
@@ -163,7 +149,7 @@ input GetRolesByProjId {
 }
 
 input GetSingleFileInput {
-  urn: String!
+  revisionId: String!
 }
 
 input LoginInput {
@@ -190,7 +176,6 @@ type Mutation {
   editOrg(input: UpdateOrgInput!): Org!
   editUser(input: EditUserByAdmin!): User!
   loginUser(input: LoginInput!): Token!
-  updateRole(input: UpdateRoleInput!): Role!
   updateUpermissions(input: CreateNewPermission!): Permission!
   updateUser(input: UpdateUserInput!): User!
   uploadFile(input: UploadFileInput!): File!
@@ -205,55 +190,6 @@ type Org {
   status: String!
   updatedDate: DateTime!
   website: String!
-}
-
-input PaginationInput {
-  currentPage: Float!
-  pageSize: Float!
-}
-
-input PaginationInputF {
-  currentPage: Float!
-  folderId: String!
-  pageSize: Float!
-}
-
-input PaginationInputs {
-  currentPage: Float!
-  pageSize: Float!
-}
-
-input PaginationInputss {
-  currentPage: Float!
-  pageSize: Float!
-}
-
-type PaginationResult {
-  currentPage: Int!
-  projects: [Project!]!
-  totalPages: Int!
-  totalProjects: Int!
-}
-
-type PaginationResultF {
-  currentPage: Int!
-  files: [File!]!
-  totalFiles: Int!
-  totalPages: Int!
-}
-
-type PaginationResults {
-  currentPage: Int!
-  totalPages: Int!
-  totalUsers: Int!
-  users: [User!]!
-}
-
-type PaginationResultss {
-  currentPage: Int!
-  orgs: [Org!]!
-  totalOrgs: Int!
-  totalPages: Int!
 }
 
 type Permission {
@@ -279,9 +215,9 @@ type Project {
 }
 
 type Query {
-  getAllOrg(input: PaginationInputss!): PaginationResultss!
-  getFileByFolderId(input: PaginationInputF!): PaginationResultF!
+  getAllOrg: [Org!]!
   getFiles: [File!]!
+  getFilesByFolderId(input: String!): [File!]!
   getFolders: [Folder!]!
   getOneFile(input: GetSingleFileInput!): File!
   getPermissions: [Permission!]!
@@ -318,18 +254,13 @@ type Token {
 
 input UpdateOrgInput {
   contact: String!
-  creationDate: DateTime! = "2024-05-16T05:33:05.876Z"
+  creationDate: DateTime! = "2024-03-27T05:11:05.164Z"
   orgId: String!
   orgName: String!
   region: String!
   status: String! = "Open"
-  updatedDate: DateTime! = "2024-05-16T05:33:05.876Z"
+  updatedDate: DateTime! = "2024-03-27T05:11:05.164Z"
   website: String
-}
-
-input UpdateRoleInput {
-  roleId: String!
-  users: [String!]!
 }
 
 input UpdateUserInput {
@@ -380,4 +311,8 @@ type User {
 
 input UserId {
   _id: String!
+}
+
+input UserIdz {
+  usrId: String!
 }

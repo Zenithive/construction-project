@@ -1,16 +1,19 @@
-import {Input, Link, Navbar, Text} from '@nextui-org/react';
+import { Link, Navbar } from '@nextui-org/react';
 import React, { Suspense } from 'react';
-import {SearchIcon} from '../icons/searchicon';
-import {Box} from '../styles/box';
-import {BurguerButton} from './burguer-button';
-import {NotificationsDropdown} from './notifications-dropdown';
-import {UserDropdown} from './user-dropdown';
+import { Box } from '../styles/box';
+import { BurguerButton } from './burguer-button';
+import { NotificationsDropdown } from './notifications-dropdown';
+import { UserDropdown } from './user-dropdown';
+import ProjectSelectedComponent from './project-selected-componet';
 
 interface Props {
    children: React.ReactNode;
+   projId?: string;
+   userId?: string;
 }
 
-export const NavbarWrapper = ({children}: Props) => {
+export const NavbarWrapper = ({ children }: Props) => {
+
    const collapseItems = [
       'Profile',
       'Dashboard',
@@ -23,11 +26,13 @@ export const NavbarWrapper = ({children}: Props) => {
       'Help & Feedback',
       'Log Out',
    ];
+
+
    return (
       <Suspense fallback={<p>Loading...</p>}>
          <Box
             css={{
-               position: 'relative',
+               position: 'absolut',
                display: 'flex',
                flexDirection: 'column',
                flex: '1 1 auto',
@@ -47,6 +52,7 @@ export const NavbarWrapper = ({children}: Props) => {
 
                   '& .nextui-navbar-container': {
                      'border': 'none',
+                     'padding-left': '6px',
                      'maxWidth': '100%',
                      background: "$customBackGround",
 
@@ -61,59 +67,19 @@ export const NavbarWrapper = ({children}: Props) => {
                   <BurguerButton />
                </Navbar.Content>
                <Navbar.Content
-                  hideIn={'md'}
+               hideIn={'md'}
                   css={{
                      width: '100%',
                   }}
                >
-                  <Input
-                     clearable
-                     contentLeft={
-                        <SearchIcon
-                           fill="var(--nextui-colors-accents6)"
-                           size={16}
-                        />
-                     }
-                     contentLeftStyling={false}
-                     css={{
-                        'w': '100%',
-                        'transition': 'all 0.2s ease',
-                        '@xsMax': {
-                           w: '100%',
-                           // mw: '300px',
-                        },
-                        '& .nextui-input-content--left': {
-                           h: '100%',
-                           ml: '$4',
-                           dflex: 'center',
-                        },
-                     }}
-                     placeholder="Search..."
-                  />
+                  <ProjectSelectedComponent />
                </Navbar.Content>
                <Navbar.Content>
-                  {/* <Navbar.Content hideIn={'md'}>
-                     <Flex align={'center'} css={{gap: '$4'}}>
-                        <FeedbackIcon />
-                        <Text span>Feedback?</Text>
-                     </Flex>
-                  </Navbar.Content> */}
 
                   <Navbar.Content>
                      <NotificationsDropdown />
                   </Navbar.Content>
 
-                  {/* <Navbar.Content hideIn={'md'}>
-                     <SupportIcon />
-                  </Navbar.Content>
-                  <Navbar.Content>
-                     <Link
-                        href="https://github.com/"
-                        target={'_blank'}
-                     >
-                        <GithubIcon />
-                     </Link>
-                  </Navbar.Content> */}
                   <Navbar.Content>
                      <UserDropdown />
                   </Navbar.Content>

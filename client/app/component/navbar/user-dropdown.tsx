@@ -8,12 +8,13 @@ import { LOGOUT } from '../../api/user/queries';
 import { useAppSelector } from '../../reducers/hook.redux';
 import { UserSchema, selectUserSession } from '../../reducers/userReducer';
 import { getUserInitials } from '../../services/user.service';
+import { UserTypes } from '../users/add-user';
 
 export const UserDropdown = () => {
 
    const userDetails:UserSchema = useAppSelector(selectUserSession)
 
-   const userInitials = getUserInitials(userDetails);
+   const userInitials = getUserInitials({...userDetails} as UserTypes);
 
    const router = useRouter();
 

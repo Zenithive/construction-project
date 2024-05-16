@@ -1,16 +1,7 @@
-import {Button, Input} from '@nextui-org/react';
 import React from 'react';
-import {DotsIcon} from '../icons/accounts/dots-icon';
-import {ExportIcon} from '../icons/accounts/export-icon';
-import {InfoIcon} from '../icons/accounts/info-icon';
-import {TrashIcon} from '../icons/accounts/trash-icon';
-import {SettingsIcon} from '../icons/sidebar/settings-icon';
 import {Flex} from '../styles/flex';
 import {AddOrganisation} from './add-organisation';
 import { OrgsListWrapper } from './orgs.list';
-import { EDITE_ORGANISATION } from 'client/app/api/organisation/mutations';
-import { useQuery } from '@apollo/client';
-
 
 export const Organisations = () => {
    const [listRefresh, setListRefresh] = React.useState(false);

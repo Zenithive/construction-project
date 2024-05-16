@@ -10,6 +10,7 @@ import { UserSchema, selectUserSession } from '../../reducers/userReducer';
 import { useAppSelector } from '../../reducers/hook.redux';
 
 
+
 export interface ProjectTypes {
    projName: string;
    region: string;
@@ -17,6 +18,7 @@ export interface ProjectTypes {
    website: string;
    orgName: string;
    orgId: string;
+   projId?: string;
  }
 
 export interface AddProjectProps {
@@ -58,7 +60,7 @@ export const AddProject = ({setListRefresh}:AddProjectProps) => {
       setSubmitting(true);
       const res = await createProject({
          variables: {
-            projId: "",
+            projId:"",
             orginatorId: userDetails.userId,
             projName: values.projName,
             region: values.region,

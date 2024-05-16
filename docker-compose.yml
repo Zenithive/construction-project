@@ -4,7 +4,7 @@ services:
       image: mongo:latest
       restart: always
       volumes:
-        - mongo_db:/data/db
+        - C:\WORK\mongodb\data:/data/db:rw
 
     api:
       build: 
@@ -12,6 +12,8 @@ services:
         dockerfile: Dockerfile
       env_file:
         .env
+      volumes:
+        - C:\WORK\mongodb\server:/app/server:rw
       ports: 
         - 3000:3000
         - 4200:4200
@@ -23,8 +25,6 @@ services:
         SERVER_API: http://localhost:3000/api/
         APS_CLIENT_ID : EbAv1ybr2Va7nowXrmnXPq3ymEhKMG5k
         APS_CLIENT_SECRET : i8uk12vSGTjBMqAL
+        PDFTronWebViewerKey : demo:1715368856424:7fcdcf250300000000b8633dea5148478e0b8c60334c950fa36119aa99
       depends_on:
         - mongo_db
-
-volumes:
-  mongo_db: {}

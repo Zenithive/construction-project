@@ -4,7 +4,7 @@ import {Switch, useTheme} from '@nextui-org/react';
 
 export const DarkModeSwitch = () => {
    const {setTheme} = useNextTheme();
-   const {isDark, type} = useTheme();
+   const {isDark} = useTheme();
    return (
       <Switch
          checked={isDark}

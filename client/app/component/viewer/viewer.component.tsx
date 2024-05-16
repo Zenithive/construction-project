@@ -21,6 +21,7 @@ export default function ViewerComponent(props: ViewerCompoentProps)  {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const Autodesk: any = typeof window !== "undefined" ? (window as any)["Autodesk"] : null;
   const viewerRef = useRef(null)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [viewer, setViewer] = useState<any>(null)
   const [ accessToken, setAccessToken] = useState("")
   const [ error, setError] = useState(false)
@@ -28,6 +29,8 @@ export default function ViewerComponent(props: ViewerCompoentProps)  {
   const getAccessToken = ()=>{
     axios.get(`${CONFIG.server_api}aps/getApsForgeToken`).then(response => {
         setAccessToken(response.data.access_token);
+    },()=>{
+        setError(true);
     });
   }
 
@@ -41,7 +44,7 @@ export default function ViewerComponent(props: ViewerCompoentProps)  {
     // Init viewer
     const options = {
         env: "AutodeskProduction",
-        getAccessToken: (onTokenReady: any) => {
+        getAccessToken: (onTokenReady: CallableFunction) => {
             const timeInSeconds = 3600 // Use value provided by Forge Authentication (OAuth) API
             onTokenReady(accessToken, timeInSeconds)
         },
@@ -59,6 +62,7 @@ export default function ViewerComponent(props: ViewerCompoentProps)  {
 
 
         // Load Document
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const onDocumentLoadSuccess = async (doc: any) => {
             await viewer.loadDocumentNode(doc, doc.getRoot().getDefaultGeometry());
 
@@ -75,6 +79,7 @@ export default function ViewerComponent(props: ViewerCompoentProps)  {
             // viewer.customCallbacks = customExtensionsCallbacks
         }
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const onDocumentLoadFailure = (code: any, message: any, errors: any) => {
             console.error({ code, message, errors });
         }

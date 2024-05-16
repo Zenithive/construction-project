@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation'
 import ToastMessage from '../component/toast-message/ToastMessage';
 import { useAppDispatch } from '../reducers/hook.redux';
 import { addUser } from '../reducers/userReducer';
-
+import { removeproject } from '../reducers/projectReducer';
 /* eslint-disable-next-line */
 export interface LoginProps {}
 
@@ -56,6 +56,11 @@ export default function Login(props: LoginProps) {
         document.cookie = `tokenId=${token}`;
         const { email, firstName, lastName, userId} = res.data.loginUser.userObj;
         dispatch(addUser({ token, email, firstName, lastName, userId}));
+        const projId = res.data?.loginUser?.userObj?.projId; 
+        console.log("projId login",projId)
+        if(projId){
+          dispatch(removeproject(projId))
+        }
         router.push("/dashboard");
       }
     },500);

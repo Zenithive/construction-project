@@ -1,37 +1,25 @@
 import { Col, Row, Tooltip } from '@nextui-org/react';
 import React, { useEffect, useMemo, useState } from 'react';
-import { GET_ORGANISATIONS } from 'client/app/api/organisation/queries';
+import { GET_ORGANISATIONS } from '../../api/organisation/queries';
 import { useQuery } from '@apollo/client';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { GridOptions } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
-import { Box, IconButton, ListItemText, Menu, MenuItem, Select } from '@mui/material';
+import { Box, IconButton } from '@mui/material';
 import { EditIcon } from '../icons/table/edit-icon';
 import { DeleteIcon } from '../icons/table/delete-icon';
 import "ag-grid-community/styles/ag-grid.css"; // Core CSS
 import "ag-grid-community/styles/ag-theme-quartz.css"; // Theme
-import { EyeIcon } from '../icons/table/eye-icon';
-import { DELETE_ORGANISATION } from 'client/app/api/organisation/mutations';
+import { DELETE_ORGANISATION } from '../../api/organisation/mutations';
 import { useMutation } from '@apollo/client';
-import { handleClientScriptLoad } from 'next/script';
-import { AddOrganisation } from './add-organisation';
-import { EDITE_ORGANISATION } from 'client/app/api/organisation/mutations';
-import { Table } from '@nextui-org/react';
 import { SelectChangeEvent } from '@mui/material/Select';
 import Stack from '@mui/material/Stack';
 import Pagination from '@mui/material/Pagination';
-import { makeStyles } from '@mui/styles';
 import { PAGE } from 'client/app/constants/page.constant';
 import { PaginationComponent } from '../Pagination/pagination.component';
 
 export interface OrgsListWrapperProps {
    listRefresh: boolean;
    setOrganizationData: CallableFunction;
-}
-//Dropdown  menu component for actions on rows in the table
-interface DotPopoverProps {
-   treeId: string;
-   toggleAddFolder: CallableFunction;
 }
 
 
@@ -62,10 +50,11 @@ export const OrgsListWrapper = ({ listRefresh, setOrganizationData }: OrgsListWr
       refetch({ variables: { pageSize, currentPage } });
    }, [pageSize, currentPage, refetch]);
 
+   
    const handlePageSizeChange = (event: SelectChangeEvent<number>) => {
       const newSize = Number(event.target.value);
       setPageSize(newSize);
-  
+      setCurrentPage(1);
    };
 
 
@@ -78,7 +67,7 @@ export const OrgsListWrapper = ({ listRefresh, setOrganizationData }: OrgsListWr
    // fuction for deleting Org button 
    const [deleteOrganisation] = useMutation(DELETE_ORGANISATION);
 
-   const handleDeleteOrg = async (orgId: any, newdata: any) => {
+   const handleDeleteOrg = async (orgId: string) => {
       try {
          await deleteOrganisation({ variables: { orgId } });
          refetch();
@@ -89,10 +78,11 @@ export const OrgsListWrapper = ({ listRefresh, setOrganizationData }: OrgsListWr
    }
 
    //for edit Org
-   const [visible, setVisible] = React.useState(false);
+   // const [visible, setVisible] = React.useState(false);
+   // eslint-disable-next-line @typescript-eslint/no-explicit-any
    const handleEditOrg = (datas: any) => {
       console.log(datas)
-      setVisible(true);
+      //setVisible(true);
       setOrganizationData(datas);
    };
    //for Dropdown  menu Grid
@@ -100,31 +90,6 @@ export const OrgsListWrapper = ({ listRefresh, setOrganizationData }: OrgsListWr
       // Other grid options...
       domLayout: 'autoHeight',
    };
-   const DotPopoverMenu = ({ treeId, toggleAddFolder }: DotPopoverProps) => {
-      const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
-
-      const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-         event.stopPropagation();
-         setAnchorEl(event.currentTarget)
-      }
-      const handleClose = (event: React.MouseEvent<HTMLLIElement>) => {
-         event.stopPropagation();
-         setAnchorEl(null)
-      }
-
-      const open = Boolean(anchorEl);
-      const id = open ? 'simple-popover' : undefined;
-
-      return (
-         <>
-
-            <IconButton aria-describedby={id} onClick={handleClick} sx={{ p: 0 }}>
-               <MoreVertIcon sx={{ color: "#979797" }} />
-            </IconButton>
-
-         </>
-      );
-   }
 
    // eslint-disable-next-line @typescript-eslint/no-explicit-any
    const ActionRenderer = ({ value, data }: any) => (
@@ -147,7 +112,7 @@ export const OrgsListWrapper = ({ listRefresh, setOrganizationData }: OrgsListWr
             <Tooltip
                content="Delete user"
                color="error"
-               onClick={() => handleDeleteOrg(data.orgId, data)}//handeler fuction for deleting Org Button
+               onClick={() => handleDeleteOrg(data.orgId)}//handeler fuction for deleting Org Button
             >
                <IconButton>
                   <DeleteIcon size={20} fill="#FF0080" />

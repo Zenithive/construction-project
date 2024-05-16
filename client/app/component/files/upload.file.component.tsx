@@ -3,7 +3,6 @@ import Button from '@mui/material/Button';
 import React, { useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import CloseIcon from '@mui/icons-material/Close';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { Box, Grid, LinearProgress } from '@mui/material';
@@ -43,29 +42,11 @@ export interface UploadFileTypes {
 
 export const UploadFileComponent = (props: UploadFileProps) => {
    const [visible, setVisible] = useState(props.open || false);
-   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-   const [fileNames, setFileNames] = useState<string[]>([]);
-   const [totalUploadedFiles, setTotalUploadedFiles] = useState(0);
-   const [loading, setLoading] = useState(false); // Loading state for the button
-   const [uploadProgress, setUploadProgress] = useState(0); // Track upload progress
-   const [uploading, setUploading] = useState(false); // Flag to track upload in progress
+   const [isUploading, setIsUploading] = useState(false);
+   const [tmpFile, setTmpFile] = useState(null as any);
 
-
-
-
-   useEffect(() => {
-      if (selectedFiles.length > 0 && totalUploadedFiles === selectedFiles.length) {
-         // If all files are uploaded, set the flag to true
-         props.setAllFilesUploaded(true);
-         closeHandler(false);
-         formik.resetForm();
-      }
-   }, [totalUploadedFiles, selectedFiles]);
-
-
-
-   useEffect(() => {
-      if (visible !== props.open) {
+   useEffect(()=>{
+      if(visible !== props.open){
          formik.resetForm();
          setSelectedFiles([]);
          setFileNames([]);
@@ -86,42 +67,19 @@ export const UploadFileComponent = (props: UploadFileProps) => {
    }
 
    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-   const uploadFile = async () => {
-      if (selectedFiles.length > 0) {
-         try {
-            const tmpArray: any[] = [];
-            setUploading(true); // Start loading when uploading begins
-            setLoading(true); // Start loading when uploading begins
+   const uploadFile = async (values: UploadFileTypes,{ setSubmitting, resetForm }:any) => {
+      setIsUploading(true);
+      const formData = new FormData();
+      formData.append("fileName", tmpFile[0]);
 
-            selectedFiles.forEach(async (file) => {
-               const formData = new FormData(); 
-               formData.append('fileName', file)
-               const response = await axios.post(`${CONFIG.server_api}files/upload`, formData, {
-                  headers: { 'Content-Type': 'multipart/form-data' },
-                  onUploadProgress: progressEvent => {
-                     const progress = Math.round((progressEvent.loaded / progressEvent.total) * 100);
-                     setUploadProgress(progress); // Update upload progress
-                  }
-               });
+      axios.post(`${CONFIG.server_api}files/upload`, formData, { headers: {"Content-Type": "multipart/form-data" } }).then(response => {
+         response.data && props.fileSet(response.data);
+         setIsUploading(false);
+         closeHandler(false);
+         resetForm();
 
-               tmpArray.push(response.data);
-               props.fileSet(tmpArray);
-               setTotalUploadedFiles(prevState => prevState + 1); // Increment totalUploadedFiles by 1
-            });
-
-         }
-
-         catch (error) {
-            console.error('Error uploading files:', error);
-
-            setLoading(false); // Stop loading after uploading finishes
-            setUploading(false); // Set uploading flag to false
-            setUploadProgress(0); // Reset upload progress
-         }
-      } else {
-         console.error('No file selected');
-      }
-   };
+       });
+   }
 
    const formik = useFormik({
       initialValues: initValue,

@@ -2,7 +2,7 @@ import { Divider, Modal, Text } from '@nextui-org/react';
 import React, { useEffect } from 'react';
 import * as Yup from 'yup';
 import { Box, Button, Grid, TextField } from '@mui/material';
-import { useFormik } from 'formik';
+import { FormikHelpers, useFormik } from 'formik';
 import { useMutation } from '@apollo/client';
 import { CREATE_ORGANISATION } from '../../api/organisation/mutations';
 import { EDITE_ORGANISATION } from '../../api/organisation/mutations';
@@ -36,7 +36,7 @@ export const AddOrganisation = ({ setListRefresh, organizationData, setOrganizat
       orgName: organizationData?.orgName || "",
       contact: organizationData?.contact || "",
       orgId: organizationData?.orgId || "1r"
-   }
+    }
 
 
    useEffect(() => {
@@ -51,7 +51,7 @@ export const AddOrganisation = ({ setListRefresh, organizationData, setOrganizat
    const [visible, setVisible] = React.useState(false);
    const handler = () => setVisible(true);
    const [createOrg, { data, error, loading }] = useMutation(CREATE_ORGANISATION);
-   const [editOrg] = useMutation(EDITE_ORGANISATION);
+   const[editOrg]=useMutation(EDITE_ORGANISATION);
 
    const closeHandler = () => {
       setVisible(false);
@@ -86,7 +86,7 @@ export const AddOrganisation = ({ setListRefresh, organizationData, setOrganizat
 
 
 
-   const updateOrg = async (values: OrganisationTypes, { setSubmitting, resetForm }: any) => {
+    const updateOrg = async (values: OrganisationTypes,{ setSubmitting, resetForm }:any) => {
       setSubmitting(true);
       const res = await editOrg({
          variables: {

@@ -1,12 +1,5 @@
 "use client"
-import {Button, Input} from '@nextui-org/react';
 import React, { useState } from 'react';
-import {DotsIcon} from '../component/icons/accounts/dots-icon';
-import {ExportIcon} from '../component/icons/accounts/export-icon';
-import {InfoIcon} from '../component/icons/accounts/info-icon';
-import {TrashIcon} from '../component/icons/accounts/trash-icon';
-
-import {SettingsIcon} from '../component/icons/sidebar/settings-icon';
 import {Flex} from '../component/styles/flex';
 import {FilesListWrapper} from '../component/files/files-list';
 import {FolderTree} from '../component/files/folder.tree';
@@ -16,7 +9,7 @@ import { Box } from '@mui/material';
 /* eslint-disable-next-line */
 export interface FilesProps {}
 export interface toggleUploadModalInterface {
-   isUploadModalOpen: Boolean; 
+   isUploadModalOpen: boolean; 
    setIsUploadModalOpen: CallableFunction;
 }
 

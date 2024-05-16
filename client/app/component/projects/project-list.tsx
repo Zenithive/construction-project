@@ -5,19 +5,16 @@ import { useQuery } from '@apollo/client';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { GridOptions } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
-import { Box, IconButton, ListItemText, Menu, MenuItem, Select } from '@mui/material';
+import { Box, IconButton, ListItemText, Menu, MenuItem } from '@mui/material';
 import { EditIcon } from '../icons/table/edit-icon';
 import { DeleteIcon } from '../icons/table/delete-icon';
 import "ag-grid-community/styles/ag-grid.css"; // Core CSS
 import "ag-grid-community/styles/ag-theme-quartz.css"; // Theme
 import RolesComponent from '../Roles/role.component';
 import PermissionComponent from '../Permission/permission.component';
-import { Table } from '@nextui-org/react';
-import { IServerSideDatasource } from "ag-grid-community";
 import { SelectChangeEvent } from '@mui/material/Select';
 import Stack from '@mui/material/Stack';
 import Pagination from '@mui/material/Pagination';
-// import { makeStyles } from '@mui/styles';
 import { PAGE } from 'client/app/constants/page.constant';
 import { PaginationComponent } from '../Pagination/pagination.component';
 
@@ -25,6 +22,7 @@ import { PaginationComponent } from '../Pagination/pagination.component';
 
 // Sachin Import
 import { DELETE_PROJECT } from 'client/app/api/project/mutations';
+
 import { useMutation } from '@apollo/client';
 
 
@@ -36,8 +34,6 @@ interface DotPopoverProps {
     treeId: string;
     toggleAddFolder: CallableFunction;
 }
-
-
 
 
 export const ProjectListWrapper = ({ listRefresh }: ProjectListWrapperProps) => {
@@ -71,19 +67,18 @@ export const ProjectListWrapper = ({ listRefresh }: ProjectListWrapperProps) => 
         refetch({ variables: { pageSize, currentPage } });
     }, [pageSize, currentPage, refetch]);
 
+   
     const handlePageSizeChange = (event: SelectChangeEvent<number>) => {
         const newSize = Number(event.target.value);
         setPageSize(newSize);
-        //   setCurrentPage(1);        
          
     };
-
-
+   
     const handlePageChange = (newPage: number) => {
         setCurrentPage(newPage);
     };
 
-
+    
 
     const gridOptions: GridOptions = {
         // Other grid options...
@@ -151,7 +146,7 @@ export const ProjectListWrapper = ({ listRefresh }: ProjectListWrapperProps) => 
 
     const [deleteProject] = useMutation(DELETE_PROJECT);
 
-    const handleDeleteProject = async (projId: any) => {
+    const handleDeleteProject = async (projId: string) => {
         try {
             await deleteProject({ variables: { projId } });
             refetch({ variables: { pageSize, currentPage } });
@@ -160,6 +155,7 @@ export const ProjectListWrapper = ({ listRefresh }: ProjectListWrapperProps) => 
         }
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const ActionRenderer = ({ value, data }: any) => (
         <Row
             justify="center"

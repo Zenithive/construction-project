@@ -1,10 +1,4 @@
-import {Button, Input} from '@nextui-org/react';
 import React from 'react';
-import {DotsIcon} from '../icons/accounts/dots-icon';
-import {ExportIcon} from '../icons/accounts/export-icon';
-import {InfoIcon} from '../icons/accounts/info-icon';
-import {TrashIcon} from '../icons/accounts/trash-icon';
-import {SettingsIcon} from '../icons/sidebar/settings-icon';
 import {Flex} from '../styles/flex';
 import {UserLiserWrapper} from './users.list'
 import {AddUser} from './add-user';

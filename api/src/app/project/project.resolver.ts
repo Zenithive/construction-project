@@ -8,6 +8,11 @@ export class ProjectResolver {
     private projService: ProjectService,
   ) {}
 
+  @Query(() => [Project])
+  async getAllProject() {
+    return this.projService.getAllProject();
+  }
+
   @Query(() => PaginationResult)
   async getProjects(@Args('input') project:PaginationInput) {
     return this.projService.getProjects(project);
@@ -23,6 +28,7 @@ export class ProjectResolver {
     return this.projService.deleteProject(project.projId);
   }
 
+  
 
 
 }
