@@ -6,6 +6,7 @@ import {
   GetRolesByProjId,
   DeleteRoleInput,
   UpdateRoleInputArray,
+  EditRole
 } from './role.schema';
 
 @Resolver()
@@ -25,6 +26,12 @@ export class RoleResolver {
   @Mutation(() => Role)
   async createNewRole(@Args('input') role: CreateNewRole) {
     return this.roleService.createNewRole(role);
+  }
+
+  
+  @Mutation(() => Role)
+  async editRole(@Args('input') role: EditRole) {
+    return this.roleService.editRole(role);
   }
 
   @Mutation(() => Role)

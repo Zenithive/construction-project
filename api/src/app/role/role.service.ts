@@ -1,7 +1,7 @@
 import { Model } from 'mongoose';
 import {  Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Role, RoleDocument, CreateNewRole, GetRolesByProjId } from './role.schema';
+import { Role, RoleDocument, CreateNewRole, GetRolesByProjId,EditRole } from './role.schema';
 import { v4 as uuidv4 } from 'uuid'; 
 import { Project } from '../project/project.schema';
 
@@ -51,4 +51,24 @@ export class RoleService {
       const update = [users];
       return this.roleModel.findOneAndUpdate({ roleId: id }, update, { new: true }).exec();
     }
-}
+
+    async editRole(role: EditRole) {
+      const existingRole = await this.roleModel.findOneAndUpdate({ roleId: role.roleId },{
+        $set:{
+          roleName:role.roleName,
+          roleId:role.roleId,
+          orginatorId:role.orginatorId,
+          users:role.users,
+          orgId:role.orgId,
+          projId:role.projId,
+          isDefaultRole:role.isDefaultRole
+        }
+      }, { new: true });
+      console.log("existingRole",existingRole)
+      if (!existingRole) {
+        throw new Error('User not found');
+      }
+      return existingRole.save();
+    }
+
+  }
