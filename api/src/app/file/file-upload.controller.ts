@@ -9,19 +9,16 @@ import * as fs from 'fs';
 import { join } from 'path';
 import { FileService } from './file.service';
 import { error } from 'console';
-import { UploadFileInput } from './file.schema';
-
-
-
-
 
 @Controller('files')
 export class FileUploadController {
   constructor(private readonly fileService: FileService) { }
 
-  @Post('upload') 
-  @UseInterceptors(FilesInterceptor('fileName', 10, multerOptions)) // 'files' is the field name for multiple files
-  uploadFiles(@UploadedFiles() files: Express.Multer.File[]) {  
+  // ******** Upload request for Modal 1 ******** //
+
+  @Post('upload')
+  @UseInterceptors(FilesInterceptor('fileName', 10, multerOptions))
+  uploadFiles(@UploadedFiles() files: Express.Multer.File[]) {
     console.log("fileName", files);
     // Process each file in the files array
     const uploadedFiles = files.map(file => ({
@@ -34,19 +31,12 @@ export class FileUploadController {
     return uploadedFiles;
   }
 
-
+  // ******** Post request for Modal 2 ******** //
 
   @Post('post')
-  async saveFiles(@Body() files: Record<number, UploadFileInput>) {
+  async saveFiles(@Body() filesData: any[]) {
     try {
-      const savedFiles = [];
-      for (const key in files) {
-        if (files.hasOwnProperty(key)) {
-          const file = files[key];
-          const result = await this.fileService.uploadFile(file);
-          savedFiles.push(result);
-        }
-      }
+      const savedFiles = await this.fileService.saveFiles(filesData);
       return savedFiles;
     } catch (error) {
       console.error('Error saving files:', error);
@@ -54,8 +44,8 @@ export class FileUploadController {
     }
   }
 
+  // ******** Get request for download ******** //
 
-  /// Code for download  file
   @Get("downloadFile/:apsUrnKey")
   async downloadFile(@Res() response: Response, @Param('apsUrnKey') apsUrnKey: string) {
     try {
@@ -79,17 +69,7 @@ export class FileUploadController {
       console.error('Error downloading file:', error);
       response.send('Error downloading file');
     }
- }
-
- 
-
- 
-
-
- 
-
-
-
+  }
 
 }
 

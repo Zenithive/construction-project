@@ -29,9 +29,6 @@ const FileObjSchemaNew = Yup.object().shape({
       .required('Must have files')
 });
 
-
-
-
 export interface FileMetadataType {
    fileName: string;
    originalName: string;
@@ -43,7 +40,6 @@ export interface FileMetadataType {
 }
 
 export interface FileSchemaType {
-
    fileName: string;
    originalname: string;
    path: string;
@@ -72,7 +68,6 @@ export interface AddFilesProps {
 
 }
 
-
 export const AddFile = ({ setListRefresh, toggleUploadModalHook, folderIdHook }: AddFilesProps) => {
 
    const initValue: FileSchemaArrayType = {
@@ -93,6 +88,7 @@ export const AddFile = ({ setListRefresh, toggleUploadModalHook, folderIdHook }:
          }
       ]
    }
+
    const [visible, setVisible] = React.useState(false);
    const [isUploadFileOpen, setIsUploadFileOpen] = useState(false);
    const [fileData, setFileData] = useState([] as Array<FileMetadataType>);
@@ -106,10 +102,6 @@ export const AddFile = ({ setListRefresh, toggleUploadModalHook, folderIdHook }:
       setVisible(false);
       formik.resetForm(); // remove
    };
-
-
-
-
 
    useEffect(() => {
       console.log("fileData", fileData)
@@ -128,15 +120,12 @@ export const AddFile = ({ setListRefresh, toggleUploadModalHook, folderIdHook }:
       }
    }, [fileData, toggleUploadModalHook.isUploadModalOpen, folderIdHook.folderId, isUploadFileOpen, allFilesUploaded]);
 
-
-
-
    const setInitFileData = () => {
 
       for (let index = 0; index < fileData.length; index++) {
-         const element = fileData[index];
+         const element = fileData[index][0];
          console.log("element", element)
-         formik.setFieldValue(`files.${index}.fileName`, element[0].fileName);
+         formik.setFieldValue(`files.${index}.fileName`, element.fileName);
          formik.setFieldValue(`files.${index}.originalName`, element.originalName);
          formik.setFieldValue(`files.${index}.path`, element.path);
          formik.setFieldValue(`files.${index}.extension`, element.extension);
@@ -148,9 +137,6 @@ export const AddFile = ({ setListRefresh, toggleUploadModalHook, folderIdHook }:
 
    };
 
-
-
-   // debugger
    const submitForm = async (values: FileSchemaArrayType, { setSubmitting }: FormikHelpers<FileSchemaArrayType>) => {
       setSubmitting(true);
 
@@ -161,38 +147,39 @@ export const AddFile = ({ setListRefresh, toggleUploadModalHook, folderIdHook }:
          filesObject[index] = file;
       });
 
-   console.log("filesObject", filesObject);
+      // console.log("filesObject", filesObject);
+      // console.log("values f /", values.files);
+      // console.log("formik.value", formik.values)
+      // const res = await saveFileData({
 
-   
-      console.log("values f /", values.files);
-      console.log("formik.value", formik.values)
-      const res = await saveFileData({
-
-         variables: {
-            // ...formik.values,
-            // files: values.files,
-            files: filesObject,
-            folderId: folderIdHook.folderId,  // this is  folderId
-         },
-      });
+      //    variables: {
+      //       // ...formik.values,
+      //       // files: values.files,
+      //       files: filesObject,
+      //       folderId: folderIdHook.folderId,  // this is  folderId
+      //    },
+      // });
 
 
-      const response = await axios.post(`${CONFIG.server_api}files/post`, filesObject, {
-         headers: { 'Content-Type': 'application/json' }, 
+      // const response = await axios.post(`${CONFIG.server_api}files/post`, filesObject, {
+      //    headers: { 'Content-Type': 'application/json' },
+      // });
+
+      try {
+         const response = await axios.post(`${CONFIG.server_api}files/post`, values.files, {
+            headers: { 'Content-Type': 'application/json' },
+         });
+
+         if (response.status === 201) {
+            closeHandler();
+            setListRefresh((boolFlag: boolean) => !boolFlag);
+            toggleUploadModalHook.setIsUploadModalOpen(false);
          }
-
-      );
-      
-
-
-
-      const fileName: string | null = res.data?.uploadFile?.fileName;
-      if (fileName) {
-         // if (res.data?.uploadFile?.fileName) {
-         closeHandler();
-         setListRefresh((boolFlag: boolean) => !boolFlag);
+      } catch (error) {
+         console.error('Error saving files:', error);
+      } finally {
+         setSubmitting(false);
       }
-      setSubmitting(false);
    }
 
    const formik = useFormik({
@@ -200,13 +187,6 @@ export const AddFile = ({ setListRefresh, toggleUploadModalHook, folderIdHook }:
       validationSchema: FileObjSchemaNew,
       onSubmit: submitForm,
    });
-
-   // useEffect(() => {
-   //    console.log("formik.values", formik.values); // Log formik values for debugging
-   //    console.log("formik.errors", formik.errors); // Log formik errors for debugging
-   // }, [formik.values, formik.errors]); // Add formik.values and formik.errors to the dependencies array
-
-
 
    return (
       <>
@@ -238,14 +218,14 @@ export const AddFile = ({ setListRefresh, toggleUploadModalHook, folderIdHook }:
                <Text id="modal-title" h4>
                   Add new Files
                </Text>
-               {JSON.stringify(formik)}
+               {/* {JSON.stringify(formik)} */}
             </Modal.Header>
             <Divider css={{ my: '$5' }} />
             <Modal.Body css={{ py: '$10' }}>
                <Box
                   id="save-file-form"
                   component="form"
-                  noValidate 
+                  noValidate
                   onSubmit={formik.handleSubmit}
                   sx={{ mt: 3 }}
                >

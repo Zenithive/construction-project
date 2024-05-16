@@ -2,6 +2,12 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+input AddSelectedProjectInput {
+  projId: String!
+  projName: String!
+  userId: String!
+}
+
 input CreateFolderInput {
   folderId: String
   folderName: String!
@@ -13,13 +19,13 @@ input CreateFolderInput {
 }
 
 input CreateNewPermission {
-  createdBy: DateTime! = "2024-03-27T05:11:05.513Z"
+  createdBy: DateTime! = "2024-05-16T11:18:48.674Z"
   orginatorId: String!
   permissionId: String!
   permissionKey: String!
   permissionLabel: String!
   projId: String!
-  updatedBy: DateTime! = "2024-03-27T05:11:05.513Z"
+  updatedBy: DateTime! = "2024-05-16T11:18:48.674Z"
   value: Boolean!
 }
 
@@ -35,12 +41,12 @@ input CreateNewRole {
 
 input CreateOrgInput {
   contact: String!
-  creationDate: DateTime! = "2024-03-27T05:11:05.163Z"
+  creationDate: DateTime! = "2024-05-16T11:18:47.251Z"
   orgId: String!
   orgName: String!
   region: String!
   status: String! = "Open"
-  updatedDate: DateTime! = "2024-03-27T05:11:05.163Z"
+  updatedDate: DateTime! = "2024-05-16T11:18:47.251Z"
   website: String
 }
 
@@ -56,22 +62,23 @@ input CreateProjectInput {
 }
 
 input CreateUserByAdmin {
-  creationDate: DateTime! = "2024-03-27T05:11:03.804Z"
+  creationDate: DateTime! = "2024-05-16T11:18:42.445Z"
   email: String
   emailVerified: Boolean! = false
   firstName: String
   isPasswordReset: Boolean! = true
   lastName: String
+  orgId: String
   password: String! = ""
   phoneNo: String
   status: String! = "Active"
   subscriptionId: Float = 1
-  updatedDate: DateTime! = "2024-03-27T05:11:03.804Z"
+  updatedDate: DateTime! = "2024-05-16T11:18:42.445Z"
   userId: String!
 }
 
 input CreateUserInput {
-  creationDate: DateTime! = "2024-03-27T05:11:03.804Z"
+  creationDate: DateTime! = "2024-05-16T11:18:42.445Z"
   email: String!
   emailVerified: Boolean! = false
   firstName: String
@@ -81,7 +88,7 @@ input CreateUserInput {
   phoneNo: String = ""
   status: String = "Active"
   subscriptionId: Float! = 1
-  updatedDate: DateTime! = "2024-03-27T05:11:03.804Z"
+  updatedDate: DateTime! = "2024-05-16T11:18:42.445Z"
   userId: String!
 }
 
@@ -107,6 +114,21 @@ input DeleteRoleInput {
 }
 
 input DeleteUserInput {
+  userId: String!
+}
+
+input EditUserByAdmin {
+  email: String
+  emailVerified: Boolean! = false
+  firstName: String
+  isPasswordReset: Boolean! = true
+  lastName: String
+  orgId: String
+  password: String! = ""
+  phoneNo: String
+  status: String! = "Active"
+  subscriptionId: Float = 1
+  updatedDate: DateTime! = "2024-05-16T11:18:42.445Z"
   userId: String!
 }
 
@@ -149,7 +171,7 @@ input GetRolesByProjId {
 }
 
 input GetSingleFileInput {
-  revisionId: String!
+  urn: String!
 }
 
 input LoginInput {
@@ -162,6 +184,7 @@ type Message {
 }
 
 type Mutation {
+  addSelectedProject(input: AddSelectedProjectInput!): SelectedProject!
   createNewFolder(input: CreateFolderInput!): Folder!
   createNewRole(input: CreateNewRole!): Role!
   createOrg(input: CreateOrgInput!): Org!
@@ -176,6 +199,8 @@ type Mutation {
   editOrg(input: UpdateOrgInput!): Org!
   editUser(input: EditUserByAdmin!): User!
   loginUser(input: LoginInput!): Token!
+  removeSelectedProject(input: RemoveSelectedProjectInput!): SelectedProject!
+  updateRole(input: UpdateRoleInputArray!): [Role!]!
   updateUpermissions(input: CreateNewPermission!): Permission!
   updateUser(input: UpdateUserInput!): User!
   uploadFile(input: UploadFileInput!): File!
@@ -190,6 +215,55 @@ type Org {
   status: String!
   updatedDate: DateTime!
   website: String!
+}
+
+input PaginationInput {
+  currentPage: Float!
+  pageSize: Float!
+}
+
+input PaginationInputF {
+  currentPage: Float!
+  folderId: String!
+  pageSize: Float!
+}
+
+input PaginationInputs {
+  currentPage: Float!
+  pageSize: Float!
+}
+
+input PaginationInputss {
+  currentPage: Float!
+  pageSize: Float!
+}
+
+type PaginationResult {
+  currentPage: Int!
+  projects: [Project!]!
+  totalPages: Int!
+  totalProjects: Int!
+}
+
+type PaginationResultF {
+  currentPage: Int!
+  files: [File!]!
+  totalFiles: Int!
+  totalPages: Int!
+}
+
+type PaginationResults {
+  currentPage: Int!
+  totalPages: Int!
+  totalUsers: Int!
+  users: [User!]!
+}
+
+type PaginationResultss {
+  currentPage: Int!
+  orgs: [Org!]!
+  totalOrgs: Int!
+  totalPages: Int!
 }
 
 type Permission {
@@ -215,19 +289,27 @@ type Project {
 }
 
 type Query {
-  getAllOrg: [Org!]!
+  getAllOrg(input: PaginationInputss!): PaginationResultss!
+  getAllOrganisation: [Org!]!
+  getAllProject: [Project!]!
+  getFileByFolderId(input: PaginationInputF!): PaginationResultF!
   getFiles: [File!]!
-  getFilesByFolderId(input: String!): [File!]!
   getFolders: [Folder!]!
   getOneFile(input: GetSingleFileInput!): File!
   getPermissions: [Permission!]!
   getProjects(input: PaginationInput!): PaginationResult!
   getRoles(input: GetRolesByProjId!): [Role!]!
+  getSelectedProjects(input: String!): [SelectedProject!]!
   getUser(input: UserId!): User!
   getUserByEmail(input: Email!): User!
   getUsers(input: PaginationInputs!): PaginationResults!
   logout: Message!
   securedResource: String!
+}
+
+input RemoveSelectedProjectInput {
+  projId: String!
+  userId: String!
 }
 
 type ReturnUserObj {
@@ -247,6 +329,12 @@ type Role {
   users: [String!]
 }
 
+type SelectedProject {
+  projId: String!
+  projName: String!
+  userId: String!
+}
+
 type Token {
   token: String!
   userObj: ReturnUserObj!
@@ -254,13 +342,22 @@ type Token {
 
 input UpdateOrgInput {
   contact: String!
-  creationDate: DateTime! = "2024-03-27T05:11:05.164Z"
+  creationDate: DateTime! = "2024-05-16T11:18:47.251Z"
   orgId: String!
   orgName: String!
   region: String!
   status: String! = "Open"
-  updatedDate: DateTime! = "2024-03-27T05:11:05.164Z"
+  updatedDate: DateTime! = "2024-05-16T11:18:47.251Z"
   website: String
+}
+
+input UpdateRoleInput {
+  roleId: String!
+  userIds: [UserIdz!]!
+}
+
+input UpdateRoleInputArray {
+  allRolesData: [UpdateRoleInput!]
 }
 
 input UpdateUserInput {
@@ -301,6 +398,7 @@ type User {
   firstName: String!
   isPasswordReset: Boolean!
   lastName: String!
+  orgId: String!
   password: String!
   phoneNo: String!
   status: String!

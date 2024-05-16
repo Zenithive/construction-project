@@ -1,7 +1,7 @@
 import { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { DeleteFileInput, File, FileDocument, UploadFileInput } from './file.schema';
+import { DeleteFileInput, File, FileDocument, PaginationInputF, UploadFileInput } from './file.schema';
 //import { FileStorageUtil } from '../util/file-storage.util';
 import { ApsForgeService } from '../aps-forge/aps.forge.service';
 import { FolderService } from '../folder/folder.service'
@@ -14,14 +14,11 @@ export class FileService {
         @InjectModel(File.name) private fileModel: Model<FileDocument>,
         private apsForgeService: ApsForgeService,
         private folderService: FolderService, // Inject FolderService
-    ) {
-
-    }
+    ) { }
 
     async getFiles() {
         return this.fileModel.find({ status: { $ne: 'Inactive' } }).exec();
     }
-
 
     async uploadFile(fileObject: UploadFileInput) {
         const apsFilesObject = await this.apsForgeService.uploadObject(fileObject.originalname, fileObject.path);
@@ -55,45 +52,60 @@ export class FileService {
     }
 
     async getFileByApsUrn(apsUrnKey: string) {
-
         return await this.fileModel.findOne({ apsUrnKey });
-
     }
 
-    
-async getFileByFolderId( paginationInputF: PaginationInputF) {
-    const { pageSize, currentPage, folderId } = paginationInputF;
-    const skip = pageSize * (currentPage - 1);
+    async getFileByFolderId(paginationInputF: PaginationInputF) {
+        const { pageSize, currentPage, folderId } = paginationInputF;
+        const skip = pageSize * (currentPage - 1);
+        let query = {}; //  logic for the folderId as it is also in input 
+        if (folderId) {
+            const folderIds = await this.folderService.getFolderTreeIds(folderId);
+            query = { folderId: { $in: folderIds } };
+        } else {
+            query = { status: { $ne: 'Inactive' } };
+        }
 
-    let query = {}; //  logic for the folderId as it is also in input 
-    if (folderId) {
-        const folderIds = await this.folderService.getFolderTreeIds(folderId);
-        query = { folderId: { $in: folderIds } };
-    } else {
-        query = { status: { $ne: 'Inactive' } };
+        const totalFiles = await this.fileModel.countDocuments(query);
+        const totalPages = Math.ceil(totalFiles / pageSize);
+
+        const files = await this.fileModel
+            .find(query)
+            .skip(skip)
+            .limit(pageSize)
+            .exec();
+
+        // Convert Mongoose documents to plain JavaScript objects
+        const formattedFiles = files.map((file: Document) => file.toObject() as File);
+
+        return {
+            files: formattedFiles,
+            totalFiles,
+            totalPages,
+            currentPage,
+        };
     }
 
-    const totalFiles = await this.fileModel.countDocuments(query);
-    const totalPages = Math.ceil(totalFiles / pageSize);
+    async saveFiles(filesData: any[]): Promise<[File]> {
+        try {
+            const tmpData = [];
+            for (const key in filesData) {
+                if (Object.prototype.hasOwnProperty.call(filesData, key)) {
+                    const element = filesData[key];
+                    tmpData.push(element);
+                }
+            }
+            // console.log("filesDatas", filesData);
+            // console.log("tmpData", tmpData);
+            const savedFiles: any = await this.fileModel.insertMany(tmpData);
 
-    const files = await this.fileModel
-        .find(query)
-        .skip(skip)
-        .limit(pageSize)
-        .exec();
-
-    // Convert Mongoose documents to plain JavaScript objects
-    const formattedFiles = files.map((file: Document) => file.toObject() as File);
-
-    return {
-        files: formattedFiles,
-        totalFiles,
-        totalPages,
-        currentPage,
-    };
+            return savedFiles;
+        } catch (error) {
+            console.error('Error saving files:', error);
+            throw new Error('Error saving files');
+        }
+    }
 }
-}
-
 
 
 

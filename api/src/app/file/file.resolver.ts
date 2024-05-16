@@ -9,42 +9,38 @@ export class FileResolver {
     private fileService: FileService,
   ) { }
 
+  // ******** Query ******** //
+
   @Query(() => [File])
   async getFiles() {
     return this.fileService.getFiles();
   }
 
+  @Query(() => File)
+  async getOneFile(@Args('input') fileObj: GetSingleFileInput) {
+    // Fetch file by apsUrnKey
+    return await this.fileService.getFileByApsUrn(fileObj.urn);
+  }
 
+  @Query(() => PaginationResultF)
+  async getFileByFolderId(
+    @Args('input') paginationInputF: PaginationInputF,
+  ) {
+    // console.log("PaginationInputF", PaginationInputF)
 
-  @Mutation(() => File)
-  async uploadFile(@Args('input') fileObject: UploadFileInput) { /////////
-    fileObject.fileId = uuidv4();
-    fileObject.revisionId = uuidv4();
-    //fileObject.folderId = folderId;  //////////////
-    console.log("fileObject", fileObject)
-    return this.fileService.uploadFile(fileObject);
+    return this.fileService.getFileByFolderId(paginationInputF);
   }
 
 
-// @Mutation(() => [File]) // Assuming File is your GraphQL type for files
-// async uploadMultipleFiles(@Args('input') input: UploadMultipleFilesInput): Promise<File[]> {
-//   const { files } = input;
-//   const uploadedFiles: File[] = [];
-
-//   for (const fileObject of files) {
-//     fileObject.fileId = uuidv4();
-//     fileObject.revisionId = uuidv4();
-//     // You can optionally handle folderId here if needed
-//     console.log('fileObject', fileObject);
-//     const uploadedFile = await this.fileService.uploadFile(fileObject);
-//     uploadedFiles.push(uploadedFile);
-//   }
-
-//   return uploadedFiles;
-// }
-
-
-
+  // ******** Mutation ******** //
+  @Mutation(() => File)
+  async uploadFile(@Args('input') fileObject: UploadFileInput) {
+    fileObject.fileId = uuidv4();
+    fileObject.revisionId = uuidv4();
+    //fileObject.folderId = folderId;  
+    console.log("fileObject", fileObject)
+    return this.fileService.uploadFile(fileObject);
+  }
 
   @Mutation(() => File)
   async deleteFile(@Args('input') deleteFileInput: DeleteFileInput) {
@@ -55,37 +51,21 @@ export class FileResolver {
 
   }
 
-  ////////////// SACHIN CODE FOR GET ONE FILE //////////////////
 
 
 
 
-  @Query(() => File)
-  async getOneFile(@Args('input') fileObj: GetSingleFileInput) {
-    // Fetch file by apsUrnKey
-    return await this.fileService.getFileByApsUrn(fileObj.urn);
-  }
 
-  // @Query(() => [File])  // New query resolver to get files by folderId
-  // async getFilesByFolderId(@Args('input') folderId: string) {
-  //   // console.log("folderId", folderId)
-  //   return await  this.fileService.getFileByFolderId(folderId);
-  // }
 
-  @Query(() => PaginationResultF)
-  async getFileByFolderId(
-    @Args('input') paginationInputF: PaginationInputF,
-  ) {
-    // console.log("PaginationInputF", PaginationInputF)
 
-    return this.fileService.getFileByFolderId(paginationInputF);
-  }
+
+
+
 }
 
 
 
 
-////////////// SACHIN CODE FOR DOWNLOAD ONE FILE //////////////////
 
 
 

@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Number } from 'mongoose';
 import { ObjectType, Field, InputType, Int } from '@nestjs/graphql';
 
 
@@ -78,6 +78,7 @@ export class File {
   apsObjKey!: string;
 }
 
+
 @InputType()
 export class UploadFileInput {
 
@@ -133,7 +134,7 @@ export class UploadFileInput {
   @Field({ nullable: true })
   apsObjKey!: string;
 }
-////// Sachin  code  ***********
+
 
 //// PaginationInput for File Schema
 @InputType()
@@ -156,7 +157,7 @@ export class PaginationResultF {
   @Field(() => Int)
   totalPages!: number;
 
-  
+
 
   @Field(() => [File])
   files!: File[];
@@ -171,16 +172,12 @@ export class DeleteFileInput {
   fileId!: string;
 }
 
-/// FOR DOWNLOAD {GET SINGLE FILE }   ***************
+/// FOR DOWNLOAD {GET SINGLE FILE } ***************
 
 @InputType()
 export class GetSingleFileInput {
   @Field()
   urn!: string;
 }
-
-
-
-
 
 export const FileSchema = SchemaFactory.createForClass(File);
