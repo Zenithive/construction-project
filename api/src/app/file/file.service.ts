@@ -8,10 +8,6 @@ import { FolderService } from '../folder/folder.service'
 // import  {getFolderTreeIds} from '../folder/folder.service'
 import { Document } from 'mongoose';
 
-
-
-
-
 @Injectable()
 export class FileService {
     constructor(

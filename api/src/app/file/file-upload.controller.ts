@@ -1,5 +1,5 @@
 // file-upload.controller.ts
-import { Controller, Get, Post, Param, Res, UseInterceptors, UploadedFile, UploadedFiles } from '@nestjs/common';
+import { Controller, Get, Post, Param, Res, UseInterceptors, UploadedFile, UploadedFiles, Body } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { multerOptions } from './multer.config';
@@ -9,6 +9,7 @@ import * as fs from 'fs';
 import { join } from 'path';
 import { FileService } from './file.service';
 import { error } from 'console';
+import { UploadFileInput } from './file.schema';
 
 
 
@@ -32,6 +33,27 @@ export class FileUploadController {
     }));
     return uploadedFiles;
   }
+
+
+
+  @Post('post')
+  async saveFiles(@Body() files: Record<number, UploadFileInput>) {
+    try {
+      const savedFiles = [];
+      for (const key in files) {
+        if (files.hasOwnProperty(key)) {
+          const file = files[key];
+          const result = await this.fileService.uploadFile(file);
+          savedFiles.push(result);
+        }
+      }
+      return savedFiles;
+    } catch (error) {
+      console.error('Error saving files:', error);
+      throw new Error('Error saving files');
+    }
+  }
+
 
   /// Code for download  file
   @Get("downloadFile/:apsUrnKey")
@@ -59,22 +81,7 @@ export class FileUploadController {
     }
  }
 
-  @Post('post') // New POST endpoint for saving files to MongoDB
-  async saveFilesToMongoDB(files) {
-    
-    
-      const uploadedFiles = files.map(file => ({
-        originalName: file.originalname,
-        fileName: file.filename,
-        extension: file.filename.split('.').pop(),
-        path: file.path,
-        size: file.size,
-      }));
-
-      
-      return uploadedFiles;
-    
-  }
+ 
 
  
 

@@ -13,13 +13,13 @@ input CreateFolderInput {
 }
 
 input CreateNewPermission {
-  createdBy: DateTime! = "2024-05-14T13:00:33.063Z"
+  createdBy: DateTime! = "2024-05-16T05:33:06.806Z"
   orginatorId: String!
   permissionId: String!
   permissionKey: String!
   permissionLabel: String!
   projId: String!
-  updatedBy: DateTime! = "2024-05-14T13:00:33.063Z"
+  updatedBy: DateTime! = "2024-05-16T05:33:06.806Z"
   value: Boolean!
 }
 
@@ -35,12 +35,12 @@ input CreateNewRole {
 
 input CreateOrgInput {
   contact: String!
-  creationDate: DateTime! = "2024-05-14T13:00:32.227Z"
+  creationDate: DateTime! = "2024-05-16T05:33:05.876Z"
   orgId: String!
   orgName: String!
   region: String!
   status: String! = "Open"
-  updatedDate: DateTime! = "2024-05-14T13:00:32.227Z"
+  updatedDate: DateTime! = "2024-05-16T05:33:05.876Z"
   website: String
 }
 
@@ -56,7 +56,7 @@ input CreateProjectInput {
 }
 
 input CreateUserByAdmin {
-  creationDate: DateTime! = "2024-05-14T13:00:30.180Z"
+  creationDate: DateTime! = "2024-05-16T05:33:02.031Z"
   email: String
   emailVerified: Boolean! = false
   firstName: String
@@ -66,12 +66,12 @@ input CreateUserByAdmin {
   phoneNo: String
   status: String! = "Active"
   subscriptionId: Float = 1
-  updatedDate: DateTime! = "2024-05-14T13:00:30.180Z"
+  updatedDate: DateTime! = "2024-05-16T05:33:02.031Z"
   userId: String!
 }
 
 input CreateUserInput {
-  creationDate: DateTime! = "2024-05-14T13:00:30.180Z"
+  creationDate: DateTime! = "2024-05-16T05:33:02.031Z"
   email: String!
   emailVerified: Boolean! = false
   firstName: String
@@ -81,7 +81,7 @@ input CreateUserInput {
   phoneNo: String = ""
   status: String = "Active"
   subscriptionId: Float! = 1
-  updatedDate: DateTime! = "2024-05-14T13:00:30.180Z"
+  updatedDate: DateTime! = "2024-05-16T05:33:02.031Z"
   userId: String!
 }
 
@@ -120,7 +120,7 @@ input EditUserByAdmin {
   phoneNo: String
   status: String! = "Active"
   subscriptionId: Float = 1
-  updatedDate: DateTime! = "2024-05-14T13:00:30.180Z"
+  updatedDate: DateTime! = "2024-05-16T05:33:02.031Z"
   userId: String!
 }
 
@@ -318,12 +318,12 @@ type Token {
 
 input UpdateOrgInput {
   contact: String!
-  creationDate: DateTime! = "2024-05-14T13:00:32.227Z"
+  creationDate: DateTime! = "2024-05-16T05:33:05.876Z"
   orgId: String!
   orgName: String!
   region: String!
   status: String! = "Open"
-  updatedDate: DateTime! = "2024-05-14T13:00:32.227Z"
+  updatedDate: DateTime! = "2024-05-16T05:33:05.876Z"
   website: String
 }
 
