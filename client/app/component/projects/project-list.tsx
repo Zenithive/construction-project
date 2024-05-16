@@ -44,18 +44,14 @@ export const ProjectListWrapper = ({ listRefresh }: ProjectListWrapperProps) => 
     });
 
     useEffect(() => {
-        console.log("Data", data)
         if (data?.getProjects) {
             setTotalPages(data.getProjects.totalPages);
         }
-        console.log("if", data?.getProjects);
 
     }, [data]);
 
 
     useEffect(() => {
-        console.log("pageSize:", pageSize);
-        console.log("currentPage:", currentPage);
         refetch({ variables: { pageSize, currentPage } });
     }, [pageSize, currentPage, refetch]);
 
@@ -71,7 +67,6 @@ export const ProjectListWrapper = ({ listRefresh }: ProjectListWrapperProps) => 
         setCurrentPage(newPage);
     };
 
-    
 
     const gridOptions: GridOptions = {
         // Other grid options...
@@ -161,7 +156,7 @@ export const ProjectListWrapper = ({ listRefresh }: ProjectListWrapperProps) => 
                 </Tooltip>
             </Col>
             <Col css={{ d: 'flex' }}>
-                <Tooltip content="Edit user">
+                <Tooltip content="Edit Project">
                     <IconButton
                         onClick={() => console.log('Edit Project', data)}
                     >

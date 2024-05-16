@@ -56,7 +56,6 @@ export const AddUser = ({ setListRefresh, userData, setUSERDATA }: AddUserProps)
 
    useEffect(() => {
       if (userData) {
-         console.log("userData", userData)
          formik.setValues(userData);
          formik.setFieldValue("subscriptionId", (userData.subscriptionId && userData.subscriptionId > -1) ? userData.subscriptionId : "");
          handler();
@@ -75,8 +74,6 @@ export const AddUser = ({ setListRefresh, userData, setUSERDATA }: AddUserProps)
 
    useEffect(() => {
       if (visible) {
-         console.log("org", organizationData)
-         console.log("GET_ORG", GET_ALL_ORG);
          refetchOrg();
       }
    }, [visible]);
@@ -89,7 +86,6 @@ export const AddUser = ({ setListRefresh, userData, setUSERDATA }: AddUserProps)
                value: elem.orgName
             }
          });
-         console.log("orgListKeyPair:", tmpOrgList); 
          setOrgListKeyPair(tmpOrgList)
       }
       else{
@@ -107,8 +103,6 @@ export const AddUser = ({ setListRefresh, userData, setUSERDATA }: AddUserProps)
 
  
    const addNewUser = async (values: UserTypes, { setSubmitting }: FormikHelpers<UserTypes>) => {
-      console.log("createUser", createUserByAdmin)
-      console.log("values", values)
       setSubmitting(true);
       const res = await createUserByAdmin({
          variables: {
@@ -135,8 +129,6 @@ export const AddUser = ({ setListRefresh, userData, setUSERDATA }: AddUserProps)
    const [editUser] = useMutation(EDITE_USER);
 
    const UpdateUsers = async (values: UserTypes, { setSubmitting }: FormikHelpers<UserTypes>) => {
-      console.log("editUser", editUser);
-      console.log("values", values)
       setSubmitting(true);
       const res = await editUser({
          variables: {
@@ -149,7 +141,6 @@ export const AddUser = ({ setListRefresh, userData, setUSERDATA }: AddUserProps)
             subscriptionId: values.subscriptionId
          },
       });
-      console.log("res", res);
 
       const userEmail: string | null = res.data?.editUser?.email;
       if (userEmail) {
@@ -159,7 +150,6 @@ export const AddUser = ({ setListRefresh, userData, setUSERDATA }: AddUserProps)
       }
 
       setSubmitting(false);
-      console.log(UpdateUsers);
    }
 
    const handleSubmitMethod = (values: UserTypes, formikProps: FormikHelpers<UserTypes>) => {
@@ -296,7 +286,7 @@ export const AddUser = ({ setListRefresh, userData, setUSERDATA }: AddUserProps)
                               <TextField
                                  {...params}
                                  id='orgId'
-                                 InputProps={{sx: {borderRadius: 3}}}
+                                 InputProps={{...params.InputProps,sx: {borderRadius: 3}}}
                                  name="orgId"
                                  value={formik.values.orgId}
                                  label="Organisation"
@@ -323,8 +313,8 @@ export const AddUser = ({ setListRefresh, userData, setUSERDATA }: AddUserProps)
                               (params) =>
                                  <TextField
                                     {...params}
+                                    InputProps={{...params.InputProps,sx: {borderRadius: 3}}}
                                     id='subscriptionId'
-                                    InputProps={{sx: {borderRadius: 3}}}
                                     name="subscriptionId"
                                     value={formik.values.subscriptionId}
                                     label="Subscription"

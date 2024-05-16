@@ -1,13 +1,15 @@
 import {Divider, Modal, Text} from '@nextui-org/react';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { useMutation } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 import ToastMessage from '../toast-message/ToastMessage';
-import { Box, Button, Grid, TextField } from '@mui/material';
+import { Autocomplete, Box, Button, Grid, TextField } from '@mui/material';
 import { CREATE_PROJECT } from '../../api/project/mutations';
 import { UserSchema, selectUserSession } from '../../reducers/userReducer';
 import { useAppSelector } from '../../reducers/hook.redux';
+import { GET_ALL_ORG } from '../../api/organisation/queries';
+import { OrganisationTypes } from '../organisations/add-organisation';
 
 
 export interface ProjectTypes {
@@ -30,12 +32,17 @@ const ProjectSchema = Yup.object().shape({
    region: Yup.string().required('Required'),
    status: Yup.string().required('Required'),
    website: Yup.string().required('Required'),
-   orgName: Yup.string().required("Required"),
+   orgId: Yup.string().required("Required"),
 });
 
 export const AddProject = ({setListRefresh}:AddProjectProps) => {
-
+   const [orgListKeyPair, setOrgListKeyPair] = React.useState<{ key: string; value: string }[]>([]);
    const userDetails:UserSchema = useAppSelector(selectUserSession);
+   const [visible, setVisible] = React.useState(false);
+
+   const { data: organizationData, refetch: refetchOrg } = useQuery(GET_ALL_ORG, {
+      skip: !visible,
+   });
    
    const initValue: ProjectTypes = {
       projName: "",
@@ -43,16 +50,38 @@ export const AddProject = ({setListRefresh}:AddProjectProps) => {
       website: "",
       status: "",
       orgName: "",
-      orgId: "1r"
+      orgId: ""
     }
     
    const [createProject, { data, error, loading }] = useMutation(CREATE_PROJECT);
-   const [visible, setVisible] = React.useState(false);
+   
    const handler = () => setVisible(true);
 
    const closeHandler = () => {
       setVisible(false);
    };
+
+   useEffect(() => {
+      if (visible) {
+         refetchOrg();
+      }
+   }, [visible]);
+
+   useEffect(() => {
+      if (organizationData && organizationData.getAllOrganisation) {
+         const tmpOrgList = organizationData.getAllOrganisation.map((elem:OrganisationTypes)=>{
+            return {
+               key: elem.orgId,
+               value: elem.orgName
+            }
+         });
+         setOrgListKeyPair(tmpOrgList)
+      }
+      else{
+         setOrgListKeyPair([])
+
+      }
+   }, [organizationData]);
 
    // eslint-disable-next-line @typescript-eslint/no-explicit-any
    const addProject = async (values: ProjectTypes,{ setSubmitting, resetForm }:any) => {
@@ -66,7 +95,7 @@ export const AddProject = ({setListRefresh}:AddProjectProps) => {
             status: values.status,
             website: values.website,
             orgName: values.orgName,
-            orgId: "1r"
+            orgId: values.orgId
          },
       });
 
@@ -194,7 +223,7 @@ export const AddProject = ({setListRefresh}:AddProjectProps) => {
                      />
                   </Grid>
                   <Grid item xs={12}>
-                     <TextField
+                     {/* <TextField
                         required
                         fullWidth
                         name="orgName"
@@ -207,7 +236,32 @@ export const AddProject = ({setListRefresh}:AddProjectProps) => {
                         onBlur={formik.handleBlur}
                         error={formik.touched.orgName && Boolean(formik.errors.orgName)}
                         helperText={formik.touched.orgName && formik.errors.orgName}
-                     />
+                     /> */}
+
+                        {orgListKeyPair.length ? (
+                           <Autocomplete
+                              disablePortal
+                              onChange={(e, value) => {formik.setFieldValue("orgId", value?.key ? value.key : "");formik.setFieldValue("orgName", value?.value ? value.value : "")}}
+                              getOptionLabel={(option) => option.value}
+                              value={orgListKeyPair.find((org) => org.key === formik.values.orgId) || null}
+                              includeInputInList
+                              options={orgListKeyPair || []}
+                              renderInput={(params) => (
+                              <TextField
+                                 {...params}
+                                 id='orgId'
+                                 InputProps={{...params.InputProps,sx: {borderRadius: 3}}}
+                                 name="orgId"
+                                 value={formik.values.orgId}
+                                 label="Organisation"
+                                 error={formik.touched.orgId && Boolean(formik.errors.orgId)}
+                                 helperText={formik.touched.orgId && formik.errors.orgId}
+                              />
+                              )}
+                           />
+                        ) : (
+                           ""
+                        )}
                   </Grid>               
                </Grid>
           </Box>
