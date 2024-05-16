@@ -147,6 +147,7 @@ export const AddOrganisation = ({setListRefresh,organizationData,setOrganization
                      <TextField
                         required
                         fullWidth
+                        InputProps={{sx: {borderRadius: 3}}}
                         id="orgName"
                         label="Organisation Name"
                         name="orgName"
@@ -162,6 +163,7 @@ export const AddOrganisation = ({setListRefresh,organizationData,setOrganization
                      <TextField
                         required
                         fullWidth
+                        InputProps={{sx: {borderRadius: 3}}}
                         name="region"
                         label="Region"
                         id="region"
@@ -177,6 +179,7 @@ export const AddOrganisation = ({setListRefresh,organizationData,setOrganization
                      <TextField
                         required
                         fullWidth
+                        InputProps={{sx: {borderRadius: 3}}}
                         name="website"
                         label="Website"
                         id="website"
@@ -192,6 +195,7 @@ export const AddOrganisation = ({setListRefresh,organizationData,setOrganization
                      <TextField
                         required
                         fullWidth
+                        InputProps={{sx: {borderRadius: 3}}}
                         name="contact"
                         label="Contact"
                         id="contact"
