@@ -7,6 +7,7 @@ import { ApsForgeService } from '../aps-forge/aps.forge.service';
 import { FolderService } from '../folder/folder.service'
 // import  {getFolderTreeIds} from '../folder/folder.service'
 import { Document } from 'mongoose';
+import { UserId } from '../user/user.schema';
 
 @Injectable()
 export class FileService {
@@ -86,19 +87,49 @@ export class FileService {
         };
     }
 
-    async saveFiles(filesData: any[]): Promise<[File]> {
-        try {
-            const tmpData = [];
-            for (const key in filesData) {
-                if (Object.prototype.hasOwnProperty.call(filesData, key)) {
-                    const element = filesData[key];
-                    tmpData.push(element);
-                }
-            }
-            // console.log("filesDatas", filesData);
-            // console.log("tmpData", tmpData);
-            const savedFiles: any = await this.fileModel.insertMany(tmpData);
+    // async saveFiles(filesData: any[]): Promise<[File]> {
+    //     try {
+    //         const tmpData = [];
+    //         for (const key in filesData) {
+    //             if (Object.prototype.hasOwnProperty.call(filesData, key)) {
+    //                 const element = filesData[key];
+    //                 tmpData.push(element);
+    //             }
+    //         }
+    //         // console.log("filesDatas", filesData);
+    //         console.log("tmpData", tmpData);
+    //         const savedFiles: any = await this.fileModel.insertMany(tmpData);
 
+    //         return savedFiles;
+    //     } catch (error) {
+    //         console.error('Error saving files:', error);
+    //         throw new Error('Error saving files');
+    //     }
+    // }
+
+    async saveFiles(filesData: any[]): Promise<File[]> {
+        try {
+            const tmpData = filesData.map(file => ({
+                revisionId: file.revisionId || null,
+                fileId: file.fileId || null,
+                revision: file.revision,
+                fileName: file.fileName,
+                path: file.path,
+                folderId: file.folderId,
+                projectId: file.projectId,
+                userId: file.UserId,
+                orginatorId: file.orginatorId,
+                extension: file.extension,
+                size: file.size,
+                status: file.status,
+                docRef: file.docRef,
+                originalname: file.originalName,
+                zipEntryPoint: file.zipEntryPoint || "",
+                apsUrnKey: file.apsUrnKey || "",
+                apsObjKey: file.apsObjKey || ""
+            }));
+
+            const savedFiles = await this.fileModel.insertMany(tmpData);
             return savedFiles;
         } catch (error) {
             console.error('Error saving files:', error);

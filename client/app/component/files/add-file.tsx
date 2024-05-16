@@ -120,13 +120,27 @@ export const AddFile = ({ setListRefresh, toggleUploadModalHook, folderIdHook }:
       }
    }, [fileData, toggleUploadModalHook.isUploadModalOpen, folderIdHook.folderId, isUploadFileOpen, allFilesUploaded]);
 
+
+   const stripTimestamp = (fileName: string) => {
+      const parts = fileName.split('-');
+      if (parts.length > 1 && !isNaN(Number(parts[0]))) {
+         return parts.slice(1).join('-');
+      }
+      return fileName;
+   };
+
    const setInitFileData = () => {
 
       for (let index = 0; index < fileData.length; index++) {
          const element = fileData[index][0];
+         const cleanFileName = stripTimestamp(element.fileName);
          console.log("element", element)
-         formik.setFieldValue(`files.${index}.fileName`, element.fileName);
+         // formik.setFieldValue(`files.${index}.fileName`, element.fileName);
+         formik.setFieldValue(`files.${index}.fileName`, cleanFileName);
          formik.setFieldValue(`files.${index}.originalName`, element.originalName);
+         formik.setFieldValue(`files.${index}.orginatorId`, "");
+         formik.setFieldValue(`files.${index}.projectId`, "");
+         // formik.setFieldValue(`files.${index}.orginatorId`, "");
          formik.setFieldValue(`files.${index}.path`, element.path);
          formik.setFieldValue(`files.${index}.extension`, element.extension);
          formik.setFieldValue(`files.${index}.size`, element.size);
@@ -256,7 +270,7 @@ export const AddFile = ({ setListRefresh, toggleUploadModalHook, folderIdHook }:
                                  <TableCell>
                                     <TextField
                                        required
-                                       fullWidth
+                                       fullWidth   
                                        id={`fileName-${index}`}
                                        name={`files.${index}.fileName`}
                                        autoComplete="fileName"
@@ -265,7 +279,8 @@ export const AddFile = ({ setListRefresh, toggleUploadModalHook, folderIdHook }:
                                        onBlur={formik.handleBlur}
                                     />
                                  </TableCell>
-                                 <TableCell colSpan={3}> {/* Set colSpan to the number of columns you want it to span */}
+                                 {/* <TableCell colSpan={3}> Set colSpan to the number of columns you want it to span */}
+                                 <TableCell colSpan={1} sx={{ pr: 3 }}>
                                     <TextField
                                        required
                                        fullWidth
@@ -280,7 +295,8 @@ export const AddFile = ({ setListRefresh, toggleUploadModalHook, folderIdHook }:
 
                                     />
                                  </TableCell>
-                                 <TableCell>
+                                 {/* <TableCell> */}
+                                 <TableCell colSpan={1} sx={{ pr: 3 }}>
                                     <TextField
                                        required
                                        fullWidth
