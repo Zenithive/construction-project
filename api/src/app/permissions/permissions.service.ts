@@ -1,7 +1,7 @@
 import { Model } from 'mongoose';
 import {  Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Permission, PermissionDocument, CreateNewPermission, GetPermissionByProjId } from './permissions.schema';
+import { Permission, PermissionDocument, CreateNewPermission, GetPermissionByProjId, UpdatePermission } from './permissions.schema';
 import { v4 as uuidv4 } from 'uuid'; 
 import { DEFAULT_PERMISSIONS } from '../Constants/permissions.constant';
 import { Project } from '../project/project.schema';
@@ -19,14 +19,21 @@ export class PermissionService {
       return this.permissionModel.create(permissions);
     }
 
-    async updatePermissions(permission: CreateNewPermission){
-      const checkExistingProj = await this.permissionModel.findOne({ permissionId: permission.permissionId });
+    async updatePermissions(permission: UpdatePermission){
+      const existingPermission = await this.permissionModel.findOneAndUpdate({ 
+        permissionId: permission.permissionId,
+        roleId: permission.roleId
+       },{
+        $set:{
+          value: permission.value,
+          orginatorId: permission.orginatorId
+        }
+      }, { new: true });
 
-      if(checkExistingProj){
-        throw new Error('Project with the same Name Exists');
+      if (!existingPermission) {
+        throw new Error('Permission not found for Update');
       }
-      permission.permissionId = uuidv4();
-      return this.permissionModel.create(permission);
+      return existingPermission.save();
     }
 
     getNewPermissionsRecordsForNewProject(newProject:Project, roleObj: Role):CreateNewPermission[]{

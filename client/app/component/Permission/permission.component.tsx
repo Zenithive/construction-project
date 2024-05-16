@@ -1,10 +1,11 @@
-import { Box, Checkbox, Divider, Grid, IconButton, Modal, Typography } from "@mui/material";
+import { Box, Checkbox, Divider, Grid, IconButton, LinearProgress, Modal, Typography } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import ToastMessage from "../toast-message/ToastMessage";
-import { useLazyQuery } from "@apollo/client";
+import { useLazyQuery, useMutation } from "@apollo/client";
 import { GET_ROLES } from "../../api/Roles/queries";
 import { useEffect, useState } from "react";
 import { GET_PERMISSIONS } from "../../api/permission/queries";
+import { UPDATE_PERMISSIONS } from "../../api/permission/mutations";
 
 export interface PermissionComponentProps {
   visible: boolean;
@@ -14,6 +15,10 @@ export interface PermissionComponentProps {
 
 export interface PermissionMapType{
   [key: string]: Array<PermissionType>
+}
+
+export interface RoleNameIdMapType{
+  [key: string]: string
 }
 
 export interface PermissionType{
@@ -31,21 +36,24 @@ export interface PermissionType{
 
 export function PermissionComponent(props: PermissionComponentProps) {
 
+  const [roleNameIdMap, setRoleNameIdMap] = useState<RoleNameIdMapType>({});
   const [permissionMap, setPermissionMap] = useState<PermissionMapType>({});
   const [permissionLableArray, setPermissionLabelArray] = useState<Array<string>>([]);
 
   const [GetRoles , { data:roles, error }] = useLazyQuery(GET_ROLES);
-  const [GetPermissions , { data:permission }] = useLazyQuery(GET_PERMISSIONS);
+  const [GetPermissions , { data:permission, refetch: refetchPermissions }] = useLazyQuery(GET_PERMISSIONS);
+  const [UpdatePermission, { error: updatePermissionError, loading: updatePermissionLoading }] = useMutation(UPDATE_PERMISSIONS);
 
-  const getRoleNameUsingId = (roleId:string) => {
+  
+
+  const createRoleNameMap = () => {
+    const tmpRoleNameIdMap:RoleNameIdMapType = {};
     for (let index = 0; index < roles.getRoles.length; index++) {
       const element = roles.getRoles[index];
-      if(element.roleId == roleId){
-        return element.roleName;
-      }
+      tmpRoleNameIdMap[element.roleId] = element.roleName;
     }
 
-    return "";
+    setRoleNameIdMap(tmpRoleNameIdMap);
   }
 
   const createPermissionRolesMapArray = () => {
@@ -53,7 +61,7 @@ export function PermissionComponent(props: PermissionComponentProps) {
     const tmpMap:PermissionMapType = {};
     for (let index = 0; index < permission?.getPermissions.length; index++) {
       const permissionObj = permission?.getPermissions[index];
-      const roleName:string = getRoleNameUsingId(permissionObj.roleId);
+      const roleName:string = roleNameIdMap[permissionObj.roleId];
       if(!tmpLabelArray.includes(permissionObj.permissionLabel)){
         tmpLabelArray.push(permissionObj.permissionLabel);
       }
@@ -76,8 +84,16 @@ export function PermissionComponent(props: PermissionComponentProps) {
     setPermissionMap(tmpMap);
   }
 
-  useEffect(()=>{
-    if(props.projId){
+  useEffect(()=>{    
+    const actualRoleCount:number = Object.keys(roleNameIdMap).length;
+    const actualPermissionCount:number = Object.keys(permissionMap).length;
+    if(actualRoleCount !== actualPermissionCount){
+      refetchPermissions();
+    }    
+  }, [props.visible]);
+
+  useEffect(()=>{    
+    if(props.projId && props.visible){
       const paramProjId = {variables: {
         projId: props.projId
       }};
@@ -87,14 +103,37 @@ export function PermissionComponent(props: PermissionComponentProps) {
   }, [props.projId]);
 
   useEffect(()=>{
+    if(roles && roles?.getRoles.length){
+      createRoleNameMap();
+    }
+  }, [roles]);
+
+  useEffect(()=>{
     if(permission && permission?.getPermissions.length){
       createPermissionRolesMapArray();
     }
-  }, [permission]);
+  }, [roleNameIdMap, permission]);
 
   const closeHandler = () => {
     props.closeRoleModel()
   }
+
+  const handlePermissionChange = async (permissionObj:PermissionType, checked:boolean) => {
+      const res = await UpdatePermission({
+        variables: {
+           orginatorId: "",
+           permissionId: permissionObj.permissionId,
+           roleId: permissionObj.roleId,
+           value: checked
+        },
+     });
+
+     if(res?.data?.updatePermission?.permissionId){
+      refetchPermissions();
+     }
+  }
+
+
   return (
     <Modal
       aria-labelledby="simple-modal-title"
@@ -124,6 +163,12 @@ export function PermissionComponent(props: PermissionComponentProps) {
             openFlag={error ? true : false}
             message='Problem while fetching roles.'
           ></ToastMessage>
+
+          <ToastMessage
+            severity="error"
+            openFlag={updatePermissionError ? true : false}
+            message='Problem while updating permission.'
+          ></ToastMessage>
         </Box>
         <Divider sx={{ my: '$5' }} />
        
@@ -144,7 +189,7 @@ export function PermissionComponent(props: PermissionComponentProps) {
                   <Grid item xs={1} sx={{fontWeight: "bold"}}>{permissionRoleArray[0].roleName}</Grid>
                   {permissionRoleArray.map((data, ind: number) =>
                     <Grid key={ind} item xs={1} sx={{fontSize: "12px", fontWeight: "bold"}}>
-                      <Checkbox size="small" checked={data.value} /> <br />
+                      <Checkbox size="small" checked={data.value} onChange={(event, checked)=>handlePermissionChange(data, checked)} disabled={updatePermissionLoading} /> <br />
                     </Grid>
                   )}
                 </Grid>
@@ -152,6 +197,7 @@ export function PermissionComponent(props: PermissionComponentProps) {
               </>
             )}
           </Box>
+          {updatePermissionLoading ? <Box sx={{ width: '100%' }}><LinearProgress /></Box> : <></>}
        </Box>
 
       </Box>

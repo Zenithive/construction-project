@@ -1,6 +1,6 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql'
 import { PermissionService } from './permissions.service'
-import { Permission, CreateNewPermission, GetPermissionByProjId } from './permissions.schema'
+import { Permission, GetPermissionByProjId, UpdatePermission } from './permissions.schema'
 
 @Resolver()
 export class PermissionResolver {
@@ -14,7 +14,7 @@ export class PermissionResolver {
   }
 
   @Mutation(() => Permission)
-  async updateUpermissions(@Args('input') permission: CreateNewPermission) {
+  async updatePermission(@Args('input') permission: UpdatePermission) {
     return this.permissionService.updatePermissions(permission);
   }
 

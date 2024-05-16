@@ -77,6 +77,25 @@ export class CreateNewPermission {
 }
 
 @InputType()
+export class UpdatePermission {
+
+  @Field()
+  permissionId!: string;
+
+  @Field()
+  value!: boolean;
+
+  @Field()
+  updatedBy: Date = new Date();
+
+  @Field()
+  roleId!: string;
+
+  @Field()
+  orginatorId!: string;
+}
+
+@InputType()
 export class GetPermissionByProjId {
   @Field()
   projId!: string;
