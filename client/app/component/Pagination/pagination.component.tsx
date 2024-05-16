@@ -50,7 +50,11 @@ export const PaginationComponent = ({ totalPage, currentPage, pageSize, handlePa
                         color: "white",
                         borderRadius: 3,
                         border: "none",
-                        textAlign: "center"
+                        textAlign: "center",
+                        '&:before': {
+                            border: "none"
+                        },
+                        
                     }}
 
                 >
