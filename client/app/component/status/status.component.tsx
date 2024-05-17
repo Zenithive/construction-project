@@ -7,26 +7,31 @@ import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
 import React, { useEffect, useState } from "react";
 import { useLazyQuery, useMutation } from "@apollo/client";
-import { GET_STATUS} from "client/app/api/status/queries";
-import { DELETE_Status } from "client/app/api/status/mutations";
+import { GET_STATUS} from "../../api/status/queries";
+import { DELETE_Status } from "../../api/status/mutations";
 
 export interface StatusComponentProps {
   visible: boolean;
   closeStatusModel: () => void;
   clearProjId: () => void;
   projId: string;
-  statusId:string;
-  statusName:string;
+  statusId: string;
+  statusName: string;
 }
+
+interface Status {
+    statusId: string;
+    statusName: string;
+  }
 
 export function StatusComponent(props: StatusComponentProps) {
   const [showAddStatus, setShowAddStatus] = useState(false);
-  const [statuses, setStatuses] = useState<any[]>([]);
+  const [statuses, setStatuses] = useState<Status[]>([]);
 
   const [GetStatuses, { data: statusesData, error: statusesError, refetch }] = useLazyQuery(GET_STATUS);
   const [deleteStatus] = useMutation(DELETE_Status);
 
-  const handleDeleteStatus = async (statusId: string) => {
+  const handleDeleteStatus = async (statusId: string): Promise<void>=> {
     try {
       await deleteStatus({ variables: { statusId } });
       refetch();

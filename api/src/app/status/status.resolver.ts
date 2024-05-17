@@ -1,5 +1,5 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
-import { Status,CreateNewStatus,GetStatusByProjId ,DeleteStatusInput} from './status.schema';
+import { Status,CreateNewStatus,GetStatusByProjId } from './status.schema';
 import { StatusService } from './status.service';
 @Resolver()
 
@@ -16,8 +16,4 @@ export class StatusResolver{
       return this.statusService.CreateNewStatus(status);
     }
 
-    @Mutation(() => Status)
-    async deletestatus(@Args('input') status: DeleteStatusInput) {
-      return this.statusService.deletestatus(status.statusId);
-    }
 }

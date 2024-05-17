@@ -54,9 +54,5 @@ export class CreateNewStatus {
   projId!: string;
 
 }
-@InputType()
-export class DeleteStatusInput {
-  @Field()
-  statusId!: string;
-}
+
 export const StatusSchema = SchemaFactory.createForClass(Status);

@@ -1,10 +1,9 @@
 import { Box, Button, Grid, TextField } from "@mui/material";
 import ToastMessage from "../toast-message/ToastMessage";
 import { useMutation } from "@apollo/client";
-import { CREATE_NEW_STATUS } from "client/app/api/status/mutations";
+import { CREATE_NEW_STATUS } from "../../api/status/mutations";
 import { FormikHelpers, useFormik } from "formik";
 import * as Yup from 'yup';
-import { useState } from "react";
 
 export interface AddStatusComponentProps {
   visible: boolean;

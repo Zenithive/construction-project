@@ -1,9 +1,8 @@
 import { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Status,CreateNewStatus, StatusDocument,GetStatusByProjId ,DeleteStatusInput} from './status.schema';
+import { Status,CreateNewStatus, StatusDocument,GetStatusByProjId } from './status.schema';
 import { v4 as uuidv4 } from 'uuid';
-import { Project } from '../project/project.schema';
 import { PermissionService } from '../permissions/permissions.service';
 
 @Injectable()
@@ -40,10 +39,4 @@ export class StatusService {
     return savedStatus;
   }
 
-  async deletestatus(id: string) {
-    const searchStatus = {
-        statusId: id,
-    };
-    return this.statusModel.findOneAndDelete(searchStatus).exec();
-  }
 }
