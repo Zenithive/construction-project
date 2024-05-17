@@ -128,10 +128,23 @@ export const AddFile = ({ setListRefresh, toggleUploadModalHook, folderIdHook }:
    }, [fileData, toggleUploadModalHook.isUploadModalOpen, folderIdHook.folderId, isUploadFileOpen, allFilesUploaded]);
 
 
+   // const stripTimestamp = (fileName: string) => {
+   //    const parts = fileName.split('-');
+   //    if (parts.length > 1 && !isNaN(Number(parts[0]))) {
+   //       return parts.slice(1).join('-');
+   //    }
+   //    return fileName;
+   // };
+
+
    const stripTimestamp = (fileName: string) => {
       const parts = fileName.split('-');
       if (parts.length > 1 && !isNaN(Number(parts[0]))) {
-         return parts.slice(1).join('-');
+         const nameWithoutTimestamp = parts.slice(1).join('-');
+         const extensionIndex = nameWithoutTimestamp.lastIndexOf('.');
+         const baseName = nameWithoutTimestamp.substring(0, extensionIndex);
+         const extension = nameWithoutTimestamp.substring(extensionIndex);
+         return baseName + extension;
       }
       return fileName;
    };
@@ -140,7 +153,8 @@ export const AddFile = ({ setListRefresh, toggleUploadModalHook, folderIdHook }:
 
       for (let index = 0; index < fileData.length; index++) {
          const element = fileData[index][0];
-         const cleanFileName = stripTimestamp(element.fileName);
+         // const cleanFileName = stripTimestamp(element.fileName);
+         const cleanFileName = stripTimestamp(element.fileName).replace(/(\.[^.]+)\1$/, '$1');
          console.log("element", element)
          // formik.setFieldValue(`files.${index}.fileName`, element.fileName);
          formik.setFieldValue(`files.${index}.fileName`, cleanFileName);
