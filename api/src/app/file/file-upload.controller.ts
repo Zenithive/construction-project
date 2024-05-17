@@ -42,19 +42,16 @@ export class FileUploadController {
   }
 
 
-  @Get('downloadFile/:apsUrnKey')
+  @Get('downloadFile/:revisionId')
   async downloadFile(
     @Res() response: Response,
-    @Param('apsUrnKey') apsUrnKey: string
+    @Param('revisionId') revisionId: string
   ) {
     try {
-      const file = await this.fileService.getFileByParams({apsUrnKey});
-
+      const file = await this.fileService.getFileByParams({revisionId});
       if (file && file.fileId) {
         const filePath = join(
-          __dirname,
-          '../../',
-          'uploadedFiles',
+          '/app/server',
           file.fileName
         ); // Path to your uploaded files
         const stat = fs.statSync(filePath);
@@ -85,9 +82,7 @@ export class FileUploadController {
       const file = await this.fileService.getFileByParams({revisionId: id});
       if (file && file.fileId) {
         const filePath = join(
-          __dirname,
-          '../../',
-          'uploadedFiles',
+          '/app/server',
           file.fileName
         ); 
        
