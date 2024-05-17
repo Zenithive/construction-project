@@ -4,7 +4,7 @@ import { UserDetails } from "../users/user.details.component";
 import { Box } from "@mui/material";
 
 
-/* eslint-disable-next-line */
+
 export interface RoleUsersListProps {
   roleUsers: Array<string>;
   allUsers: UserTypes[];

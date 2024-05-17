@@ -25,6 +25,8 @@ export interface RolesComponentProps {
   roleId: string;
   roleName: string;
   usersData: User[];
+  roleDetails?: Role | null;
+  onUserSelectionChange?: (selectedUsers: string[]) => void;
 }
 
 export interface User {
@@ -36,6 +38,7 @@ export interface User {
 
 export interface Role {
   roleId: string;
+  isDefaultRole?: boolean;
   roleName: string;
   users: Array<string>;
 }
@@ -57,6 +60,8 @@ export function RolesComponent(props: RolesComponentProps) {
   const [GetRoles, { data: rolesData, error: rolesError, refetch: refetchRoles }] = useLazyQuery(GET_ROLES);
   const [getUsers, { data: usersData, error: usersError }] = useLazyQuery<UsersData>(GET_USERS);
   const [deleteRole] = useMutation(DELETE_Role);
+  const [isUserSelected] = useState(false);
+  const isAdminRole = selectedRole?.roleName.toLowerCase() === 'admin';
 
   useEffect(() => {
     if (selectedRole) {
@@ -122,7 +127,20 @@ export function RolesComponent(props: RolesComponentProps) {
     setMode('add');
   };
 
-  const handleDeleteRole = async (roleId: string) => {
+  const handleUserSelectionChange = (selectedUsers: string[]) => {
+  
+    const isAdminRole = props.roleDetails?.roleName.toLowerCase() === 'admin';
+  
+    if (!isAdminRole) {
+      props.onUserSelectionChange && props.onUserSelectionChange(selectedUsers);
+    }
+  };
+  
+  const handleDeleteRole = async (roleId: string, roleName: string) => {
+    if (roleName.toLowerCase() === 'admin') {
+      console.log('Cannot delete admin role.');
+      return;
+    }
     try {
       await deleteRole({ variables: { roleId } });
       refetchRoles();
@@ -131,12 +149,14 @@ export function RolesComponent(props: RolesComponentProps) {
     }
   };
 
+
   return (
     <Modal
       aria-labelledby="simple-modal-title"
       aria-describedby="simple-modal-description"
       open={props.visible}
       onClose={closeHandler}
+      style={{ zIndex: 999 }}
     >
       <Box sx={{ bgcolor: "white", width: "80%", marginX: "auto", marginY: 4, borderRadius: 3, maxHeight: '80vh' }}>
         <Box sx={{ paddingX: 3, paddingY: 2, }} component={"div"}>
@@ -147,7 +167,7 @@ export function RolesComponent(props: RolesComponentProps) {
               </Typography>
             </Grid>
             <Grid item xs={9}>
-              <Button variant="outlined" startIcon={<AddIcon />} onClick={handleAddRole} size="small" sx={{ borderRadius: 3 }}>
+              <Button variant="outlined" startIcon={<AddIcon />} onClick={handleAddRole} size="small" sx={{ borderRadius: 3 }}  disabled={mode === 'edit' && isAdminRole && !isUserSelected}>
                 Add new Role
               </Button>
             </Grid>
@@ -169,23 +189,36 @@ export function RolesComponent(props: RolesComponentProps) {
               projId={props.projId}
               usersData={usersData?.getUsers?.users || []}
               roleDetails={selectedRole}
+              onUserSelectionChange={handleUserSelectionChange}
             />
           )}
         </Box>
         <Divider sx={{ my: '$5' }} />
         <Box sx={{ pb: 4, overflowY: 'auto', overflowX: 'hidden', maxHeight: '450px', pr: 0 }}>
-          {roles.map((role, index) => (
-            <React.Fragment key={index}>
-              {(mode === 'edit' && selectedRole && selectedRole.roleId === role.roleId) ? (
-                <div style={{ marginLeft: '15px' }}>
-                  <AddRolesComponent
-                    visible={true}
-                    closeAddRole={closeAddRole}
-                    projId={props.projId}
-                    usersData={usersData?.getUsers?.users || []}
-                    roleDetails={role}
-                  />
-                </div>
+        {roles.map((role, index) => (
+    <React.Fragment key={index}>
+      {(mode === 'edit' && selectedRole && selectedRole.roleId === role.roleId) ? (
+        <div style={{ marginLeft: '15px' }}>
+          {role.roleName.toLowerCase() === 'admin' ? (
+            <AddRolesComponent
+              visible={true}
+              closeAddRole={closeAddRole}
+              projId={props.projId}
+              usersData={usersData?.getUsers?.users || []}
+              roleDetails={role}
+              editable={false} 
+            />
+          ) : (
+            <AddRolesComponent
+              visible={true}
+              closeAddRole={closeAddRole}
+              projId={props.projId}
+              usersData={usersData?.getUsers?.users || []}
+              roleDetails={role}
+              editable={true} 
+            />
+          )}
+        </div>
               ) : (
                 <Grid
                   container
@@ -198,13 +231,15 @@ export function RolesComponent(props: RolesComponentProps) {
                     <Box sx={{ display: "flex" }}>
                       {role.roleName}
                       {hoveredRole === role.roleId && (
-                        <Box sx={{ display: "flex" }}>
-                          <Tooltip content="Delete Role" color="error">
-                            <IconButton onClick={() => handleDeleteRole(role.roleId)}>
+                        <Box sx={{ display: "flex"}}>
+                         {role.roleName.toLowerCase() !== 'admin' && (
+                          <Tooltip content="Delete Role" color="error" style={{zIndex:9999}}>
+                            <IconButton onClick={() => handleDeleteRole(role.roleId, role.roleName)}>
                               <DeleteIcon size={20} fill="#FF0080" />
                             </IconButton>
                           </Tooltip>
-                          <Tooltip content="Edit Role">
+                          )}
+                          <Tooltip content="Edit Role" style={{ zIndex:9999}}>
                             <IconButton onClick={() => handleOpenEditRole(role)}>
                               <EditIcon size={20} fill="#3f51b5" />
                             </IconButton>

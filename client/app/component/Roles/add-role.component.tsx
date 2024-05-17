@@ -16,8 +16,8 @@ export interface RolesComponentProps {
   roleId?: string;
   roleDetails?: Role | null;
   usersData: User[];
-
-
+   onUserSelectionChange?: (selectedUsers: string[]) => void;
+  editable?:boolean;
 }
 
 
@@ -49,6 +49,7 @@ export function AddRolesComponent(props: RolesComponentProps) {
   const [selectedRoleUsers, setSelectedRoleUsers] = useState<string[]>([]);
 
   useEffect(() => {
+    console.log("props.roleDetails", props.roleDetails)
     if (props.roleDetails && props.roleDetails.users) {
       setSelectedRoleUsers(props.roleDetails.users);
     } else {
@@ -151,6 +152,7 @@ export function AddRolesComponent(props: RolesComponentProps) {
                 error={formik.touched.roleName && Boolean(formik.errors.roleName)}
                 helperText={formik.touched.roleName && formik.errors.roleName}
                 value={formik.values.roleName}
+                disabled={props.roleDetails?.isDefaultRole || false}
               />
             </Grid>
             <Grid item xs={7}>
