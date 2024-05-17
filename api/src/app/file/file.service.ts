@@ -8,6 +8,8 @@ import { FolderService } from '../folder/folder.service'
 // import  {getFolderTreeIds} from '../folder/folder.service'
 import { Document } from 'mongoose';
 import { UserId } from '../user/user.schema';
+import { v4 as uuidv4 } from 'uuid';
+
 
 @Injectable()
 export class FileService {
@@ -111,7 +113,7 @@ export class FileService {
         try {
             const tmpData = filesData.map(file => ({
                 revisionId: file.revisionId || null,
-                fileId: file.fileId || null,
+                fileId: file.fileId || uuidv4(),
                 revision: file.revision,
                 fileName: file.fileName,
                 path: file.path,

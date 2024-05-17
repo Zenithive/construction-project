@@ -107,6 +107,8 @@ export const UploadFileComponent = (props: UploadFileProps) => {
                tmpArray.push(response.data);
                props.fileSet(tmpArray);
                setTotalUploadedFiles(prevState => prevState + 1); // Increment totalUploadedFiles by 1
+               closeHandler()
+
             });
 
          }

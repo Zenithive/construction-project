@@ -20,6 +20,8 @@ import axios from 'axios';
 import { useRouter } from 'next/router';
 import { RootState } from 'client/app/reducers/store';
 
+
+
 const FileObjSchemaNew = Yup.object().shape({
    files: Yup.array()
       .of(
@@ -97,18 +99,16 @@ export const AddFile = ({ setListRefresh, toggleUploadModalHook, folderIdHook }:
    const [isUploadFileOpen, setIsUploadFileOpen] = useState(false);
    const [fileData, setFileData] = useState([] as Array<FileMetadataType>);
    const [saveFileData, { data, error, loading }] = useMutation(SAVE_FILE_DATA);
+   const [allFilesUploaded, setAllFilesUploaded] = useState(false); // Flag for all files uploaded
    const openFileDataModal = () => setVisible(true);
    const fileUploadDialogOpen = () => setIsUploadFileOpen(true);
-   const [allFilesUploaded, setAllFilesUploaded] = useState(false); // Flag for all files uploaded
 
-
-   
-   
 
    const closeHandler = () => {
       setVisible(false);
-      formik.resetForm(); // remove
+      // formik.resetForm(); // remove 
    };
+
 
    useEffect(() => {
       console.log("fileData", fileData)
@@ -127,16 +127,6 @@ export const AddFile = ({ setListRefresh, toggleUploadModalHook, folderIdHook }:
       }
    }, [fileData, toggleUploadModalHook.isUploadModalOpen, folderIdHook.folderId, isUploadFileOpen, allFilesUploaded]);
 
-
-   // const stripTimestamp = (fileName: string) => {
-   //    const parts = fileName.split('-');
-   //    if (parts.length > 1 && !isNaN(Number(parts[0]))) {
-   //       return parts.slice(1).join('-');
-   //    }
-   //    return fileName;
-   // };
-
-
    const stripTimestamp = (fileName: string) => {
       const parts = fileName.split('-');
       if (parts.length > 1 && !isNaN(Number(parts[0]))) {
@@ -148,6 +138,8 @@ export const AddFile = ({ setListRefresh, toggleUploadModalHook, folderIdHook }:
       }
       return fileName;
    };
+
+
 
    const setInitFileData = () => {
 
@@ -164,20 +156,21 @@ export const AddFile = ({ setListRefresh, toggleUploadModalHook, folderIdHook }:
          formik.setFieldValue(`files.${index}.path`, element.path);
          formik.setFieldValue(`files.${index}.extension`, element.extension);
          formik.setFieldValue(`files.${index}.size`, element.size);
-         formik.setFieldValue(`files.${index}.folderId`, element.folderId);
+         formik.setFieldValue(`files.${index}.folderId`, folderIdHook.folderId);
          formik.setFieldValue(`files.${index}.userId`, userId);
-         
+
+
       }
 
       console.log("formik.value", formik.values)
 
    };
 
-   
-   const userId = useAppSelector((state: RootState) => state.user.user.userId); 
-   console.log("userId", userId)
-   const submitForm = async (values: FileSchemaArrayType, { setSubmitting }: FormikHelpers<FileSchemaArrayType>) => {
-      setSubmitting(true);      
+
+   const userId = useAppSelector((state: RootState) => state.user.user.userId);
+   // console.log("userId", userId)
+   const submitForm = async (values: FileSchemaArrayType, { resetForm, setSubmitting }: FormikHelpers<FileSchemaArrayType>) => {
+      setSubmitting(true);
 
 
       const filesWithUserId = values.files.map(file => ({
@@ -188,21 +181,22 @@ export const AddFile = ({ setListRefresh, toggleUploadModalHook, folderIdHook }:
       try {
          const response = await axios.post(`${CONFIG.server_api}files/post`, filesWithUserId, {
             headers: { 'Content-Type': 'application/json' },
-            
+
          });
 
          if (response.status === 201) {
-            closeHandler();
             setListRefresh((boolFlag: boolean) => !boolFlag);
             toggleUploadModalHook.setIsUploadModalOpen(false);
+            closeHandler();
+            resetForm();
          }
+
       } catch (error) {
          console.error('Error saving files:', error);
       } finally {
          setSubmitting(false);
       }
    }
-
    const formik = useFormik({
       initialValues: initValue,
       validationSchema: FileObjSchemaNew,
@@ -213,7 +207,6 @@ export const AddFile = ({ setListRefresh, toggleUploadModalHook, folderIdHook }:
       <>
          <Button component="label"
             onClick={fileUploadDialogOpen}
-
             sx={{ borderRadius: 3 }} variant="contained" startIcon={<CloudUploadIcon />}>
             Upload file
          </Button>
@@ -277,7 +270,7 @@ export const AddFile = ({ setListRefresh, toggleUploadModalHook, folderIdHook }:
                                  <TableCell>
                                     <TextField
                                        required
-                                       fullWidth   
+                                       fullWidth
                                        id={`fileName-${index}`}
                                        name={`files.${index}.fileName`}
                                        autoComplete="fileName"
@@ -332,7 +325,7 @@ export const AddFile = ({ setListRefresh, toggleUploadModalHook, folderIdHook }:
                                     />
                                  </TableCell>
 
-                                 {/* <TableCell>
+                                 {/* <TableCell colSpan={1} sx={{ pr: 3 }}>
                                     <Select
                                        required
                                        fullWidth
@@ -345,7 +338,7 @@ export const AddFile = ({ setListRefresh, toggleUploadModalHook, folderIdHook }:
                                        <MenuItem value="Open">Open</MenuItem>
                                        <MenuItem value="Closed">Closed</MenuItem>
                                     </Select>
-                                 </TableCell> */}
+                                 </TableCell>  */}
                               </TableRow>
                            )) : <TableRow><TableCell>""</TableCell></TableRow>}
                         </TableBody>
@@ -372,5 +365,7 @@ export const AddFile = ({ setListRefresh, toggleUploadModalHook, folderIdHook }:
       </>
    );
 };
+
+
 
 
