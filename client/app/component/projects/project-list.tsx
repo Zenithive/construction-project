@@ -16,6 +16,7 @@ import { SelectChangeEvent } from '@mui/material/Select';
 import { PaginationComponent } from '../Pagination/pagination.component';
 import { DELETE_PROJECT } from '../../api/project/mutations';
 import { useMutation } from '@apollo/client';
+import StatusComponent from '../status/status.component';
 
 
 export interface ProjectListWrapperProps {
@@ -35,6 +36,7 @@ export const ProjectListWrapper = ({ listRefresh }: ProjectListWrapperProps) => 
     const [showRoles, setShowRoles] = useState(false)
     const [currentProj, setCurrentProj] = useState("");
     const [showPermissions, setShowPermissions] = useState(false)
+    const [showStatus,setShowStatus]=useState(false);
 
     const { data, refetch } = useQuery(GET_PROJECTS, {
         variables: { pageSize, currentPage },
@@ -97,6 +99,8 @@ export const ProjectListWrapper = ({ listRefresh }: ProjectListWrapperProps) => 
         }
         const openStatusesModal = (event: React.MouseEvent<HTMLLIElement>) => {
             handleClose(event);
+            setShowStatus(true);
+            setCurrentProj(treeId);
         }
 
         const open = Boolean(anchorEl);
@@ -239,6 +243,14 @@ export const ProjectListWrapper = ({ listRefresh }: ProjectListWrapperProps) => 
                     setCurrentProj("");
                 }}
             />
+            <StatusComponent
+                    projId={currentProj}
+                    clearProjId={() => setCurrentProj("")}
+                    visible={showStatus} 
+                    closeStatusModel={() => setShowStatus(false)}
+                    statusId=""
+                    statusName=""
+                />
 
             <Box component="div" className='ag-theme-quartz' sx={{ height: '450px', mt: 2,  overflowX:"auto", overflowY: 'auto' }}>
                 <AgGridReact
