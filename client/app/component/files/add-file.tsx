@@ -10,11 +10,15 @@ import { FormikHelpers, useFormik } from 'formik';
 import { useLazyQuery, useMutation } from '@apollo/client';
 import { SAVE_FILE_DATA } from '../../api/file/mutations';
 import { toggleUploadModalInterface, FolderIdInterface } from 'client/app/files/page';
+import { useAppDispatch, useAppSelector } from 'client/app/reducers/hook.redux';
+import { addUser } from 'client/app/reducers/userReducer';
 
 import { useQuery } from '@apollo/client';
 import { GET_FILES_BY_FOLDER_ID } from 'client/app/api/file/queries';
 import { CONFIG } from 'client/app/constants/config.constant';
 import axios from 'axios';
+import { useRouter } from 'next/router';
+import { RootState } from 'client/app/reducers/store';
 
 const FileObjSchemaNew = Yup.object().shape({
    files: Yup.array()
@@ -98,6 +102,9 @@ export const AddFile = ({ setListRefresh, toggleUploadModalHook, folderIdHook }:
    const [allFilesUploaded, setAllFilesUploaded] = useState(false); // Flag for all files uploaded
 
 
+   
+   
+
    const closeHandler = () => {
       setVisible(false);
       formik.resetForm(); // remove
@@ -140,48 +147,34 @@ export const AddFile = ({ setListRefresh, toggleUploadModalHook, folderIdHook }:
          formik.setFieldValue(`files.${index}.originalName`, element.originalName);
          formik.setFieldValue(`files.${index}.orginatorId`, "");
          formik.setFieldValue(`files.${index}.projectId`, "");
-         // formik.setFieldValue(`files.${index}.orginatorId`, "");
          formik.setFieldValue(`files.${index}.path`, element.path);
          formik.setFieldValue(`files.${index}.extension`, element.extension);
          formik.setFieldValue(`files.${index}.size`, element.size);
          formik.setFieldValue(`files.${index}.folderId`, element.folderId);
+         formik.setFieldValue(`files.${index}.userId`, userId);
+         
       }
 
       console.log("formik.value", formik.values)
 
    };
 
+   
+   const userId = useAppSelector((state: RootState) => state.user.user.userId); 
+   console.log("userId", userId)
    const submitForm = async (values: FileSchemaArrayType, { setSubmitting }: FormikHelpers<FileSchemaArrayType>) => {
-      setSubmitting(true);
+      setSubmitting(true);      
 
 
-      // Convert array of files to object format
-      const filesObject: Record<number, FileSchemaType> = {};
-      values.files.forEach((file, index) => {
-         filesObject[index] = file;
-      });
-
-      // console.log("filesObject", filesObject);
-      // console.log("values f /", values.files);
-      // console.log("formik.value", formik.values)
-      // const res = await saveFileData({
-
-      //    variables: {
-      //       // ...formik.values,
-      //       // files: values.files,
-      //       files: filesObject,
-      //       folderId: folderIdHook.folderId,  // this is  folderId
-      //    },
-      // });
-
-
-      // const response = await axios.post(`${CONFIG.server_api}files/post`, filesObject, {
-      //    headers: { 'Content-Type': 'application/json' },
-      // });
+      const filesWithUserId = values.files.map(file => ({
+         ...file,
+         userId: userId ?? '', // Ensure userId is added to each file object
+      }));
 
       try {
-         const response = await axios.post(`${CONFIG.server_api}files/post`, values.files, {
+         const response = await axios.post(`${CONFIG.server_api}files/post`, filesWithUserId, {
             headers: { 'Content-Type': 'application/json' },
+            
          });
 
          if (response.status === 201) {

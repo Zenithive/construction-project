@@ -37,7 +37,7 @@ export class File {
   @Field()
   projectId!: string;
 
-  @Prop()
+  @Prop({nullable: true})
   @Field()
   userId!: string;
 

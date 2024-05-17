@@ -19,7 +19,7 @@ export class FileUploadController {
   @Post('upload')
   @UseInterceptors(FilesInterceptor('fileName', 10, multerOptions))
   uploadFiles(@UploadedFiles() files: Express.Multer.File[]) {
-    console.log("fileName", files);
+    // console.log("fileName", files);
     // Process each file in the files array
     const uploadedFiles = files.map(file => ({
       originalName: file.originalname,

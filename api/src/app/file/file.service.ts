@@ -117,7 +117,7 @@ export class FileService {
                 path: file.path,
                 folderId: file.folderId,
                 projectId: file.projectId,
-                userId: file.UserId,
+                userId: file.userId,
                 orginatorId: file.orginatorId,
                 extension: file.extension,
                 size: file.size,
