@@ -89,36 +89,16 @@ export class FileService {
     }
 
     getFileContentType(filePath: string) {
-        //const mime = require('mime-types'); // Use a reliable mime-type library
         const extension = path.extname(filePath).slice(1).toLowerCase();
-        return mime.lookup(extension) || 'application/octet-stream'; // Default to octet-stream
+        return mime.lookup(extension) || 'application/octet-stream';
     }
 
-    // async saveFiles(filesData: any[]): Promise<[File]> {
-    //     try {
-    //         const tmpData = [];
-    //         for (const key in filesData) {
-    //             if (Object.prototype.hasOwnProperty.call(filesData, key)) {
-    //                 const element = filesData[key];
-    //                 tmpData.push(element);
-    //             }
-    //         }
-    //         // console.log("filesDatas", filesData);
-    //         console.log("tmpData", tmpData);
-    //         const savedFiles: any = await this.fileModel.insertMany(tmpData);
-
-    //         return savedFiles;
-    //     } catch (error) {
-    //         console.error('Error saving files:', error);
-    //         throw new Error('Error saving files');
-    //     }
-    // }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async saveFiles(filesData: any[]): Promise<File[]> {
         try {
             const tmpData = filesData.map(file => ({
-                revisionId: file.revisionId || null,
+                revisionId: file.revisionId || uuidv4(),
                 fileId: file.fileId || uuidv4(),
                 revision: file.revision,
                 fileName: file.fileName,
