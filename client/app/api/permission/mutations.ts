@@ -1,11 +1,11 @@
 import { gql } from "@apollo/client";
 
 export const UPDATE_PERMISSIONS = gql`
-  mutation updatePermissions($permission: String!, $permissionId: String!, $orginatorId: String!, $projId: String!) {
-    createNewRole(input: { permission: $permission, permissionId: $roleId, orginatorId: $orginatorId, projId: $projId }) {
+  mutation UpdatePermission($permissionId: String!, $roleId: String!, $value: Boolean!, $orginatorId: String!) {
+    updatePermission(input: { permissionId: $permissionId, roleId: $roleId, value: $value, orginatorId: $orginatorId }) {
       projId
+      roleId
       permissionId
-      permission,
       value,
       orginatorId
     }

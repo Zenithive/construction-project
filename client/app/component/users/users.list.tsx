@@ -81,12 +81,8 @@ export const UserLiserWrapper = ({ listRefresh, setUSERDATA }: UserLiserWrapperP
       }
    };
 
-   //for edite
-   //const [visible, setVisible] = React.useState(false);
    // eslint-disable-next-line @typescript-eslint/no-explicit-any
    const handleEditUser = (datas: any) => {
-      console.log(datas);
-      //setVisible(true)
       setUSERDATA(datas);
    }
 

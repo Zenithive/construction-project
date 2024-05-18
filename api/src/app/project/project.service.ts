@@ -63,15 +63,8 @@ export class ProjectService {
           throw new Error('Project created, but problems with project role!');
         }
 
-        // Create default Permissions
-        const preparePermissionData  = this.permissionService.getNewPermissionsRecordsForNewProject(newProject);
-        const insertAllPermissionRecord  = await this.permissionService.createNewPermissions(preparePermissionData);
-        if(insertAllPermissionRecord && insertAllPermissionRecord.length){
-          console.log("Project Permissions added");
-          return newProject;
-        }else{
-          throw new Error('Project created, but problems with project permissions!');
-        }
+        return newProject;
+        
       }else {
         throw new Error('Project not created, error with database!');
       }

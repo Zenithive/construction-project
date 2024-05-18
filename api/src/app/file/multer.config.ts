@@ -5,7 +5,7 @@ import * as path from 'path';
 
 export const multerOptions = {
   storage: diskStorage({
-    destination: 'uploadedFiles', // Destination folder
+    destination: '/app/server', // Destination folder
     filename: (req, file, callback) => {
         let filename = req.body.filename;
         const fileExtName = path.extname(file.originalname);
