@@ -15,7 +15,7 @@ export interface ViewerCompoentProps {
 // const DynamicComponent = dynamic(() => import("https://developer.api.autodesk.com/modelderivative/v2/viewers/7.*/style.css"))
 
 
-export default function ApsViewerComponent(props: ViewerCompoentProps)  {
+export default function ViewerComponent(props: ViewerCompoentProps)  {
     const {urn} = props;
     const loadAutodeskExtensions=['Autodesk.DocumentBrowser', 'Autodesk.VisualClusters'];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

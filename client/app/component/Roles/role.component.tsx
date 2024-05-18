@@ -1,4 +1,4 @@
-import { Box, Button, Divider, Grid, IconButton, Modal, Typography } from "@mui/material";
+import { Box, Button, Divider, Grid, IconButton, Modal, Typography} from "@mui/material";
 import { Tooltip } from '@nextui-org/react';
 import { DeleteIcon } from '../icons/table/delete-icon';
 import ToastMessage from "../toast-message/ToastMessage";
@@ -15,7 +15,7 @@ import { RoleUsersList } from "./role-users-list.component";
 import { EditIcon } from "../icons/table/edit-icon";
 import { UserTypes } from "../users/add-user";
 
-
+/* eslint-disable-next-line */
 export interface RolesComponentProps {
   visible: boolean;
   closeRoleModel: () => void;

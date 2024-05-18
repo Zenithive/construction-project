@@ -2,6 +2,12 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+input AddSelectedProjectInput {
+  projId: String!
+  projName: String!
+  userId: String!
+}
+
 input CreateFolderInput {
   folderId: String
   folderName: String!
@@ -10,17 +16,6 @@ input CreateFolderInput {
   parentFolderId: String!
   projectId: String!
   status: String = "Active"
-}
-
-input CreateNewPermission {
-  createdBy: DateTime! = "2024-05-06T18:20:18.843Z"
-  orginatorId: String!
-  permissionId: String!
-  permissionKey: String!
-  permissionLabel: String!
-  projId: String!
-  updatedBy: DateTime! = "2024-05-06T18:20:18.843Z"
-  value: Boolean!
 }
 
 input CreateNewRole {
@@ -35,12 +30,12 @@ input CreateNewRole {
 
 input CreateOrgInput {
   contact: String!
-  creationDate: DateTime! = "2024-05-06T18:20:18.666Z"
+  creationDate: DateTime! = "2024-05-18T09:28:01.644Z"
   orgId: String!
   orgName: String!
   region: String!
   status: String! = "Open"
-  updatedDate: DateTime! = "2024-05-06T18:20:18.666Z"
+  updatedDate: DateTime! = "2024-05-18T09:28:01.644Z"
   website: String
 }
 
@@ -56,22 +51,23 @@ input CreateProjectInput {
 }
 
 input CreateUserByAdmin {
-  creationDate: DateTime! = "2024-05-06T18:20:18.251Z"
+  creationDate: DateTime! = "2024-05-18T09:28:01.284Z"
   email: String
   emailVerified: Boolean! = false
   firstName: String
   isPasswordReset: Boolean! = true
   lastName: String
+  orgId: String
   password: String! = ""
   phoneNo: String
   status: String! = "Active"
   subscriptionId: Float = 1
-  updatedDate: DateTime! = "2024-05-06T18:20:18.251Z"
+  updatedDate: DateTime! = "2024-05-18T09:28:01.284Z"
   userId: String!
 }
 
 input CreateUserInput {
-  creationDate: DateTime! = "2024-05-06T18:20:18.251Z"
+  creationDate: DateTime! = "2024-05-18T09:28:01.284Z"
   email: String!
   emailVerified: Boolean! = false
   firstName: String
@@ -81,7 +77,7 @@ input CreateUserInput {
   phoneNo: String = ""
   status: String = "Active"
   subscriptionId: Float! = 1
-  updatedDate: DateTime! = "2024-05-06T18:20:18.251Z"
+  updatedDate: DateTime! = "2024-05-18T09:28:01.284Z"
   userId: String!
 }
 
@@ -116,11 +112,12 @@ input EditUserByAdmin {
   firstName: String
   isPasswordReset: Boolean! = true
   lastName: String
+  orgId: String
   password: String! = ""
   phoneNo: String
   status: String! = "Active"
   subscriptionId: Float = 1
-  updatedDate: DateTime! = "2024-05-06T18:20:18.251Z"
+  updatedDate: DateTime! = "2024-05-18T09:28:01.284Z"
   userId: String!
 }
 
@@ -158,12 +155,16 @@ type Folder {
   status: String!
 }
 
+input GetPermissionByProjId {
+  projId: String!
+}
+
 input GetRolesByProjId {
   projId: String!
 }
 
 input GetSingleFileInput {
-  revisionId: String!
+  urn: String!
 }
 
 input LoginInput {
@@ -176,6 +177,7 @@ type Message {
 }
 
 type Mutation {
+  addSelectedProject(input: AddSelectedProjectInput!): SelectedProject!
   createNewFolder(input: CreateFolderInput!): Folder!
   createNewRole(input: CreateNewRole!): Role!
   createOrg(input: CreateOrgInput!): Org!
@@ -190,8 +192,9 @@ type Mutation {
   editOrg(input: UpdateOrgInput!): Org!
   editUser(input: EditUserByAdmin!): User!
   loginUser(input: LoginInput!): Token!
+  removeSelectedProject(input: RemoveSelectedProjectInput!): SelectedProject!
+  updatePermission(input: UpdatePermission!): Permission!
   updateRole(input: UpdateRoleInputArray!): [Role!]!
-  updateUpermissions(input: CreateNewPermission!): Permission!
   updateUser(input: UpdateUserInput!): User!
   uploadFile(input: UploadFileInput!): File!
 }
@@ -212,6 +215,12 @@ input PaginationInput {
   pageSize: Float!
 }
 
+input PaginationInputF {
+  currentPage: Float!
+  folderId: String!
+  pageSize: Float!
+}
+
 input PaginationInputs {
   currentPage: Float!
   pageSize: Float!
@@ -227,6 +236,13 @@ type PaginationResult {
   projects: [Project!]!
   totalPages: Int!
   totalProjects: Int!
+}
+
+type PaginationResultF {
+  currentPage: Int!
+  files: [File!]!
+  totalFiles: Int!
+  totalPages: Int!
 }
 
 type PaginationResults {
@@ -250,6 +266,7 @@ type Permission {
   permissionKey: String!
   permissionLabel: String!
   projId: String!
+  roleId: String!
   updatedBy: DateTime!
   value: Boolean!
 }
@@ -266,20 +283,27 @@ type Project {
 }
 
 type Query {
-  generateApsUrnKey(input: String!): File!
   getAllOrg(input: PaginationInputss!): PaginationResultss!
+  getAllOrganisation: [Org!]!
+  getAllProject: [Project!]!
+  getFileByFolderId(input: PaginationInputF!): PaginationResultF!
   getFiles: [File!]!
-  getFilesByFolderId(input: String!): [File!]!
   getFolders: [Folder!]!
   getOneFile(input: GetSingleFileInput!): File!
-  getPermissions: [Permission!]!
+  getPermissions(input: GetPermissionByProjId!): [Permission!]!
   getProjects(input: PaginationInput!): PaginationResult!
   getRoles(input: GetRolesByProjId!): [Role!]!
+  getSelectedProjects(input: String!): [SelectedProject!]!
   getUser(input: UserId!): User!
   getUserByEmail(input: Email!): User!
   getUsers(input: PaginationInputs!): PaginationResults!
   logout: Message!
   securedResource: String!
+}
+
+input RemoveSelectedProjectInput {
+  projId: String!
+  userId: String!
 }
 
 type ReturnUserObj {
@@ -299,6 +323,12 @@ type Role {
   users: [String!]
 }
 
+type SelectedProject {
+  projId: String!
+  projName: String!
+  userId: String!
+}
+
 type Token {
   token: String!
   userObj: ReturnUserObj!
@@ -306,13 +336,21 @@ type Token {
 
 input UpdateOrgInput {
   contact: String!
-  creationDate: DateTime! = "2024-05-06T18:20:18.666Z"
+  creationDate: DateTime! = "2024-05-18T09:28:01.644Z"
   orgId: String!
   orgName: String!
   region: String!
   status: String! = "Open"
-  updatedDate: DateTime! = "2024-05-06T18:20:18.666Z"
+  updatedDate: DateTime! = "2024-05-18T09:28:01.644Z"
   website: String
+}
+
+input UpdatePermission {
+  orginatorId: String!
+  permissionId: String!
+  roleId: String!
+  updatedBy: DateTime! = "2024-05-18T09:28:01.813Z"
+  value: Boolean!
 }
 
 input UpdateRoleInput {
@@ -362,6 +400,7 @@ type User {
   firstName: String!
   isPasswordReset: Boolean!
   lastName: String!
+  orgId: String!
   password: String!
   phoneNo: String!
   status: String!
