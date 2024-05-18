@@ -140,7 +140,7 @@ export const FilesListWrapper = ({ listRefresh, folderIdHook }: FilesListWrapper
          underline="none"
          target="_blank"
          rel="noopener"
-         href={`/viewer?id=${data.apsUrnKey}`}
+         href={data.apsUrnKey ? `/viewer?id=${data.revisionId}` : `/web-viewer?id=${data.revisionId}`}
       >
          {value}
       </Link>
