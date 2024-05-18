@@ -1,6 +1,5 @@
 // file-upload.controller.ts
-import { Controller, Get, Post, Param, Res, UseInterceptors, UploadedFile, UploadedFiles, Body } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { Controller, Get, Post, Param, Res, UseInterceptors,  UploadedFiles, Body, Query } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { multerOptions } from './multer.config';
 
@@ -34,6 +33,7 @@ export class FileUploadController {
   // ******** Post request for Modal 2 ******** //
 
   @Post('post')
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async saveFiles(@Body() filesData: any[]) {
     try {
       const savedFiles = await this.fileService.saveFiles(filesData);
@@ -45,14 +45,18 @@ export class FileUploadController {
   }
 
   // ******** Get request for download ******** //
-
-  @Get("downloadFile/:apsUrnKey")
-  async downloadFile(@Res() response: Response, @Param('apsUrnKey') apsUrnKey: string) {
+ @Get('downloadFile/:revisionId')
+  async downloadFile(
+    @Res() response: Response,
+    @Param('revisionId') revisionId: string
+  ) {
     try {
-      const file = await this.fileService.getFileByApsUrn(apsUrnKey); // Fetch file by apsUrnKey
-      // console.log(file)
+      const file = await this.fileService.getFileByParams({revisionId});
       if (file && file.fileId) {
-        const filePath = join(__dirname, '../../', 'uploadedFiles', file.fileName); // Path to your uploaded files
+        const filePath = join(
+          '/app/server',
+          file.fileName
+        ); // Path to your uploaded files
         const stat = fs.statSync(filePath);
 
         response.writeHead(200, {
@@ -71,6 +75,37 @@ export class FileUploadController {
     }
   }
 
+  @Get('renderPdfTronFile')
+  async renderPdfTronFile(
+    @Res() response: Response,
+    @Query('id') id: string
+  ) {
+    try {
+      const file = await this.fileService.getFileByParams({revisionId: id});
+      if (file && file.fileId) {
+        const filePath = join(
+          '/app/server',
+          file.fileName
+        ); 
+       
+        const stat = fs.statSync(filePath);
+        const fileContentType = this.fileService.getFileContentType(filePath);
+        response.writeHead(200, {
+          'Content-Type': fileContentType,
+          'Content-Disposition': `inline; filename="${file.originalname}"`,
+          'Content-Length': stat.size,
+        });
+
+        const fileStream = fs.createReadStream(filePath);
+        fileStream.pipe(response);
+      } else {
+        console.log(error);
+      }
+    } catch (error) {
+      console.error('Error downloading file:', error);
+      response.send('Error downloading file');
+    }
+  }
 }
 
 

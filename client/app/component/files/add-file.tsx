@@ -1,24 +1,17 @@
 import { Divider, Modal, Text } from '@nextui-org/react';
 import Button from '@mui/material/Button';
-import React, { useCallback, useEffect, useState, ChangeEvent } from 'react';
+import React, { useEffect, useState } from 'react';
 import * as Yup from 'yup';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { UploadFileComponent } from './upload.file.component';
-import ToastMessage from '../toast-message/ToastMessage';
-import { Box, Grid, MenuItem, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material';
+import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material';
 import { FormikHelpers, useFormik } from 'formik';
-import { useLazyQuery, useMutation } from '@apollo/client';
-import { SAVE_FILE_DATA } from '../../api/file/mutations';
-import { toggleUploadModalInterface, FolderIdInterface } from 'client/app/files/page';
-import { useAppDispatch, useAppSelector } from 'client/app/reducers/hook.redux';
-import { addUser } from 'client/app/reducers/userReducer';
+import { toggleUploadModalInterface, FolderIdInterface } from '../../files/page';
+import { useAppSelector } from '../../reducers/hook.redux';
 
-import { useQuery } from '@apollo/client';
-import { GET_FILES_BY_FOLDER_ID } from 'client/app/api/file/queries';
-import { CONFIG } from 'client/app/constants/config.constant';
+import { CONFIG } from '../../constants/config.constant';
 import axios from 'axios';
-import { useRouter } from 'next/router';
-import { RootState } from 'client/app/reducers/store';
+import { RootState } from '../../reducers/store';
 
 
 
@@ -97,8 +90,7 @@ export const AddFile = ({ setListRefresh, toggleUploadModalHook, folderIdHook }:
 
    const [visible, setVisible] = React.useState(false);
    const [isUploadFileOpen, setIsUploadFileOpen] = useState(false);
-   const [fileData, setFileData] = useState([] as Array<FileMetadataType>);
-   const [saveFileData, { data, error, loading }] = useMutation(SAVE_FILE_DATA);
+   const [fileData, setFileData] = useState([] as Array<Array<FileMetadataType>>);
    const [allFilesUploaded, setAllFilesUploaded] = useState(false); // Flag for all files uploaded
    const openFileDataModal = () => setVisible(true);
    const fileUploadDialogOpen = () => setIsUploadFileOpen(true);
@@ -111,7 +103,6 @@ export const AddFile = ({ setListRefresh, toggleUploadModalHook, folderIdHook }:
 
 
    useEffect(() => {
-      console.log("fileData", fileData)
       console.log("folderIdHook.folderId", folderIdHook.folderId)
 
       if (allFilesUploaded) {
@@ -340,7 +331,7 @@ export const AddFile = ({ setListRefresh, toggleUploadModalHook, folderIdHook }:
                                     </Select>
                                  </TableCell>  */}
                               </TableRow>
-                           )) : <TableRow><TableCell>""</TableCell></TableRow>}
+                           )) : <TableRow><TableCell></TableCell></TableRow>}
                         </TableBody>
                      </Table>
                   </TableContainer>
@@ -349,7 +340,6 @@ export const AddFile = ({ setListRefresh, toggleUploadModalHook, folderIdHook }:
             <Divider css={{ my: '$5' }} />
             <Modal.Footer>
                <Button
-                  disabled={loading}
                   style={{ borderRadius: 10 }}
                   variant="contained"
                   type='submit'

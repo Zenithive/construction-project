@@ -13,15 +13,12 @@ import "ag-grid-community/styles/ag-theme-quartz.css"; // Theme
 import RolesComponent from '../Roles/role.component';
 import PermissionComponent from '../Permission/permission.component';
 import { SelectChangeEvent } from '@mui/material/Select';
-import Stack from '@mui/material/Stack';
-import Pagination from '@mui/material/Pagination';
-import { PAGE } from 'client/app/constants/page.constant';
 import { PaginationComponent } from '../Pagination/pagination.component';
 
 
 
 // Sachin Import
-import { DELETE_PROJECT } from 'client/app/api/project/mutations';
+import { DELETE_PROJECT } from '../../api/project/mutations';
 
 import { useMutation } from '@apollo/client';
 
@@ -52,18 +49,14 @@ export const ProjectListWrapper = ({ listRefresh }: ProjectListWrapperProps) => 
     });
 
     useEffect(() => {
-        console.log("Data", data)
         if (data?.getProjects) {
             setTotalPages(data.getProjects.totalPages);
         }
-        console.log("if", data?.getProjects);
 
     }, [data]);
 
 
     useEffect(() => {
-        console.log("pageSize:", pageSize);
-        console.log("currentPage:", currentPage);
         refetch({ variables: { pageSize, currentPage } });
     }, [pageSize, currentPage, refetch]);
 
@@ -78,7 +71,6 @@ export const ProjectListWrapper = ({ listRefresh }: ProjectListWrapperProps) => 
         setCurrentPage(newPage);
     };
 
-    
 
     const gridOptions: GridOptions = {
         // Other grid options...
@@ -168,7 +160,7 @@ export const ProjectListWrapper = ({ listRefresh }: ProjectListWrapperProps) => 
                 </Tooltip>
             </Col>
             <Col css={{ d: 'flex' }}>
-                <Tooltip content="Edit user">
+                <Tooltip content="Edit Project">
                     <IconButton
                         onClick={() => console.log('Edit Project', data)}
                     >

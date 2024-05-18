@@ -1,7 +1,6 @@
 'use client'
 
-import { AppBar, Box, Container, CssBaseline, ThemeProvider, Toolbar, Typography, createTheme } from '@mui/material';
-import axios from 'axios';
+import { AppBar, Box, CssBaseline, ThemeProvider, Toolbar, Typography, createTheme } from '@mui/material';
 
 import Script from 'next/script';
 import { useEffect, useState } from 'react';
@@ -12,19 +11,11 @@ import { useSearchParams } from 'next/navigation'
 
 // Sachin code 
 import DownloadIcon from '@mui/icons-material/Download';
-import App from 'next/app';
 import { GET_ONE_FILE } from '../api/file/queries';
-import { useLazyQuery, useQuery } from '@apollo/client';
-import { GetSingleFileInput } from '../../../api/src/app/file/file.schema';
+import { useLazyQuery } from '@apollo/client';
 
 import * as React from 'react';
 import CircularProgress from '@mui/material/CircularProgress';
-import { AddBoxTwoTone } from '@mui/icons-material';
-// import Box from '@mui/material/Box';
-
-
-
-
 
 
 
@@ -35,18 +26,18 @@ export default function Viewer() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [urn, setUrn] = useState("");
   const [isJSLoader, setIsJSLoader] = useState(true);
-  const [allData, setAllData] = useState([]);
+  // const [allData, setAllData] = useState([]);
 
   const searchParams = useSearchParams()
 
 
 
-  const getModelsData = () => {
-    axios.get(`${CONFIG.server_api}aps/getApsForgeModels`).then(response => {
-      setAllData(response.data);
-      setUrn(response.data[0].urn)
-    });
-  }
+  // const getModelsData = () => {
+  //   axios.get(`${CONFIG.server_api}aps/getApsForgeModels`).then(response => {
+  //     setAllData(response.data);
+  //     setUrn(response.data[0].urn)
+  //   });
+  // }
 
   useEffect(() => {
     const urnId = searchParams.get('id');
@@ -59,7 +50,7 @@ export default function Viewer() {
   }, [urn])
 
 
-  const [GetOneFile, { loading, error, data }] = useLazyQuery(GET_ONE_FILE);
+  const [GetOneFile, { data }] = useLazyQuery(GET_ONE_FILE);
 
   const [fileData, setFileData] = useState({
     tmpData: null, // s
@@ -95,7 +86,7 @@ export default function Viewer() {
   //////  Downlaod file ////////////
 
 
-  const generateDownloadUrl = (tmpData: any) => {
+  const generateDownloadUrl = () => {
 
 
     const urnId = searchParams.get('id');

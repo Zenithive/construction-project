@@ -19,7 +19,7 @@ export class FileResolver {
   @Query(() => File)
   async getOneFile(@Args('input') fileObj: GetSingleFileInput) {
     // Fetch file by apsUrnKey
-    return await this.fileService.getFileByApsUrn(fileObj.urn);
+    return await this.fileService.getFileByParams({apsUrnKey: fileObj.urn});
   }
 
   @Query(() => PaginationResultF)

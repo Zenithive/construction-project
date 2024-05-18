@@ -88,10 +88,6 @@ export default function Files(props: FilesProps) {
              <AddFile setListRefresh={setListRefresh} toggleUploadModalHook={toggleUploadModalHook} 
              folderIdHook={folderIdHook} 
              />
-             
-             {/* <Button auto iconRight={<ExportIcon />}>
-                Export to CSV
-             </Button> */}
           </Flex>
        </Flex>
 

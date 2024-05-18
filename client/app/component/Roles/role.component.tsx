@@ -1,22 +1,17 @@
-import { Box, Button, Divider, Grid, IconButton, MenuItem, Modal, Menu, Typography, ListItemText } from "@mui/material";
+import { Box, Button, Divider, Grid, IconButton, Modal, Menu, Typography} from "@mui/material";
 import { Tooltip } from '@nextui-org/react';
 import { DeleteIcon } from '../icons/table/delete-icon';
 import ToastMessage from "../toast-message/ToastMessage";
-import AddRolesComponent, { RolesSchema } from "./add-role.component";
+import AddRolesComponent from "./add-role.component";
 import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
 import React, { useEffect, useState } from "react";
 import { useLazyQuery } from "@apollo/client";
 import { GET_ROLES } from "../../api/Roles/queries";
 import { GET_USERS } from "../../api/user/queries"
-import OutlinedInput from '@mui/material/OutlinedInput';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
-import Checkbox from '@mui/material/Checkbox';
 import { useMutation } from "@apollo/client";
 import { DELETE_Role } from "../../api/Roles/mutations";
-import Chip from '@mui/material/Chip';
-import { UPDATE_Role } from "../../api/Roles/mutations";
-
+import { RoleUsersList } from "./role-users-list.component";
 
 /* eslint-disable-next-line */
 export interface RolesComponentProps {
@@ -52,41 +47,6 @@ export function RolesComponent(props: RolesComponentProps) {
       console.error('Error deleting Role:', error);
     }
   };
-
-  const [updateRole] = useMutation(UPDATE_Role);
-
-  const handleUpdate = async () => {
-    try {
-
-      const arrayTmp = [];
-
-      for (const key in selectedRoleUsers) {
-        if (Object.prototype.hasOwnProperty.call(selectedRoleUsers, key)) {
-          const element = selectedRoleUsers[key];
-          arrayTmp.push({
-            roleId: key,
-            userIds: selectedRoleUsers[key]
-          })
-        }
-      }
-
-      console.log("arrayTmp", arrayTmp)
-      console.log("selectedRoleUsers", selectedRoleUsers)
-
-
-
-      await updateRole({
-        variables: arrayTmp
-      });
-
-      console.log("Roles updated successfully!");
-    } catch (error) {
-      console.error('Error updating roles:', error);
-    }
-  };
-
-
-
 
 
   useEffect(() => {
@@ -144,7 +104,7 @@ export function RolesComponent(props: RolesComponentProps) {
       open={props.visible}
       onClose={closeHandler}
     >
-      <Box sx={{ bgcolor: "white", width: "80%", marginX: "auto", marginY: 4, borderRadius: 3,maxHeight: '80vh'  }}>
+      <Box sx={{ bgcolor: "white", width: "80%", marginX: "auto", marginY: 4, borderRadius: 3, maxHeight: '80vh'  }}>
         <Box sx={{ paddingX: 3, paddingY: 2, }} component={"div"}>
           <Grid container spacing={2} sx={{ pt: 1 }}>
             <Grid item xs={1}>

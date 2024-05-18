@@ -1,11 +1,13 @@
 import { gql } from "@apollo/client";
 
 export const GET_PERMISSIONS = gql`
-  query GetPermissions {
-    getPermissions {
+  query GetPermissions($projId: String!) {
+    getPermissions(input: {projId: $projId}) {
       projId
       permissionId
-      permission,
+      permissionLabel,
+      permissionKey,
+      roleId,
       value,
       orginatorId,
       createdBy,

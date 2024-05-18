@@ -18,17 +18,6 @@ input CreateFolderInput {
   status: String = "Active"
 }
 
-input CreateNewPermission {
-  createdBy: DateTime! = "2024-05-16T11:18:48.674Z"
-  orginatorId: String!
-  permissionId: String!
-  permissionKey: String!
-  permissionLabel: String!
-  projId: String!
-  updatedBy: DateTime! = "2024-05-16T11:18:48.674Z"
-  value: Boolean!
-}
-
 input CreateNewRole {
   isDefaultRole: Boolean = false
   orgId: String
@@ -41,12 +30,12 @@ input CreateNewRole {
 
 input CreateOrgInput {
   contact: String!
-  creationDate: DateTime! = "2024-05-16T11:18:47.251Z"
+  creationDate: DateTime! = "2024-05-18T09:28:01.644Z"
   orgId: String!
   orgName: String!
   region: String!
   status: String! = "Open"
-  updatedDate: DateTime! = "2024-05-16T11:18:47.251Z"
+  updatedDate: DateTime! = "2024-05-18T09:28:01.644Z"
   website: String
 }
 
@@ -62,7 +51,7 @@ input CreateProjectInput {
 }
 
 input CreateUserByAdmin {
-  creationDate: DateTime! = "2024-05-16T11:18:42.445Z"
+  creationDate: DateTime! = "2024-05-18T09:28:01.284Z"
   email: String
   emailVerified: Boolean! = false
   firstName: String
@@ -73,12 +62,12 @@ input CreateUserByAdmin {
   phoneNo: String
   status: String! = "Active"
   subscriptionId: Float = 1
-  updatedDate: DateTime! = "2024-05-16T11:18:42.445Z"
+  updatedDate: DateTime! = "2024-05-18T09:28:01.284Z"
   userId: String!
 }
 
 input CreateUserInput {
-  creationDate: DateTime! = "2024-05-16T11:18:42.445Z"
+  creationDate: DateTime! = "2024-05-18T09:28:01.284Z"
   email: String!
   emailVerified: Boolean! = false
   firstName: String
@@ -88,7 +77,7 @@ input CreateUserInput {
   phoneNo: String = ""
   status: String = "Active"
   subscriptionId: Float! = 1
-  updatedDate: DateTime! = "2024-05-16T11:18:42.445Z"
+  updatedDate: DateTime! = "2024-05-18T09:28:01.284Z"
   userId: String!
 }
 
@@ -128,7 +117,7 @@ input EditUserByAdmin {
   phoneNo: String
   status: String! = "Active"
   subscriptionId: Float = 1
-  updatedDate: DateTime! = "2024-05-16T11:18:42.445Z"
+  updatedDate: DateTime! = "2024-05-18T09:28:01.284Z"
   userId: String!
 }
 
@@ -166,6 +155,10 @@ type Folder {
   status: String!
 }
 
+input GetPermissionByProjId {
+  projId: String!
+}
+
 input GetRolesByProjId {
   projId: String!
 }
@@ -200,8 +193,8 @@ type Mutation {
   editUser(input: EditUserByAdmin!): User!
   loginUser(input: LoginInput!): Token!
   removeSelectedProject(input: RemoveSelectedProjectInput!): SelectedProject!
+  updatePermission(input: UpdatePermission!): Permission!
   updateRole(input: UpdateRoleInputArray!): [Role!]!
-  updateUpermissions(input: CreateNewPermission!): Permission!
   updateUser(input: UpdateUserInput!): User!
   uploadFile(input: UploadFileInput!): File!
 }
@@ -273,6 +266,7 @@ type Permission {
   permissionKey: String!
   permissionLabel: String!
   projId: String!
+  roleId: String!
   updatedBy: DateTime!
   value: Boolean!
 }
@@ -296,7 +290,7 @@ type Query {
   getFiles: [File!]!
   getFolders: [Folder!]!
   getOneFile(input: GetSingleFileInput!): File!
-  getPermissions: [Permission!]!
+  getPermissions(input: GetPermissionByProjId!): [Permission!]!
   getProjects(input: PaginationInput!): PaginationResult!
   getRoles(input: GetRolesByProjId!): [Role!]!
   getSelectedProjects(input: String!): [SelectedProject!]!
@@ -342,13 +336,21 @@ type Token {
 
 input UpdateOrgInput {
   contact: String!
-  creationDate: DateTime! = "2024-05-16T11:18:47.251Z"
+  creationDate: DateTime! = "2024-05-18T09:28:01.644Z"
   orgId: String!
   orgName: String!
   region: String!
   status: String! = "Open"
-  updatedDate: DateTime! = "2024-05-16T11:18:47.251Z"
+  updatedDate: DateTime! = "2024-05-18T09:28:01.644Z"
   website: String
+}
+
+input UpdatePermission {
+  orginatorId: String!
+  permissionId: String!
+  roleId: String!
+  updatedBy: DateTime! = "2024-05-18T09:28:01.813Z"
+  value: Boolean!
 }
 
 input UpdateRoleInput {

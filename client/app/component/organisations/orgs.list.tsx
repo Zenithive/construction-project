@@ -12,9 +12,6 @@ import "ag-grid-community/styles/ag-theme-quartz.css"; // Theme
 import { DELETE_ORGANISATION } from '../../api/organisation/mutations';
 import { useMutation } from '@apollo/client';
 import { SelectChangeEvent } from '@mui/material/Select';
-import Stack from '@mui/material/Stack';
-import Pagination from '@mui/material/Pagination';
-import { PAGE } from 'client/app/constants/page.constant';
 import { PaginationComponent } from '../Pagination/pagination.component';
 
 export interface OrgsListWrapperProps {

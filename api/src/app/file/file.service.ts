@@ -1,14 +1,13 @@
 import { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { DeleteFileInput, File, FileDocument, PaginationInputF, UploadFileInput } from './file.schema';
-//import { FileStorageUtil } from '../util/file-storage.util';
+import { File, FileDocument, PaginationInputF, UploadFileInput } from './file.schema';
 import { ApsForgeService } from '../aps-forge/aps.forge.service';
 import { FolderService } from '../folder/folder.service'
-// import  {getFolderTreeIds} from '../folder/folder.service'
 import { Document } from 'mongoose';
-import { UserId } from '../user/user.schema';
 import { v4 as uuidv4 } from 'uuid';
+import path from 'path';
+import mime from 'mime';
 
 
 @Injectable()
@@ -54,8 +53,8 @@ export class FileService {
 
     }
 
-    async getFileByApsUrn(apsUrnKey: string) {
-        return await this.fileModel.findOne({ apsUrnKey });
+    async getFileByParams(Obj: {[key:string]: string | number}) {
+        return await this.fileModel.findOne(Obj);
     }
 
     async getFileByFolderId(paginationInputF: PaginationInputF) {
@@ -89,6 +88,12 @@ export class FileService {
         };
     }
 
+    getFileContentType(filePath: string) {
+        //const mime = require('mime-types'); // Use a reliable mime-type library
+        const extension = path.extname(filePath).slice(1).toLowerCase();
+        return mime.lookup(extension) || 'application/octet-stream'; // Default to octet-stream
+    }
+
     // async saveFiles(filesData: any[]): Promise<[File]> {
     //     try {
     //         const tmpData = [];
@@ -109,6 +114,7 @@ export class FileService {
     //     }
     // }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async saveFiles(filesData: any[]): Promise<File[]> {
         try {
             const tmpData = filesData.map(file => ({

@@ -1,9 +1,7 @@
 import { Col, Row, Tooltip } from '@nextui-org/react';
 import { GridOptions } from 'ag-grid-community';
 import React, { useEffect, useState } from 'react';
-import { RenderCell } from './file-render-cell';
-import { useLazyQuery, useMutation, useQuery } from '@apollo/client';
-import { GET_FILES, GET_FILES_BY_FOLDER_ID } from '../../api/file/queries';
+import { GET_FILES_BY_FOLDER_ID } from '../../api/file/queries';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 import { AgGridReact } from 'ag-grid-react'; // React Grid Logic
@@ -15,9 +13,10 @@ import { DeleteIcon } from '../icons/table/delete-icon';
 
 // Sachin Import  ******************
 
-import { DELETE_FILE_MEMBERSH } from 'client/app/api/file/mutations'
-import { FolderIdInterface } from 'client/app/files/page';
+import { DELETE_FILE_MEMBERSH } from '../../api/file/mutations'
+import { FolderIdInterface } from '../../files/page';
 import { PaginationComponent } from '../Pagination/pagination.component';
+import { useMutation, useQuery } from '@apollo/client';
 
 export interface FilesListWrapperProps {
    listRefresh: boolean;
@@ -86,7 +85,7 @@ export const FilesListWrapper = ({ listRefresh, folderIdHook }: FilesListWrapper
 
 
    // Function to handle project deletion
-   const handleDeleteFiles = async (fileId: string, newData: any) => {
+   const handleDeleteFiles = async (fileId: string) => {
       try {
          // Execute the deleteFile mutation with the fieldId as variable
          await deleteFile({ variables: { fileId } });
@@ -124,7 +123,7 @@ export const FilesListWrapper = ({ listRefresh, folderIdHook }: FilesListWrapper
             <Tooltip
                content="Delete File"
                color="error"
-               onClick={() => handleDeleteFiles(data.fileId, data)} // me *********
+               onClick={() => handleDeleteFiles(data.fileId)}
             >
                <IconButton>
                   <DeleteIcon size={20} fill="#FF0080" />

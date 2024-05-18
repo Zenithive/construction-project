@@ -9,7 +9,6 @@ import * as Yup from 'yup';
 import { Box, Grid, LinearProgress } from '@mui/material';
 import axios from 'axios';
 import { CONFIG } from '../../constants/config.constant';
-import { BooleanLiteral } from 'typescript';
 import CircularProgress from '@mui/material/CircularProgress';
 
 
@@ -89,6 +88,7 @@ export const UploadFileComponent = (props: UploadFileProps) => {
    const uploadFile = async () => {
       if (selectedFiles.length > 0) {
          try {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const tmpArray: any[] = [];
             setUploading(true); // Start loading when uploading begins
             setLoading(true); // Start loading when uploading begins
@@ -99,7 +99,7 @@ export const UploadFileComponent = (props: UploadFileProps) => {
                const response = await axios.post(`${CONFIG.server_api}files/upload`, formData, {
                   headers: { 'Content-Type': 'multipart/form-data' },
                   onUploadProgress: progressEvent => {
-                     const progress = Math.round((progressEvent.loaded / progressEvent.total) * 100);
+                     const progress = Math.round((progressEvent.loaded / (progressEvent?.total || 0)) * 100);
                      setUploadProgress(progress); // Update upload progress
                   }
                });
@@ -107,7 +107,7 @@ export const UploadFileComponent = (props: UploadFileProps) => {
                tmpArray.push(response.data);
                props.fileSet(tmpArray);
                setTotalUploadedFiles(prevState => prevState + 1); // Increment totalUploadedFiles by 1
-               closeHandler()
+               closeHandler(true)
 
             });
 

@@ -50,7 +50,7 @@ export const AddOrganisation = ({ setListRefresh, organizationData, setOrganizat
 
    const [visible, setVisible] = React.useState(false);
    const handler = () => setVisible(true);
-   const [createOrg, { data, error, loading }] = useMutation(CREATE_ORGANISATION);
+   const [createOrg, { loading }] = useMutation(CREATE_ORGANISATION);
    const[editOrg]=useMutation(EDITE_ORGANISATION);
 
    const closeHandler = () => {
@@ -86,7 +86,7 @@ export const AddOrganisation = ({ setListRefresh, organizationData, setOrganizat
 
 
 
-    const updateOrg = async (values: OrganisationTypes,{ setSubmitting, resetForm }:any) => {
+    const updateOrg = async (values: OrganisationTypes,{ setSubmitting, resetForm }:FormikHelpers<OrganisationTypes>) => {
       setSubmitting(true);
       const res = await editOrg({
          variables: {
@@ -133,79 +133,83 @@ export const AddOrganisation = ({ setListRefresh, organizationData, setOrganizat
                   {organizationData ? "Edit Organisation" : "Add Organisation"}
                </Text>
             </Modal.Header>
-
-            <Divider css={{ my: '$5' }} />
-            <Modal.Body css={{ py: '$10' }}>
-               <Box
-                  id='add-org-form'
-                  component="form"
-                  noValidate
-                  onSubmit={formik.handleSubmit}
-                  sx={{ mt: 3 }}
-               >
-                  <Grid container spacing={2}>
-                     <Grid item xs={12}>
-                        <TextField
-                           required
-                           fullWidth
-                           id="orgName"
-                           label="Organisation Name"
-                           name="orgName"
-                           autoComplete="orgName"
-                           value={formik.values.orgName}
-                           onChange={formik.handleChange}
-                           onBlur={formik.handleBlur}
-                           error={formik.touched.orgName && Boolean(formik.errors.orgName)}
-                           helperText={formik.touched.orgName && formik.errors.orgName}
-                        />
-                     </Grid>
-                     <Grid item xs={12}>
-                        <TextField
-                           required
-                           fullWidth
-                           name="region"
-                           label="Region"
-                           id="region"
-                           autoComplete="region"
-                           value={formik.values.region}
-                           onChange={formik.handleChange}
-                           onBlur={formik.handleBlur}
-                           error={formik.touched.region && Boolean(formik.errors.region)}
-                           helperText={formik.touched.region && formik.errors.region}
-                        />
-                     </Grid>
-                     <Grid item xs={12}>
-                        <TextField
-                           required
-                           fullWidth
-                           name="website"
-                           label="Website"
-                           id="website"
-                           autoComplete="website"
-                           value={formik.values.website}
-                           onChange={formik.handleChange}
-                           onBlur={formik.handleBlur}
-                           error={formik.touched.website && Boolean(formik.errors.website)}
-                           helperText={formik.touched.website && formik.errors.website}
-                        />
-                     </Grid>
-                     <Grid item xs={12}>
-                        <TextField
-                           required
-                           fullWidth
-                           name="contact"
-                           label="Contact"
-                           id="contact"
-                           autoComplete="contact"
-                           value={formik.values.contact}
-                           onChange={formik.handleChange}
-                           onBlur={formik.handleBlur}
-                           error={formik.touched.contact && Boolean(formik.errors.contact)}
-                           helperText={formik.touched.contact && formik.errors.contact}
-                        />
-                     </Grid>
+            
+            <Divider css={{my: '$5'}} />
+            <Modal.Body css={{py: '$10'}}>
+            <Box
+               id='add-org-form'
+               component="form"
+               noValidate
+               onSubmit={formik.handleSubmit}
+               sx={{ mt: 3 }}
+            >
+               <Grid container spacing={2}>
+                  <Grid item xs={12}>
+                     <TextField
+                        required
+                        fullWidth
+                        InputProps={{sx: {borderRadius: 3}}}
+                        id="orgName"
+                        label="Organisation Name"
+                        name="orgName"
+                        autoComplete="orgName"
+                        value={formik.values.orgName}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        error={formik.touched.orgName && Boolean(formik.errors.orgName)}
+                        helperText={formik.touched.orgName && formik.errors.orgName}
+                     />
                   </Grid>
-               </Box>
+                  <Grid item xs={12}>
+                     <TextField
+                        required
+                        fullWidth
+                        InputProps={{sx: {borderRadius: 3}}}
+                        name="region"
+                        label="Region"
+                        id="region"
+                        autoComplete="region"
+                        value={formik.values.region}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        error={formik.touched.region && Boolean(formik.errors.region)}
+                        helperText={formik.touched.region && formik.errors.region}
+                     />
+                  </Grid>
+                  <Grid item xs={12}>
+                     <TextField
+                        required
+                        fullWidth
+                        InputProps={{sx: {borderRadius: 3}}}
+                        name="website"
+                        label="Website"
+                        id="website"
+                        autoComplete="website"
+                        value={formik.values.website}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        error={formik.touched.website && Boolean(formik.errors.website)}
+                        helperText={formik.touched.website && formik.errors.website}
+                     />
+                  </Grid>
+                  <Grid item xs={12}>
+                     <TextField
+                        required
+                        fullWidth
+                        InputProps={{sx: {borderRadius: 3}}}
+                        name="contact"
+                        label="Contact"
+                        id="contact"
+                        autoComplete="contact"
+                        value={formik.values.contact}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        error={formik.touched.contact && Boolean(formik.errors.contact)}
+                        helperText={formik.touched.contact && formik.errors.contact}
+                     />
+                  </Grid>               
+               </Grid>
+          </Box>
             </Modal.Body>
             <Divider css={{ my: '$5' }} />
             <Modal.Footer>

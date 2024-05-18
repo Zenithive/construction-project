@@ -25,7 +25,7 @@ import { diskStorage } from 'multer';
 import * as path from 'path';
 export const multerOptions = {
   storage: diskStorage({
-    destination: 'uploadedFiles', // Destination folder
+    destination: '/app/server', // Destination folder
     filename: (req, file, callback) => {
       const fileExtName = path.extname(file.originalname);
       const filename = `${Date.now()}-${file.originalname}`;
