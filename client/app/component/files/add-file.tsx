@@ -149,11 +149,7 @@ export const AddFile = ({ setListRefresh, toggleUploadModalHook, folderIdHook }:
          formik.setFieldValue(`files.${index}.size`, element.size);
          formik.setFieldValue(`files.${index}.folderId`, folderIdHook.folderId);
          formik.setFieldValue(`files.${index}.userId`, userId);
-
-
       }
-
-      console.log("formik.value", formik.values)
 
    };
 
@@ -180,6 +176,7 @@ export const AddFile = ({ setListRefresh, toggleUploadModalHook, folderIdHook }:
             toggleUploadModalHook.setIsUploadModalOpen(false);
             closeHandler();
             resetForm();
+            setAllFilesUploaded(false);
          }
 
       } catch (error) {

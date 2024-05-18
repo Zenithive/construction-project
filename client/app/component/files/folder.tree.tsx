@@ -79,9 +79,6 @@ export const FolderTree = ({toggleUploadModalHook, folderIdHook}: FolderTreeInte
     } /// Sachin Code
 
 
-    
-    
-    
     useEffect(()=>{
       refetch();
    }, [listRefresh, refetch]);
@@ -275,9 +272,7 @@ export const FolderTree = ({toggleUploadModalHook, folderIdHook}: FolderTreeInte
     const handleTreeViewEvent2 = (event: React.SyntheticEvent<Element, Event>, nodeIds: string)=>{
         console.log("nodeIds", nodeIds)
         if(isNaN(Number(nodeIds))){
-            console.log("nodeIds 1", nodeIds)
-            folderIdHook.setFolderId(nodeIds); /////////////
-            
+            folderIdHook.setFolderId(nodeIds);             
         }
         
     }

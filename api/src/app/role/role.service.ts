@@ -1,8 +1,14 @@
 import { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Role, RoleDocument, CreateNewRole, GetRolesByProjId } from './role.schema';
-import { v4 as uuidv4 } from 'uuid'; 
+import {
+  Role,
+  RoleDocument,
+  CreateNewRole,
+  GetRolesByProjId,
+  EditRole,
+} from './role.schema';
+import { v4 as uuidv4 } from 'uuid';
 import { Project } from '../project/project.schema';
 import { PermissionService } from '../permissions/permissions.service';
 
@@ -33,16 +39,16 @@ export class RoleService {
     role.roleId = uuidv4();
     const newRole = await this.roleModel.create(role);
 
-    const projObj:Project = {
+    const projObj: Project = {
       projId: newRole.projId,
       orgId: newRole.projId,
-      orginatorId: "",
-      orgName: "",
-      projName: "",
-      region: "",
-      status: "",
-      website: ""
-    }
+      orginatorId: '',
+      orgName: '',
+      projName: '',
+      region: '',
+      status: '',
+      website: '',
+    };
     const preparePermissionData =
       this.permissionService.getNewPermissionsRecordsForNewProject(
         projObj,
@@ -80,8 +86,29 @@ export class RoleService {
     return this.roleModel.findOneAndDelete(searchRole).exec();
   }
 
-    async updaterole(id: string, users: string[]) {
-      const update = [users];
-      return this.roleModel.findOneAndUpdate({ roleId: id }, update, { new: true }).exec();
+  async updaterole(id: string, users: string[]) {
+    const update = [users];
+    return this.roleModel
+      .findOneAndUpdate({ roleId: id }, update, { new: true })
+      .exec();
+  }
+
+  async editRole(role: EditRole) {
+    const existingRole = await this.roleModel.findOneAndUpdate({ roleId: role.roleId },{
+      $set:{
+        roleName:role.roleName,
+        roleId:role.roleId,
+        orginatorId:role.orginatorId,
+        users:role.users,
+        orgId:role.orgId,
+        projId:role.projId,
+        isDefaultRole:role.isDefaultRole
+      }
+    }, { new: true });
+    console.log("existingRole",existingRole)
+    if (!existingRole) {
+      throw new Error('User not found');
     }
+    return existingRole.save();
+  }
 }
