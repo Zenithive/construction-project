@@ -11,9 +11,9 @@ import "ag-grid-community/styles/ag-theme-quartz.css"; // Theme
 import { EditIcon } from '../icons/table/edit-icon';
 import { DeleteIcon } from '../icons/table/delete-icon';
 import { IconButton } from '@mui/material';
+import { DELETE_USER } from '../../api/user/mutations';
 import { useMutation } from '@apollo/client';
 import { SelectChangeEvent } from '@mui/material/Select';
-import { DELETE_USER } from '../../api/user/mutations';
 
 export interface UserLiserWrapperProps {
    listRefresh: boolean;

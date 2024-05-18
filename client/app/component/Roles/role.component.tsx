@@ -1,4 +1,4 @@
-import { Box, Button, Divider, Grid, IconButton, Modal, Menu, Typography } from "@mui/material";
+import { Box, Button, Divider, Grid, IconButton, Modal, Menu, Typography} from "@mui/material";
 import { Tooltip } from '@nextui-org/react';
 import { DeleteIcon } from '../icons/table/delete-icon';
 import ToastMessage from "../toast-message/ToastMessage";
@@ -12,7 +12,6 @@ import { GET_USERS } from "../../api/user/queries"
 import { useMutation } from "@apollo/client";
 import { DELETE_Role } from "../../api/Roles/mutations";
 import { RoleUsersList } from "./role-users-list.component";
-
 
 /* eslint-disable-next-line */
 export interface RolesComponentProps {
@@ -49,7 +48,6 @@ export function RolesComponent(props: RolesComponentProps) {
     }
   };
 
-  //const [updateRole] = useMutation(UPDATE_ROLES_USERS);
 
   useEffect(() => {
     if (props.projId) {

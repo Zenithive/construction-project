@@ -15,11 +15,13 @@ export const SAVE_FILE_DATA = gql`
       projectId
       userId
       folderId
-      apsUrnKey
-      fileId
     }
   }
 `;
+
+
+
+
 
 
 export  const DELETE_FILE_MEMBERSH =  gql `
@@ -30,5 +32,10 @@ export  const DELETE_FILE_MEMBERSH =  gql `
      }  
    }
 `;
+
+
+
+
+
 
 
