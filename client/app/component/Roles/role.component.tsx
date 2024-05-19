@@ -21,10 +21,9 @@ export interface RolesComponentProps {
   closeRoleModel: () => void;
   clearProjId: () => void;
   projId: string;
-  userData: { userId: string; firstName: string; lastName: string }[];
   roleId: string;
   roleName: string;
-  usersData: User[];
+  usersData?: User[];
   roleDetails?: Role | null;
   onUserSelectionChange?: (selectedUsers: string[]) => void;
 }

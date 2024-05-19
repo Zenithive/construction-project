@@ -231,7 +231,6 @@ export const ProjectListWrapper = ({ listRefresh }: ProjectListWrapperProps) => 
                 clearProjId={() => setCurrentProj("")}
                 visible={showRoles}
                 closeRoleModel={() => setShowRoles(false)}
-                userData={[]}
                 roleId=""
                 roleName=""
             />
