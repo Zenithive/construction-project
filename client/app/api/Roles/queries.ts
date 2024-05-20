@@ -8,7 +8,8 @@ export const GET_ROLES = gql`
       orginatorId
       users,
       orgId,
-      projId
+      projId,
+      isDefaultRole
     }
   }
 `;

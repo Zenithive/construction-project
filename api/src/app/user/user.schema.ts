@@ -39,8 +39,8 @@ export class User {
   phoneNo!: string;
 
   @Prop()
-  @Field()
-  orgId!: string;
+  @Field({ nullable: true })
+  orgId?: string;
 
   @Prop()
   @Field()

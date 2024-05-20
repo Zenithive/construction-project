@@ -1,36 +1,44 @@
-import {Divider, Modal, Text} from '@nextui-org/react';
+import { Divider, Modal, Text } from '@nextui-org/react';
 import Button from '@mui/material/Button';
 import React, { useEffect, useState } from 'react';
 import * as Yup from 'yup';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload'; 
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { UploadFileComponent } from './upload.file.component';
-import ToastMessage from '../toast-message/ToastMessage';
-import { Box, Grid, LinearProgress, TextField } from '@mui/material';
+import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material';
 import { FormikHelpers, useFormik } from 'formik';
-import { useMutation, useQuery } from '@apollo/client';
-import { SAVE_FILE_DATA } from '../../api/file/mutations';
-import { toggleUploadModalInterface , FolderIdInterface } from '../../files/page';
-import { GENERATE_APS_URN_KEY } from '../../api/file/queries';
+import { toggleUploadModalInterface, FolderIdInterface } from '../../files/page';
+import { useAppSelector } from '../../reducers/hook.redux';
+
+import { CONFIG } from '../../constants/config.constant';
+import axios from 'axios';
+import { RootState } from '../../reducers/store';
 
 
-const FileObjSchema = Yup.object().shape({
-   fileName: Yup.string().required('Required'),
-   status: Yup.string().required('Required'),
-   docRef: Yup.string().required('Required'),
-   revision: Yup.string().required("Required"),
+
+const FileObjSchemaNew = Yup.object().shape({
+   files: Yup.array()
+      .of(
+         Yup.object().shape({
+            fileName: Yup.string().required('Required'),
+            status: Yup.string().required('Required'),
+            docRef: Yup.string().required('Required'),
+            revision: Yup.string().required("Required")
+         })
+      )
+      .required('Must have files')
 });
 
- export interface FileMetadataType{
+export interface FileMetadataType {
    fileName: string;
    originalName: string;
    path: string;
    size: number;
    extension: string;
    folderId: string;
-   
- }
 
- export interface FileSchemaType{
+}
+
+export interface FileSchemaType {
    fileName: string;
    originalname: string;
    path: string;
@@ -46,250 +54,305 @@ const FileObjSchema = Yup.object().shape({
    projectId: string;
    fileId?: string;
    folderId: string;  // this is the id of the parent folder
- }
+}
 
- export interface AddFilesProps {
+export interface FileSchemaArrayType {
+   files: Array<FileSchemaType>
+}
+
+export interface AddFilesProps {
    setListRefresh: React.Dispatch<React.SetStateAction<boolean>>;
    toggleUploadModalHook: toggleUploadModalInterface;
-   folderIdHook: FolderIdInterface; ////////
-   
- }
+   folderIdHook: FolderIdInterface;
 
+}
 
-export const AddFile = ({setListRefresh, toggleUploadModalHook,folderIdHook }:AddFilesProps) => {
+export const AddFile = ({ setListRefresh, toggleUploadModalHook, folderIdHook }: AddFilesProps) => {
 
-   const initValue:FileSchemaType = {
-      fileName: "",
-      originalname: "",
-      path: "",
-      orginatorId: "",
-      extension: "",
-      size: 0,
-      status: "",
-      docRef: "",
-      revision: "",
-      userId: "a",
-      projectId: "v",
-      folderId:""
-      
-      
+   const initValue: FileSchemaArrayType = {
+      files: [
+         {
+            fileName: "",
+            originalname: "",
+            path: "",
+            orginatorId: "",
+            extension: "",
+            size: 0,
+            status: "",
+            docRef: "",
+            revision: "",
+            userId: "a",
+            projectId: "v",
+            folderId: ""
+         }
+      ]
    }
-   const [saveFileData, { data, error, loading }] = useMutation(SAVE_FILE_DATA);
+
    const [visible, setVisible] = React.useState(false);
-   const [fileIdForURN, setFileIdForURN] = React.useState("");
+   const [isUploadFileOpen, setIsUploadFileOpen] = useState(false);
+   const [fileData, setFileData] = useState([] as Array<Array<FileMetadataType>>);
+   const [allFilesUploaded, setAllFilesUploaded] = useState(false); // Flag for all files uploaded
    const openFileDataModal = () => setVisible(true);
    const fileUploadDialogOpen = () => setIsUploadFileOpen(true);
 
-   const GenerateApsUrnKey = ({fileId}: {fileId: string}) => {
-      const { data, error } = useQuery(GENERATE_APS_URN_KEY , {
-         variables : {fileId: (fileId || "")},
-         skip: !fileId
-      });
-
-      useEffect(()=>{
-         if (data || error) {
-            setFileIdForURN("");
-            setListRefresh((boolFlag:boolean)=>!boolFlag);
-         }
-
-      }, [data, error]);
-
-      return (
-         <>
-            <ToastMessage 
-               severity="success" 
-               openFlag={data?.createProject?._id ? true : false } 
-               message="File's APS URN key generated."
-            ></ToastMessage>
-
-            <ToastMessage 
-               severity="error" 
-               openFlag={error ? true : false } 
-               message='Problem while generating APS URN key of file.'
-            ></ToastMessage>
-         </>
-      );
-   }
-
-   const [isUploadFileOpen, setIsUploadFileOpen] = useState(false);
-    const [fileData, setFileData] = useState({} as FileMetadataType);
 
    const closeHandler = () => {
       setVisible(false);
-      formik.resetForm();
+      // formik.resetForm(); // remove 
    };
 
-   useEffect(()=>{
-      if(fileData && fileData?.fileName){
+
+   useEffect(() => {
+      console.log("folderIdHook.folderId", folderIdHook.folderId)
+
+      if (allFilesUploaded) {
          setInitFileData();
          openFileDataModal();
+         // setVisible(true);
       }
 
-      if(toggleUploadModalHook.isUploadModalOpen){
+      if (toggleUploadModalHook.isUploadModalOpen) {
          fileUploadDialogOpen();
-      }else{
+      } else {
          toggleUploadModalHook.setIsUploadModalOpen(false);
-      } 
-   }, [fileData, toggleUploadModalHook.isUploadModalOpen,folderIdHook.folderId]);
+      }
+   }, [fileData, toggleUploadModalHook.isUploadModalOpen, folderIdHook.folderId, isUploadFileOpen, allFilesUploaded]);
+
+   const stripTimestamp = (fileName: string) => {
+      const parts = fileName.split('-');
+      if (parts.length > 1 && !isNaN(Number(parts[0]))) {
+         const nameWithoutTimestamp = parts.slice(1).join('-');
+         const extensionIndex = nameWithoutTimestamp.lastIndexOf('.');
+         const baseName = nameWithoutTimestamp.substring(0, extensionIndex);
+         const extension = nameWithoutTimestamp.substring(extensionIndex);
+         return baseName + extension;
+      }
+      return fileName;
+   };
+
+
 
    const setInitFileData = () => {
-      
-      formik.setFieldValue("fileName", fileData.fileName);
-      formik.setFieldValue("originalname", fileData.originalName || "");
-      formik.setFieldValue("path", fileData.path);
-      formik.setFieldValue("extension", fileData.extension || "");
-      formik.setFieldValue("size", fileData.size);
-      // formik.setFieldValue("folderId", fileData.folderId);
-   }
-   
-   const submitForm = async (values: FileSchemaType,{ setSubmitting }:FormikHelpers<FileSchemaType>, ) => {
-      setSubmitting(true);
-      
-      const res = await saveFileData({
-         variables: {
-            ...values,
-            folderId : folderIdHook.folderId,
-         },
-      });
-      
-      const uploadFile = res.data?.uploadFile;
-      if(uploadFile && uploadFile.fileName){
-         console.log("uploadFile", uploadFile)
-         if(uploadFile.apsUrnKey === "PENDING"){
-            setFileIdForURN(uploadFile.fileId);
-         }else{
-            setListRefresh((boolFlag:boolean)=>!boolFlag);
-         }
-         closeHandler();
-      }
-      
-      setSubmitting(false);
-   }
 
+      for (let index = 0; index < fileData.length; index++) {
+         const element = fileData[index][0];
+         // const cleanFileName = stripTimestamp(element.fileName);
+         const cleanFileName = stripTimestamp(element.fileName).replace(/(\.[^.]+)\1$/, '$1');
+         console.log("element", element)
+         // formik.setFieldValue(`files.${index}.fileName`, element.fileName);
+         formik.setFieldValue(`files.${index}.fileName`, cleanFileName);
+         formik.setFieldValue(`files.${index}.originalName`, element.originalName);
+         formik.setFieldValue(`files.${index}.orginatorId`, "");
+         formik.setFieldValue(`files.${index}.projectId`, "");
+         formik.setFieldValue(`files.${index}.path`, element.path);
+         formik.setFieldValue(`files.${index}.extension`, element.extension);
+         formik.setFieldValue(`files.${index}.size`, element.size);
+         formik.setFieldValue(`files.${index}.folderId`, folderIdHook.folderId);
+         formik.setFieldValue(`files.${index}.userId`, userId);
+      }
+
+   };
+
+
+   const userId = useAppSelector((state: RootState) => state.user.user.userId);
+   // console.log("userId", userId)
+   const submitForm = async (values: FileSchemaArrayType, { resetForm, setSubmitting }: FormikHelpers<FileSchemaArrayType>) => {
+      setSubmitting(true);
+
+
+      const filesWithUserId = values.files.map(file => ({
+         ...file,
+         userId: userId ?? '', // Ensure userId is added to each file object
+      }));
+
+      try {
+         const response = await axios.post(`${CONFIG.server_api}files/post`, filesWithUserId, {
+            headers: { 'Content-Type': 'application/json' },
+
+         });
+
+         if (response.status === 201) {
+            setListRefresh((boolFlag: boolean) => !boolFlag);
+            toggleUploadModalHook.setIsUploadModalOpen(false);
+            closeHandler();
+            resetForm();
+            setAllFilesUploaded(false);
+         }
+
+      } catch (error) {
+         console.error('Error saving files:', error);
+      } finally {
+         setSubmitting(false);
+      }
+   }
    const formik = useFormik({
       initialValues: initValue,
-      validationSchema: FileObjSchema,
+      validationSchema: FileObjSchemaNew,
       onSubmit: submitForm,
    });
 
    return (
       <>
-          <Button component="label" onClick={fileUploadDialogOpen} sx={{borderRadius: 3}} variant="contained" startIcon={<CloudUploadIcon />}>
+         <Button component="label"
+            onClick={fileUploadDialogOpen}
+            sx={{ borderRadius: 3 }} variant="contained" startIcon={<CloudUploadIcon />}>
             Upload file
-         </Button>   
+         </Button>
 
-         <UploadFileComponent closeSet={()=>{setIsUploadFileOpen(false);toggleUploadModalHook.setIsUploadModalOpen(false);closeHandler()}} open={isUploadFileOpen} fileSet={setFileData} ></UploadFileComponent>
-         <GenerateApsUrnKey fileId={fileIdForURN} />
+         <UploadFileComponent closeSet={() => {
+            setIsUploadFileOpen(false);
+            toggleUploadModalHook.setIsUploadModalOpen(false);
+            closeHandler()
+         }} open={isUploadFileOpen} fileSet={setFileData}
+            setAllFilesUploaded={setAllFilesUploaded}
+         ></UploadFileComponent>
+
+
+
          <Modal
             closeButton
             aria-labelledby="modal-title"
-            width="600px"
+            width="1000px"
             open={visible}
             onClose={closeHandler}
          >
-            <Modal.Header css={{justifyContent: 'start'}}>
+            <Modal.Header css={{ justifyContent: 'start' }}>
                <Text id="modal-title" h4>
-                  Add new File
+                  Add new Files
                </Text>
-
-               <ToastMessage 
-                  severity="success" 
-                  openFlag={data?.createProject?._id ? true : false } 
-                  message='File uploaded.'
-               ></ToastMessage>
-
-               <ToastMessage 
-                  severity="error" 
-                  openFlag={error ? true : false } 
-                  message='Problem while uploading the file.'
-               ></ToastMessage>
+               {/* {JSON.stringify(formik)} */}
             </Modal.Header>
-            <Divider css={{my: '$5'}} />
-            <Modal.Body css={{py: '$10'}}>
-            <Box
-               id='save-file-form'
-               component="form"
-               noValidate
-               onSubmit={formik.handleSubmit}
-               sx={{ mt: 3 }}
-            >
-               <Grid container spacing={2}>
-                  <Grid item xs={12}>
-                     <TextField
-                        required
-                        fullWidth
-                        id="fileName"
-                        label="File Name"
-                        name="fileName"
-                        autoComplete="fileName"
-                        value={formik.values.fileName}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        error={formik.touched.fileName && Boolean(formik.errors.fileName)}
-                        helperText={formik.touched.fileName && formik.errors.fileName}
-                     />
-                  </Grid>
-                  <Grid item xs={12}>
-                     <TextField
-                        required
-                        fullWidth
-                        name="revision"
-                        label="Revision"
-                        id="revision"
-                        autoComplete="revision"
-                        value={formik.values.revision}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        error={formik.touched.revision && Boolean(formik.errors.revision)}
-                        helperText={formik.touched.revision && formik.errors.revision}
-                     />
-                  </Grid>
-                  <Grid item xs={12}>
-                     <TextField
-                        required
-                        fullWidth
-                        name="docRef"
-                        label="Doc Ref"
-                        id="docRef"
-                        autoComplete="docRef"
-                        value={formik.values.docRef}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        error={formik.touched.docRef && Boolean(formik.errors.docRef)}
-                        helperText={formik.touched.docRef && formik.errors.docRef}
-                     />
-                  </Grid>
-                  <Grid item xs={12}>
-                     <TextField
-                        required
-                        fullWidth
-                        name="status"
-                        label="Status"
-                        id="status"
-                        autoComplete="status"
-                        value={formik.values.status}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        error={formik.touched.status && Boolean(formik.errors.status)}
-                        helperText={formik.touched.status && formik.errors.status}
-                     />
-                  </Grid>
-                  
-                  
-               </Grid>
-          </Box>
+            <Divider css={{ my: '$5' }} />
+            <Modal.Body css={{ py: '$10' }}>
+               <Box
+                  id="save-file-form"
+                  component="form"
+                  noValidate
+                  onSubmit={formik.handleSubmit}
+                  sx={{ mt: 3 }}
+               >
+
+                  <TableContainer>
+                     <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
+                        <TableHead>
+                           <TableRow>
+                              <TableCell>
+                                 <Typography variant="subtitle1" fontWeight="bold">File Name</Typography>
+                              </TableCell>
+                              <TableCell>
+                                 <Typography variant="subtitle1" fontWeight="bold">Revision</Typography>
+                              </TableCell>
+                              <TableCell>
+                                 <Typography variant="subtitle1" fontWeight="bold">Doc.Ref</Typography>
+                              </TableCell>
+                              <TableCell>
+                                 <Typography variant="subtitle1" fontWeight="bold">Status</Typography>
+                              </TableCell>
+                           </TableRow>
+                        </TableHead>
+                        <TableBody>
+
+
+                           {formik.values.files.length ? formik.values.files.map((file, index) => (
+                              <TableRow key={index}>
+                                 <TableCell>
+                                    <TextField
+                                       required
+                                       fullWidth
+                                       id={`fileName-${index}`}
+                                       name={`files.${index}.fileName`}
+                                       autoComplete="fileName"
+                                       value={file.fileName}
+                                       onChange={formik.handleChange}
+                                       onBlur={formik.handleBlur}
+                                    />
+                                 </TableCell>
+                                 {/* <TableCell colSpan={3}> Set colSpan to the number of columns you want it to span */}
+                                 <TableCell colSpan={1} sx={{ pr: 3 }}>
+                                    <TextField
+                                       required
+                                       fullWidth
+                                       id={`revision-${index}`}
+                                       name={`files.${index}.revision`}
+                                       autoComplete="revision"
+                                       value={file.revision}
+                                       onChange={formik.handleChange}
+                                       onBlur={formik.handleBlur}
+                                    // error={formik.touched.revision && Boolean(formik.errors.revision)}
+                                    // helperText={formik.touched.revision && formik.errors.revision}
+
+                                    />
+                                 </TableCell>
+                                 {/* <TableCell> */}
+                                 <TableCell colSpan={1} sx={{ pr: 3 }}>
+                                    <TextField
+                                       required
+                                       fullWidth
+                                       id={`docRef-${index}`}
+                                       name={`files.${index}.docRef`}
+                                       autoComplete="docRef"
+                                       value={file.docRef}
+                                       onChange={formik.handleChange}
+                                       onBlur={formik.handleBlur}
+                                    // error={formik.touched.docRef && Boolean(formik.errors.docRef)}
+                                    // helperText={formik.touched.docRef && formik.errors.docRef}
+                                    />
+                                 </TableCell>
+                                 <TableCell>
+                                    <TextField
+                                       required
+                                       fullWidth
+                                       id={`status-${index}`}
+                                       name={`files.${index}.status`}
+                                       autoComplete="status"
+                                       value={file.status}
+                                       onChange={formik.handleChange}
+                                       onBlur={formik.handleBlur}
+                                    // error={formik.touched.status && Boolean(formik.errors.status)}
+                                    // helperText={formik.touched.status && formik.errors.status}
+                                    />
+                                 </TableCell>
+
+                                 {/* <TableCell colSpan={1} sx={{ pr: 3 }}>
+                                    <Select
+                                       required
+                                       fullWidth
+                                       id={`status-${index}`}
+                                       name={`files.${index}.status`}
+                                       value={file.status}
+                                       onChange={formik.handleChange}
+                                       onBlur={formik.handleBlur}
+                                    >
+                                       <MenuItem value="Open">Open</MenuItem>
+                                       <MenuItem value="Closed">Closed</MenuItem>
+                                    </Select>
+                                 </TableCell>  */}
+                              </TableRow>
+                           )) : <TableRow><TableCell></TableCell></TableRow>}
+                        </TableBody>
+                     </Table>
+                  </TableContainer>
+               </Box>
             </Modal.Body>
-            <Divider css={{my: '$5'}} />
+            <Divider css={{ my: '$5' }} />
             <Modal.Footer>
-               {loading ? 
-               (<Box sx={{ width: '100%' }}><LinearProgress /></Box>)
-               :(<Button disabled={loading} style={{borderRadius: 10}} variant="contained" type='submit' form="save-file-form">
+               <Button
+                  style={{ borderRadius: 10 }}
+                  variant="contained"
+                  type='submit'
+                  form="save-file-form"
+               >
                   Add File
-               </Button>)}
+               </Button>
             </Modal.Footer>
          </Modal>
+
+
+
       </>
    );
 };
+
+
 
 

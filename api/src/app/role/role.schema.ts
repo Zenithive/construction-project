@@ -74,6 +74,30 @@ export class DeleteRoleInput {
 }
 
 @InputType()
+export class EditRole {
+  @Field()
+  roleName?: string;
+
+  @Field()
+  roleId?: string;
+
+  @Field()
+  orginatorId?: string;
+
+  @Field(() => [String],{nullable: true, defaultValue: []})
+  users?: string[];
+
+  @Field({ nullable: true })
+  orgId?: string;
+
+  @Field()
+  projId?: string;
+
+  @Field(() => Boolean,{nullable: true, defaultValue: false})
+  isDefaultRole?: boolean;
+}
+
+@InputType()
 export class UpdateRoleInput {
   @Field(() => String)
   roleId!: string;

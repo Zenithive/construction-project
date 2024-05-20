@@ -14,7 +14,12 @@ import RolesComponent from '../Roles/role.component';
 import PermissionComponent from '../Permission/permission.component';
 import { SelectChangeEvent } from '@mui/material/Select';
 import { PaginationComponent } from '../Pagination/pagination.component';
+
+
+
+// Sachin Import
 import { DELETE_PROJECT } from '../../api/project/mutations';
+
 import { useMutation } from '@apollo/client';
 import StatusComponent from '../status/status.component';
 
@@ -60,8 +65,7 @@ export const ProjectListWrapper = ({ listRefresh }: ProjectListWrapperProps) => 
    
     const handlePageSizeChange = (event: SelectChangeEvent<number>) => {
         const newSize = Number(event.target.value);
-            setPageSize(newSize);
-            setCurrentPage(1);
+        setPageSize(newSize);
          
     };
    
@@ -231,7 +235,6 @@ export const ProjectListWrapper = ({ listRefresh }: ProjectListWrapperProps) => 
                 clearProjId={() => setCurrentProj("")}
                 visible={showRoles}
                 closeRoleModel={() => setShowRoles(false)}
-                userData={[]}
                 roleId=""
                 roleName=""
             />

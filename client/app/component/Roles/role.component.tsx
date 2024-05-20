@@ -1,4 +1,4 @@
-import { Box, Button, Divider, Grid, IconButton, Modal, Menu, Typography } from "@mui/material";
+import { Box, Button, Divider, Grid, IconButton, Modal, Typography} from "@mui/material";
 import { Tooltip } from '@nextui-org/react';
 import { DeleteIcon } from '../icons/table/delete-icon';
 import ToastMessage from "../toast-message/ToastMessage";
@@ -8,58 +8,73 @@ import CloseIcon from '@mui/icons-material/Close';
 import React, { useEffect, useState } from "react";
 import { useLazyQuery } from "@apollo/client";
 import { GET_ROLES } from "../../api/Roles/queries";
-import { GET_USERS } from "../../api/user/queries"
+import { GET_USERS } from "../../api/user/queries";
 import { useMutation } from "@apollo/client";
 import { DELETE_Role } from "../../api/Roles/mutations";
 import { RoleUsersList } from "./role-users-list.component";
-
+import { EditIcon } from "../icons/table/edit-icon";
+import { UserTypes } from "../users/add-user";
 
 /* eslint-disable-next-line */
 export interface RolesComponentProps {
   visible: boolean;
-  closeRoleModel: CallableFunction;
-  clearProjId: CallableFunction;
+  closeRoleModel: () => void;
+  clearProjId: () => void;
   projId: string;
-  userData: { userId: string; firstName: string; lastName: string}[];
   roleId: string;
   roleName: string;
-
+  usersData?: User[];
+  roleDetails?: Role | null;
+  onUserSelectionChange?: (selectedUsers: string[]) => void;
 }
+
+export interface User {
+  userId: string;
+  firstName: string;
+  lastName: string;
+}
+
+
+export interface Role {
+  roleId: string;
+  isDefaultRole?: boolean;
+  roleName: string;
+  users: Array<string>;
+}
+
+interface UsersData {
+  getUsers: {
+    users: UserTypes[];
+  };
+}
+
 
 export function RolesComponent(props: RolesComponentProps) {
   const [showAddRole, setShowAddRole] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [roles, setRoles] = useState<any[]>([]);
-  
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [roles, setRoles] = useState<Role[]>([]);
+  const [hoveredRole, setHoveredRole] = useState<string | null>(null);
+  const [selectedRole, setSelectedRole] = useState<Role | null>(null);
+  const [, setSelectedRoleUsers] = useState<string[]>([]);
+  const [mode, setMode] = useState<'add' | 'edit'>('add');
   const [GetRoles, { data: rolesData, error: rolesError, refetch: refetchRoles }] = useLazyQuery(GET_ROLES);
-  const [getUsers, { data: usersData, error: usersError }] = useLazyQuery(GET_USERS);
+  const [getUsers, { data: usersData, error: usersError }] = useLazyQuery<UsersData>(GET_USERS);
+  const [deleteRole] = useMutation(DELETE_Role);
+  const [isUserSelected] = useState(false);
+  const isAdminRole = selectedRole?.roleName.toLowerCase() === 'admin';
 
-
-  console.log("userData", usersData)
-  const [deleterole] = useMutation(DELETE_Role);
-
-  const handleDeleteRole = async (roleId: string) => {
-    console.log("roleId", roleId)
-    try {
-      await deleterole({ variables: { roleId } });
-      refetchRoles();
-    } catch (error) {
-      console.error('Error deleting Role:', error);
+  useEffect(() => {
+    if (selectedRole) {
+      setSelectedRoleUsers(selectedRole.users);
     }
-  };
-
-  //const [updateRole] = useMutation(UPDATE_ROLES_USERS);
+  }, [selectedRole]);
 
   useEffect(() => {
     if (props.projId) {
       GetRoles({
-        variables: {
-          projId: props.projId
-        }
+        variables: { projId: props.projId }
       });
     }
-  }, [props.projId]);
+  }, [props.projId, GetRoles]);
 
   useEffect(() => {
     if (props.visible) {
@@ -67,46 +82,82 @@ export function RolesComponent(props: RolesComponentProps) {
         variables: { pageSize: -1, currentPage: -1 },
         notifyOnNetworkStatusChange: true,
         fetchPolicy: "network-only"
-
       });
     }
-  }, [props.visible]);
+  }, [props.visible, getUsers]);
 
   useEffect(() => {
     if (rolesData && rolesData.getRoles) {
-      const initialSelectedRoleUsers: { [key: string]: string[] } = {};
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      rolesData.getRoles.forEach((role: any) => {
-        initialSelectedRoleUsers[role.roleId] = [];
-      });
-      //setSelectedRoleUsers(initialSelectedRoleUsers);
       setRoles(rolesData.getRoles);
     }
   }, [rolesData]);
 
-
   const closeAddRole = () => {
     setShowAddRole(false);
+    setSelectedRole(null);
+    setMode('add');
     refetchRoles();
-  }
+  };
 
   const closeHandler = () => {
-    props.closeRoleModel()
-    props.clearProjId()
-  }
-  
-  const handleClose = () => {
-    setAnchorEl(null);
+    props.closeRoleModel();
+    props.clearProjId();
+    setShowAddRole(false);
+    setSelectedRole(null);
+    setMode('add');
   };
-    
+
+  const handleRoleHover = (roleId: string | null) => {
+    setHoveredRole(roleId);
+  };
+
+  const handleOpenEditRole = (role: Role) => {
+    setSelectedRole(role);
+    setMode('edit');
+    if (role) {
+      const selectedUsers = role.users;
+      setSelectedRoleUsers(selectedUsers);
+    }
+  };
+
+  const handleAddRole = () => {
+    setShowAddRole(true);
+    setSelectedRole(null);
+    setMode('add');
+  };
+
+  const handleUserSelectionChange = (selectedUsers: string[]) => {
+  
+    const isAdminRole = props.roleDetails?.roleName.toLowerCase() === 'admin';
+  
+    if (!isAdminRole) {
+      props.onUserSelectionChange && props.onUserSelectionChange(selectedUsers);
+    }
+  };
+  
+  const handleDeleteRole = async (roleId: string, roleName: string) => {
+    if (roleName.toLowerCase() === 'admin') {
+      console.log('Cannot delete admin role.');
+      return;
+    }
+    try {
+      await deleteRole({ variables: { roleId } });
+      refetchRoles();
+    } catch (error) {
+      console.error('Error deleting Role:', error);
+    }
+  };
+
+
   return (
     <Modal
       aria-labelledby="simple-modal-title"
       aria-describedby="simple-modal-description"
       open={props.visible}
       onClose={closeHandler}
+      style={{ zIndex: 999 }}
     >
-      <Box sx={{ bgcolor: "white", width: "80%", marginX: "auto", marginY: 4, borderRadius: 3, maxHeight: '80vh'  }}>
+      <Box sx={{ bgcolor: "white", width: "80%", marginX: "auto", marginY: 4, borderRadius: 3,maxHeight: '80vh'  }}>
         <Box sx={{ paddingX: 3, paddingY: 2, }} component={"div"}>
           <Grid container spacing={2} sx={{ pt: 1 }}>
             <Grid item xs={1}>
@@ -115,7 +166,7 @@ export function RolesComponent(props: RolesComponentProps) {
               </Typography>
             </Grid>
             <Grid item xs={9}>
-              <Button variant="outlined" startIcon={<AddIcon />} onClick={() => setShowAddRole(true)} size="small">
+              <Button variant="outlined" startIcon={<AddIcon />} onClick={handleAddRole} size="small" sx={{ borderRadius: 3 }}  disabled={mode === 'edit' && isAdminRole && !isUserSelected}>
                 Add new Role
               </Button>
             </Grid>
@@ -124,53 +175,84 @@ export function RolesComponent(props: RolesComponentProps) {
                 <CloseIcon />
               </IconButton>
             </Grid>
-            <Grid item xs={20}>
-              <Menu
-                id="users-menu"
-                anchorEl={anchorEl}
-                keepMounted
-                open={Boolean(anchorEl)}
-                onClose={handleClose}
-              >
-              </Menu>
-            </Grid>
           </Grid>
-          <ToastMessage severity="error" openFlag={rolesError || usersError ? true : false} message="Problem while fetching data." />
+          <ToastMessage severity="error" openFlag={!!rolesError || !!usersError} message="Problem while fetching data." />
         </Box>
         <Divider sx={{ my: '$5' }} />
 
         <Box sx={{ px: 3 }}>
-          <AddRolesComponent 
-            projId={props.projId} 
-            visible={showAddRole}
-            closeAddRole={closeAddRole} 
-            usersData={usersData?.getUsers?.users || []} />
+          {mode === 'add' && showAddRole && (
+            <AddRolesComponent
+              visible={showAddRole}
+              closeAddRole={closeAddRole}
+              projId={props.projId}
+              usersData={usersData?.getUsers?.users || []}
+              roleDetails={selectedRole}
+              onUserSelectionChange={handleUserSelectionChange}
+            />
+          )}
         </Box>
-
-        <Box sx={{ pb: 4, overflowY: 'auto', overflowX: 'hidden', maxHeight: '450px' }}>
-          {roles.map((rolesData, index) => (
-            <React.Fragment key={index}>
-              <Grid sx={{ display: 'flex', py: 1 }} container spacing={3}>
-                <Grid item xs={1}>{rolesData.roleName !== 'Admin' ? (
-                  <Tooltip
-                    content="Delete Role"
-                    color="error"
-                    onClick={() => handleDeleteRole(rolesData.roleId)}
-                  >
-                    <IconButton sx={{ pl: 3 }}>
-                      <DeleteIcon size={20} fill="#FF0080" />
-                    </IconButton>
-                  </Tooltip>
-                ) : ""}</Grid>
-
-                <Grid item xs={3}>{rolesData.roleName}</Grid>
-                <Grid item xs={8} sx={{ pr: 4 }}>
-                  <RoleUsersList roleUsers={rolesData.users} allUsers={usersData?.getUsers?.users || []}></RoleUsersList>
+        <Divider sx={{ my: '$5' }} />
+        <Box sx={{ pb: 4, overflowY: 'auto', overflowX: 'hidden', maxHeight: '450px', pr: 0 }}>
+        {roles.map((role, index) => (
+    <React.Fragment key={index}>
+      {(mode === 'edit' && selectedRole && selectedRole.roleId === role.roleId) ? (
+        <div style={{ marginLeft: '15px' }}>
+          {role.roleName.toLowerCase() === 'admin' ? (
+            <AddRolesComponent
+              visible={true}
+              closeAddRole={closeAddRole}
+              projId={props.projId}
+              usersData={usersData?.getUsers?.users || []}
+              roleDetails={role}
+              editable={false} 
+            />
+          ) : (
+            <AddRolesComponent
+              visible={true}
+              closeAddRole={closeAddRole}
+              projId={props.projId}
+              usersData={usersData?.getUsers?.users || []}
+              roleDetails={role}
+              editable={true} 
+            />
+          )}
+        </div>
+              ) : (
+                <Grid
+                  container
+                  spacing={3}
+                  sx={{ display: 'flex', alignItems: 'center', position: 'relative', pb: 1, pt: 1, pl: 4 }}
+                  onMouseEnter={() => handleRoleHover(role.roleId)}
+                  onMouseLeave={() => handleRoleHover(null)}
+                >
+                  <Grid item xs={3} sx={{ pl: 2 }}>
+                    <Box sx={{ display: "flex" }}>
+                      {role.roleName}
+                      {hoveredRole === role.roleId && (
+                        <Box sx={{ display: "flex"}}>
+                         {role.roleName.toLowerCase() !== 'admin' && (
+                          <Tooltip content="Delete Role" color="error" style={{zIndex:9999}}>
+                            <IconButton onClick={() => handleDeleteRole(role.roleId, role.roleName)}>
+                              <DeleteIcon size={20} fill="#FF0080" />
+                            </IconButton>
+                          </Tooltip>
+                          )}
+                          <Tooltip content="Edit Role" style={{ zIndex:9999}}>
+                            <IconButton onClick={() => handleOpenEditRole(role)}>
+                              <EditIcon size={20} fill="#3f51b5" />
+                            </IconButton>
+                          </Tooltip>
+                        </Box>
+                      )}
+                    </Box>
+                  </Grid>
+                  <Grid item xs={9}>
+                    <RoleUsersList roleUsers={role.users} allUsers={usersData?.getUsers?.users || []} />
+                  </Grid>
                 </Grid>
-
-              </Grid>
+              )}
               <Divider sx={{ my: '$5' }} />
-
             </React.Fragment>
           ))}
         </Box>
