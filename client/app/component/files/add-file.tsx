@@ -12,6 +12,9 @@ import { useAppSelector } from '../../reducers/hook.redux';
 import { CONFIG } from '../../constants/config.constant';
 import axios from 'axios';
 import { RootState } from '../../reducers/store';
+import ToastMessage from '../toast-message/ToastMessage';
+import { GENERATE_APS_URN_KEY } from '../../api/file/queries';
+import { useQuery } from '@apollo/client';
 
 
 
@@ -94,6 +97,37 @@ export const AddFile = ({ setListRefresh, toggleUploadModalHook, folderIdHook }:
    const [allFilesUploaded, setAllFilesUploaded] = useState(false); // Flag for all files uploaded
    const openFileDataModal = () => setVisible(true);
    const fileUploadDialogOpen = () => setIsUploadFileOpen(true);
+   const [fileIdForURN, setFileIdForURN] = React.useState<Array<string>>([]);
+
+   const GenerateApsUrnKey = ({fileId}: {fileId: string}) => {
+      const { data, error } = useQuery(GENERATE_APS_URN_KEY , {
+         variables : {fileId: (fileId || [])},
+         skip: !fileId
+      });
+
+      useEffect(()=>{
+         if (data || error) {
+            setFileIdForURN((val)=>val.filter(tmpVal => tmpVal.indexOf(fileId) == -1));
+            setListRefresh((boolFlag:boolean)=>!boolFlag);
+         }
+      }, [data, error]);
+
+      return (
+         <>
+            <ToastMessage 
+               severity="success" 
+               openFlag={data?.createProject?._id ? true : false } 
+               message="File's APS URN key generated."
+            ></ToastMessage>
+
+            <ToastMessage 
+               severity="error" 
+               openFlag={error ? true : false } 
+               message='Problem while generating APS URN key of file.'
+            ></ToastMessage>
+         </>
+      );
+   }
 
 
    const closeHandler = () => {
@@ -101,22 +135,23 @@ export const AddFile = ({ setListRefresh, toggleUploadModalHook, folderIdHook }:
       // formik.resetForm(); // remove 
    };
 
-
    useEffect(() => {
-      console.log("folderIdHook.folderId", folderIdHook.folderId)
-
       if (allFilesUploaded) {
          setInitFileData();
          openFileDataModal();
          // setVisible(true);
       }
+   }, [allFilesUploaded]);
+
+
+   useEffect(() => {
 
       if (toggleUploadModalHook.isUploadModalOpen) {
          fileUploadDialogOpen();
       } else {
          toggleUploadModalHook.setIsUploadModalOpen(false);
       }
-   }, [fileData, toggleUploadModalHook.isUploadModalOpen, folderIdHook.folderId, isUploadFileOpen, allFilesUploaded]);
+   }, [fileData, toggleUploadModalHook.isUploadModalOpen, folderIdHook.folderId, isUploadFileOpen]);
 
    const stripTimestamp = (fileName: string) => {
       const parts = fileName.split('-');
@@ -177,6 +212,14 @@ export const AddFile = ({ setListRefresh, toggleUploadModalHook, folderIdHook }:
             closeHandler();
             resetForm();
             setAllFilesUploaded(false);
+            const tmpFileIdsArray = [];
+            for (let index = 0; index < response.data.length; index++) {
+               const element = response.data[index];
+               if(element.apsUrnKey === "PENDING"){
+                  tmpFileIdsArray.push(element.fileId)
+               }
+            }
+            setFileIdForURN(tmpFileIdsArray);
          }
 
       } catch (error) {
@@ -207,7 +250,11 @@ export const AddFile = ({ setListRefresh, toggleUploadModalHook, folderIdHook }:
             setAllFilesUploaded={setAllFilesUploaded}
          ></UploadFileComponent>
 
-
+         {fileIdForURN.map((singleFieldId: string)=>(
+            <>
+               {singleFieldId ? <GenerateApsUrnKey fileId={singleFieldId} /> : ""}
+            </>
+         ))}
 
          <Modal
             closeButton
@@ -220,7 +267,7 @@ export const AddFile = ({ setListRefresh, toggleUploadModalHook, folderIdHook }:
                <Text id="modal-title" h4>
                   Add new Files
                </Text>
-               {/* {JSON.stringify(formik)} */}
+
             </Modal.Header>
             <Divider css={{ my: '$5' }} />
             <Modal.Body css={{ py: '$10' }}>
@@ -267,7 +314,7 @@ export const AddFile = ({ setListRefresh, toggleUploadModalHook, folderIdHook }:
                                        onBlur={formik.handleBlur}
                                     />
                                  </TableCell>
-                                 {/* <TableCell colSpan={3}> Set colSpan to the number of columns you want it to span */}
+                                
                                  <TableCell colSpan={1} sx={{ pr: 3 }}>
                                     <TextField
                                        required
@@ -313,20 +360,6 @@ export const AddFile = ({ setListRefresh, toggleUploadModalHook, folderIdHook }:
                                     />
                                  </TableCell>
 
-                                 {/* <TableCell colSpan={1} sx={{ pr: 3 }}>
-                                    <Select
-                                       required
-                                       fullWidth
-                                       id={`status-${index}`}
-                                       name={`files.${index}.status`}
-                                       value={file.status}
-                                       onChange={formik.handleChange}
-                                       onBlur={formik.handleBlur}
-                                    >
-                                       <MenuItem value="Open">Open</MenuItem>
-                                       <MenuItem value="Closed">Closed</MenuItem>
-                                    </Select>
-                                 </TableCell>  */}
                               </TableRow>
                            )) : <TableRow><TableCell></TableCell></TableRow>}
                         </TableBody>

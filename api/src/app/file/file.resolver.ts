@@ -19,7 +19,7 @@ export class FileResolver {
   @Query(() => File)
   async getOneFile(@Args('input') fileObj: GetSingleFileInput) {
     // Fetch file by apsUrnKey
-    return await this.fileService.getFileByParams({apsUrnKey: fileObj.urn});
+    return await this.fileService.getFileByParams({revisionId: fileObj.revisionId});
   }
 
   @Query(() => PaginationResultF)
@@ -51,15 +51,10 @@ export class FileResolver {
 
   }
 
-
-
-
-
-
-
-
-
-
+  @Query(() => File)
+  async generateApsUrnKey(@Args('input') fileId: string) {
+    return await this.fileService.generateApsUrnKey(fileId);
+  }
 
 }
 

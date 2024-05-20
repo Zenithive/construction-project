@@ -58,6 +58,8 @@ export const UploadFileComponent = (props: UploadFileProps) => {
          props.setAllFilesUploaded(true);
          closeHandler(false);
          formik.resetForm();
+         setUploading(false);
+         setLoading(false);
       }
    }, [totalUploadedFiles, selectedFiles]);
 
@@ -90,8 +92,8 @@ export const UploadFileComponent = (props: UploadFileProps) => {
          try {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const tmpArray: any[] = [];
-            setUploading(true); // Start loading when uploading begins
-            setLoading(true); // Start loading when uploading begins
+            setUploading(true); 
+            setLoading(true);
 
             selectedFiles.forEach(async (file) => {
                const formData = new FormData();
@@ -116,9 +118,9 @@ export const UploadFileComponent = (props: UploadFileProps) => {
          catch (error) {
             console.error('Error uploading files:', error);
 
-            setLoading(false); // Stop loading after uploading finishes
-            setUploading(false); // Set uploading flag to false
-            setUploadProgress(0); // Reset upload progress
+            setLoading(false);
+            setUploading(false);
+            setUploadProgress(0);
          }
       } else {
          console.error('No file selected');
@@ -179,13 +181,13 @@ export const UploadFileComponent = (props: UploadFileProps) => {
                         {fileNames.map((fileName, index) => (
                            <Box key={index} sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                               <span>{fileName}</span>
-                              {selectedFiles[index] && uploading && ( // Check if file is uploading
+                              {selectedFiles[index] && uploading && (
                                  <Box sx={{ position: 'relative', width: '30px', height: '30px' }}>
                                     <CircularProgress size={30} color="primary" variant="determinate" value={uploadProgress} />
                                     <span style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', color: 'black', fontSize: '0.6rem' }}>{uploadProgress}%</span>
                                  </Box>
                               )}
-                              {!uploading && ( // Show close icon only when not uploading
+                              {!uploading && (
                                  <CloseIcon onClick={() => removeFile(fileName)} />
                               )}
                            </Box>

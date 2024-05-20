@@ -8,6 +8,7 @@ import { Document } from 'mongoose';
 import { v4 as uuidv4 } from 'uuid';
 import path from 'path';
 import mime from 'mime';
+import { APS_FORGE_CONFIG } from '../Constants/aps.forge.constant';
 
 
 @Injectable()
@@ -23,20 +24,43 @@ export class FileService {
     }
 
     async uploadFile(fileObject: UploadFileInput) {
-        const apsFilesObject = await this.apsForgeService.uploadObject(fileObject.originalname, fileObject.path);
-        console.log("apsFilesObject 1", apsFilesObject)
-        const apsUrnObj = await this.apsForgeService.translateObject(
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            this.apsForgeService.urnify(apsFilesObject.objectId as any), fileObject.zipEntryPoint
-        );
-        console.log("apsUrnObj 2", apsUrnObj)
-        const nameWihUrnKey = {
-            apsObjKey: apsFilesObject.objectId,
-            apsUrnKey: apsUrnObj.urn,
+        const fileExt = fileObject.extension.toUpperCase();
 
+        if(APS_FORGE_CONFIG.APS_VIEWER_SUPPORTED_FORMATS.indexOf(fileExt) > -1 || fileExt.indexOf("DWG") > -1 || fileExt.indexOf("RVT") > -1){
+
+            const nameWihUrnKey = {
+                apsUrnKey: "PENDING",
+            }
+            return await this.fileModel.create({ ...fileObject, ...nameWihUrnKey });
         }
 
-        return await this.fileModel.create({ ...fileObject, ...nameWihUrnKey });
+        return await this.fileModel.create({ ...fileObject });
+    }
+
+    async generateApsUrnKey(fileId: string){
+        const searchObj = { fileId };
+        const fileObject = await this.getFileByParams(searchObj);
+        if(fileObject && fileObject.fileId){
+            if(fileObject.apsUrnKey === "PENDING"){
+                const apsFilesObject = await this.apsForgeService.uploadObject(fileObject.originalname, fileObject.path);
+                console.log("apsFilesObject 1", apsFilesObject)
+                const apsUrnObj = await this.apsForgeService.translateObject(
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    this.apsForgeService.urnify(apsFilesObject.objectId as any), fileObject.zipEntryPoint
+                );
+                console.log("apsUrnObj 2", apsUrnObj)
+                const updatedUrnKey = {
+                    apsObjKey: apsFilesObject.objectId,
+                    apsUrnKey: apsUrnObj.urn,
+        
+                }
+                return await this.fileModel.findOneAndUpdate(searchObj, updatedUrnKey).exec();
+            }else {
+                throw({"error": "File has already generated URN key."})
+            }
+        }else{
+            throw({"Error": "File not found to generate URN key."})
+        }
     }
 
     async deleteFile(fileId: string) {
@@ -93,10 +117,13 @@ export class FileService {
         return mime.lookup(extension) || 'application/octet-stream';
     }
 
-
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async saveFiles(filesData: any[]): Promise<File[]> {
         try {
+            const getFileApsUrnKey = (fileObject:File) => {
+                const fileExt = fileObject.extension.toUpperCase();
+                return APS_FORGE_CONFIG.APS_VIEWER_SUPPORTED_FORMATS.indexOf(fileExt) > -1 || fileExt.indexOf("DWG") > -1 || fileExt.indexOf("RVT") > -1 ? "PENDING" : "";
+            }
             const tmpData = filesData.map(file => ({
                 revisionId: file.revisionId || uuidv4(),
                 fileId: file.fileId || uuidv4(),
@@ -113,7 +140,7 @@ export class FileService {
                 docRef: file.docRef,
                 originalname: file.originalName,
                 zipEntryPoint: file.zipEntryPoint || "",
-                apsUrnKey: file.apsUrnKey || "",
+                apsUrnKey: getFileApsUrnKey(file),
                 apsObjKey: file.apsObjKey || ""
             }));
 
