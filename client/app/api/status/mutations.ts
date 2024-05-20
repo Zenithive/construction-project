@@ -12,6 +12,18 @@ export const CREATE_NEW_STATUS = gql`
   }
 `;
 
+export const EDIT_STATUS = gql`
+  mutation EditStatus($statusId: String!, $statusName: String!, $projId: String!, $orgId: String!, $userId: String!) {
+    editStatus(input: { statusId: $statusId, statusName: $statusName, projId: $projId, orgId: $orgId, userId: $userId }) {
+      statusId,
+      statusName,
+      projId,
+      orgId,
+      userId
+    }
+  }
+`;
+
 
 export const DELETE_Status = gql`
   mutation DeleteStatus($statusId: String!) {

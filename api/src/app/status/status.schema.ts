@@ -31,7 +31,7 @@ export class Status {
 }
 
 @InputType()
-export class GetStatusByProjId {
+export class GetStatus {
   @Field()
   projId!: string;
 }
@@ -44,7 +44,7 @@ export class CreateNewStatus {
   @Field()
   statusId!: string;
 
-  @Field()
+  @Field({ nullable: true })
   userId!: string;
 
   @Field({ nullable: true })
@@ -53,6 +53,31 @@ export class CreateNewStatus {
   @Field()
   projId!: string;
 
+}
+
+@InputType()
+export class EditStatus {
+  @Field()
+  statusName?: string;
+
+  @Field()
+  statusId?: string;
+
+  @Field({ nullable: true })
+  userId?: string;
+
+  @Field({ nullable: true })
+  orgId?: string;
+
+  @Field()
+  projId?: string;
+
+}
+
+@InputType()
+export class DeleteStatus {
+  @Field()
+  statusId!: string;
 }
 
 export const StatusSchema = SchemaFactory.createForClass(Status);

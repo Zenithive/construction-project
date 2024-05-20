@@ -1,7 +1,7 @@
 import { Box, Button, Grid, TextField } from "@mui/material";
 import ToastMessage from "../toast-message/ToastMessage";
 import { useMutation } from "@apollo/client";
-import { CREATE_NEW_STATUS } from "../../api/status/mutations";
+import { CREATE_NEW_STATUS, EDIT_STATUS } from "../../api/status/mutations";
 import { FormikHelpers, useFormik } from "formik";
 import * as Yup from 'yup';
 
@@ -9,62 +9,88 @@ export interface AddStatusComponentProps {
   visible: boolean;
   closeAddStatus: () => void;
   projId: string;
-  refetchStatuses: () => void;
+  statusId?: string;
+  statusDetails?: Status | null;
+  statusName?: string;
+  orgId: string;
+  userId: string;
 }
 
 export interface StatusFormValues {
   statusName: string;
 }
 
+export interface Status {
+  statusId: string;
+  statusName: string;
+  projId: string;
+  orgId: string;
+  userId: string;
+}
+
 const StatusSchema = Yup.object().shape({
-  statusName: Yup.string().required('Required')
+  statusName: Yup.string().required('Required'),
 });
 
 export function AddStatusComponent(props: AddStatusComponentProps) {
-  const [createNewStatus, { data, error, loading }] = useMutation(CREATE_NEW_STATUS);
+  const [createNewStatus, { data: createData, error: createError, loading: createLoading }] = useMutation(CREATE_NEW_STATUS);
+  const [editStatus, { error: updateError, loading: updateLoading }] = useMutation(EDIT_STATUS);
 
   const closeHandler = () => {
     props.closeAddStatus();
-  }
+  };
 
-  const initValue: StatusFormValues = {
-    statusName: ""
-  }
+  const initialValues: StatusFormValues = props.statusDetails ? {
+    statusName: props.statusDetails.statusName,
+  } : {
+    statusName: "",
+  };
 
-  const addStatus = async (values: StatusFormValues, { setSubmitting, resetForm }: FormikHelpers<StatusFormValues>) => {
+  const addOrUpdateStatus = async (values: StatusFormValues, { setSubmitting, resetForm }: FormikHelpers<StatusFormValues>) => {
     setSubmitting(true);
     try {
-      const res = await createNewStatus({
-        variables: {
-          projId: props.projId,
-          statusName: values.statusName,
-          statusId: "",
-          orgId: "",
-          userId:""
-        },
-      });
-      const statusId: string | null = res.data?.createNewStatus?.statusId;
-      if (statusId) {
-        resetForm();
-        closeHandler();
-        props.refetchStatuses();
+      // console.log("orgId",props.orgId);
+      // console.log("userId",props.userId);
+      if (props.statusDetails) {
+        console.log("props.statusDetails",props.statusDetails);
+        await editStatus({
+          variables: {
+            statusId: props.statusDetails.statusId,
+            statusName: values.statusName,
+            projId: props.projId,
+            orgId: props.orgId,
+            userId: props.userId,
+          },
+        });
+      } else {
+        console.log("props.orgId",props.orgId);
+        await createNewStatus({
+          variables: {
+            statusId: "",
+            statusName: values.statusName,
+            projId: props.projId,
+            orgId: props.orgId,
+            userId:props.userId,
+          },
+        });
       }
-    } catch (e) {
-      console.error('Error creating status:', e);
-    } finally {
-      setSubmitting(false);
+      resetForm();
+      closeHandler();
+    } catch (error) {
+      console.error('Error:', error);
     }
-  }
+    setSubmitting(false);
+  };
 
   const formik = useFormik({
-    initialValues: initValue,
+    initialValues,
     validationSchema: StatusSchema,
-    onSubmit: addStatus,
+    onSubmit: addOrUpdateStatus,
   });
 
   return (
     <>
-      {props.visible ? (
+      {props.visible ?
         <Box
           id='add-status-form'
           component="form"
@@ -74,18 +100,16 @@ export function AddStatusComponent(props: AddStatusComponentProps) {
         >
           <ToastMessage
             severity="success"
-            openFlag={data?.createNewStatus?.statusId ? true : false}
+            openFlag={createData?.createNewStatus?.statusId ? true : false}
             message='Status created.'
           />
-
           <ToastMessage
             severity="error"
-            openFlag={error ? true : false}
-            message='Problem while creating status.'
+            openFlag={createError || updateError ? true : false}
+            message='Problem while creating or updating status.'
           />
-
           <Grid container spacing={2}>
-            <Grid item xs={6}>
+            <Grid item xs={8}>
               <TextField
                 required
                 fullWidth
@@ -98,21 +122,36 @@ export function AddStatusComponent(props: AddStatusComponentProps) {
                 onBlur={formik.handleBlur}
                 error={formik.touched.statusName && Boolean(formik.errors.statusName)}
                 helperText={formik.touched.statusName && formik.errors.statusName}
+                value={formik.values.statusName}
               />
             </Grid>
             <Grid item xs={2}>
-              <Button disabled={loading} size="small" style={{ borderRadius: 10 }} form="add-status-form" variant="contained" type='submit'>
+              <Button
+                disabled={createLoading || updateLoading}
+                size="small"
+                style={{ borderRadius: 10 }}
+                variant="contained"
+                type='submit' 
+              >
                 Submit
               </Button>
             </Grid>
             <Grid item xs={2}>
-              <Button disabled={loading} size="small" onClick={closeHandler} style={{ borderRadius: 10 }} variant="contained" type='button' color="inherit">
+              <Button
+                disabled={createLoading || updateLoading}
+                size="small"
+                onClick={closeHandler}
+                style={{ borderRadius: 10 }}
+                variant="contained"
+                type='button'
+                color="inherit"
+              >
                 Cancel
               </Button>
             </Grid>
           </Grid>
         </Box>
-      ) : null}
+        : null}
     </>
   );
 }

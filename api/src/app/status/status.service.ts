@@ -1,7 +1,7 @@
 import { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Status,CreateNewStatus, StatusDocument,GetStatusByProjId } from './status.schema';
+import { Status,CreateNewStatus, StatusDocument,GetStatus,EditStatus } from './status.schema';
 import { v4 as uuidv4 } from 'uuid';
 import { PermissionService } from '../permissions/permissions.service';
 
@@ -12,16 +12,16 @@ export class StatusService {
     private permissionService: PermissionService
   ) {}
 
-  async getStatus(status: GetStatusByProjId) {
+  async getStatus(status: GetStatus) {
     return this.statusModel.find({ projId: status.projId });
   }
 
   async CreateNewStatus(statusData: CreateNewStatus): Promise<Status> {
     const { statusName, userId, orgId, projId } = statusData;
 
-    const existingStatus = await this.statusModel.findOne({ statusName, projId });
+    const existingStatus = await this.statusModel.findOne({ statusName, projId ,orgId,userId});
     if (existingStatus) {
-      throw new Error('A status with the same name already exists in this project.');
+      throw new Error('A status with the same name already exists.');
     }
 
     const statusId = uuidv4();
@@ -37,6 +37,29 @@ export class StatusService {
 
     const savedStatus = await newStatus.save();
     return savedStatus;
+  }
+
+  async editStatus(statusData: EditStatus): Promise<Status> {
+    const { statusId, statusName, userId, orgId, projId } = statusData;
+
+    const updatedStatus = await this.statusModel.findOneAndUpdate(
+      { statusId },
+      { statusName, userId, orgId, projId },
+      { new: true } 
+    );
+
+    if (!updatedStatus) {
+      throw new Error('Status not found');
+    }
+
+    return updatedStatus;
+  }
+
+  async deletestatus(id: string) {
+    const searchStatus = {
+      statusId: id,
+    };
+    return this.statusModel.findOneAndDelete(searchStatus).exec();
   }
 
 }

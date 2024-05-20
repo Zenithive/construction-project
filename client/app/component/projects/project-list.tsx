@@ -14,14 +14,15 @@ import RolesComponent from '../Roles/role.component';
 import PermissionComponent from '../Permission/permission.component';
 import { SelectChangeEvent } from '@mui/material/Select';
 import { PaginationComponent } from '../Pagination/pagination.component';
-
-
+import { useAppSelector } from '../../reducers/hook.redux';
+import { UserSchema, selectUserSession } from '../../reducers/userReducer';
 
 // Sachin Import
 import { DELETE_PROJECT } from '../../api/project/mutations';
 
 import { useMutation } from '@apollo/client';
 import StatusComponent from '../status/status.component';
+
 
 
 export interface ProjectListWrapperProps {
@@ -31,6 +32,8 @@ export interface ProjectListWrapperProps {
 interface DotPopoverProps {
     treeId: string;
     toggleAddFolder: CallableFunction;
+    userId:string;
+    orgId:string;
 }
 
 
@@ -40,8 +43,12 @@ export const ProjectListWrapper = ({ listRefresh }: ProjectListWrapperProps) => 
     const [totalPages, setTotalPages] = useState(0);
     const [showRoles, setShowRoles] = useState(false)
     const [currentProj, setCurrentProj] = useState("");
+    const [currentOrg, setCurrentOrg] = useState("");
+    const [currentUser,setCurrentUser]=useState("")
     const [showPermissions, setShowPermissions] = useState(false)
     const [showStatus,setShowStatus]=useState(false);
+
+    const userDetails: UserSchema = useAppSelector(selectUserSession);
 
     const { data, refetch } = useQuery(GET_PROJECTS, {
         variables: { pageSize, currentPage },
@@ -78,7 +85,7 @@ export const ProjectListWrapper = ({ listRefresh }: ProjectListWrapperProps) => 
         // Other grid options...
         domLayout: 'autoHeight'
     };
-    const DotPopoverMenu = ({ treeId, toggleAddFolder }: DotPopoverProps) => {
+    const DotPopoverMenu = ({ treeId, toggleAddFolder,userId,orgId }: DotPopoverProps) => {
         const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
 
         const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -94,17 +101,24 @@ export const ProjectListWrapper = ({ listRefresh }: ProjectListWrapperProps) => 
             setCurrentProj(treeId);
             setShowRoles(true);
             handleClose(event)
+            setCurrentOrg(orgId);
+            setCurrentUser(userId);
+
         }
 
         const openPermissionModal = (event: React.MouseEvent<HTMLLIElement>) => {
             setShowPermissions(true);
             setCurrentProj(treeId);
             handleClose(event)
+            setCurrentOrg(orgId);
+            setCurrentUser(userId);
         }
         const openStatusesModal = (event: React.MouseEvent<HTMLLIElement>) => {
             handleClose(event);
             setShowStatus(true);
             setCurrentProj(treeId);
+            setCurrentOrg(orgId);
+            setCurrentUser(userId);
         }
 
         const open = Boolean(anchorEl);
@@ -160,7 +174,7 @@ export const ProjectListWrapper = ({ listRefresh }: ProjectListWrapperProps) => 
         >
             <Col css={{ d: 'flex' }}>
                 <Tooltip content="More Setting">
-                    <DotPopoverMenu treeId={data.projId} toggleAddFolder={() => { }}></DotPopoverMenu>
+                    <DotPopoverMenu treeId={data.projId} orgId={data.orgId} userId={userDetails.userId} toggleAddFolder={() => { }}></DotPopoverMenu>
                 </Tooltip>
             </Col>
             <Col css={{ d: 'flex' }}>
@@ -253,6 +267,8 @@ export const ProjectListWrapper = ({ listRefresh }: ProjectListWrapperProps) => 
                     closeStatusModel={() => setShowStatus(false)}
                     statusId=""
                     statusName=""
+                    orgId={currentOrg}
+                    userId={currentUser}
                 />
 
             <Box component="div" className='ag-theme-quartz' sx={{ height: '450px', mt: 2,  overflowX:"auto", overflowY: 'auto' }}>
