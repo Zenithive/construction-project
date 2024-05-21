@@ -1,10 +1,13 @@
 import { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { File, FileDocument, PaginationInputF, UploadFileInput } from './file.schema';
+import { DeleteFileInput, File, FileDocument, PaginationInputF, UploadFileInput } from './file.schema';
+//import { FileStorageUtil } from '../util/file-storage.util';
 import { ApsForgeService } from '../aps-forge/aps.forge.service';
 import { FolderService } from '../folder/folder.service'
+// import  {getFolderTreeIds} from '../folder/folder.service'
 import { Document } from 'mongoose';
+import { UserId } from '../user/user.schema';
 import { v4 as uuidv4 } from 'uuid';
 import path from 'path';
 import mime from 'mime';
@@ -60,12 +63,10 @@ export class FileService {
     async getFileByFolderId(paginationInputF: PaginationInputF) {
         const { pageSize, currentPage, folderId } = paginationInputF;
         const skip = pageSize * (currentPage - 1);
-        let query = {}; //  logic for the folderId as it is also in input 
+        let query: any = { status: { $ne: 'Inactive' } }; //  logic for the folderId as it is also in input 
         if (folderId) {
             const folderIds = await this.folderService.getFolderTreeIds(folderId);
-            query = { folderId: { $in: folderIds } };
-        } else {
-            query = { status: { $ne: 'Inactive' } };
+            query = {...query, folderId: { $in: folderIds } };
         }
 
         const totalFiles = await this.fileModel.countDocuments(query);
@@ -88,6 +89,7 @@ export class FileService {
         };
     }
 
+
     getFileContentType(filePath: string) {
         const extension = path.extname(filePath).slice(1).toLowerCase();
         return mime.lookup(extension) || 'application/octet-stream';
@@ -95,6 +97,7 @@ export class FileService {
 
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     async saveFiles(filesData: any[]): Promise<File[]> {
         try {
             const tmpData = filesData.map(file => ({
