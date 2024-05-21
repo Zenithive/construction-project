@@ -177,7 +177,7 @@ export class DeleteFileInput {
 @InputType()
 export class GetSingleFileInput {
   @Field()
-  urn!: string;
+  revisionId!: string;
 }
 
 export const FileSchema = SchemaFactory.createForClass(File);

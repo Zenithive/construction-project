@@ -72,19 +72,8 @@ export const FilesListWrapper = ({ listRefresh, folderIdHook }: FilesListWrapper
       setCurrentPage(newPage);
    };
 
-
-
-
-
-
-
-   // Sachin Code to delete the files
-
-   // Define the deleteProject mutation function
    const [deleteFile] = useMutation(DELETE_FILE_MEMBERSH);
 
-
-   // Function to handle project deletion
    const handleDeleteFiles = async (fileId: string) => {
       try {
          // Execute the deleteFile mutation with the fieldId as variable
@@ -135,15 +124,23 @@ export const FilesListWrapper = ({ listRefresh, folderIdHook }: FilesListWrapper
 
    // eslint-disable-next-line @typescript-eslint/no-explicit-any
    const FileNameRenderer = ({ value, data }: any) => (
-      <Link
-         variant="body2"
-         underline="none"
-         target="_blank"
-         rel="noopener"
-         href={data.apsUrnKey ? `/viewer?id=${data.revisionId}` : `/web-viewer?id=${data.revisionId}`}
-      >
-         {value}
-      </Link>
+      <>
+         {data.apsUrnKey !== "PENDING" ? <Link
+            variant="body2"
+            underline="none"
+            target="_blank"
+            rel="noopener"
+            href={data.apsUrnKey ? `/viewer?id=${data.revisionId}` : `/web-viewer?id=${data.revisionId}`}
+         >
+            {value}
+         </Link> : <Tooltip
+               content="Please wait, generating APS metadata"
+               color="error"
+               onClick={() => {}}
+            >
+               {value}
+            </Tooltip>}
+      </>
    );
 
    const colDefs = [

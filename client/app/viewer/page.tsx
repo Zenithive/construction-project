@@ -24,7 +24,7 @@ const theme = createTheme();
 export default function Viewer() {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [urn, setUrn] = useState("");
+  const [revisionId, setRevisionId] = useState("");
   const [isJSLoader, setIsJSLoader] = useState(true);
   // const [allData, setAllData] = useState([]);
 
@@ -40,29 +40,31 @@ export default function Viewer() {
   // }
 
   useEffect(() => {
-    const urnId = searchParams.get('id');
+    const revisionId = searchParams.get('id');
 
-    if (urnId && !urn) {
-      setUrn(urnId);
-      console.log("urnId", urnId)
-      GetSingleFile(urnId);
+    if (revisionId) {
+      //setUrn(urnId);
+      console.log("urnId", revisionId)
+      setRevisionId(revisionId);
+      GetSingleFile(revisionId);
     }
-  }, [urn])
+  }, [revisionId])
 
 
-  const [GetOneFile, { data }] = useLazyQuery(GET_ONE_FILE);
+  const [GetOneFile] = useLazyQuery(GET_ONE_FILE);
 
   const [fileData, setFileData] = useState({
-    tmpData: null, // s
-    data: null,    // s
-    originalname: ''
-  }
+      tmpData: null, // s
+      data: null,    // s
+      originalname: '',
+      urn: ""
+    }
   );
-  const GetSingleFile = async (urn: string) => {
+  const GetSingleFile = async (revisionId: string) => {
     // Define state variables to store file data
     const tmpData = await GetOneFile({
       variables: {
-        urn
+        revisionId
       }
     });
 
@@ -71,16 +73,11 @@ export default function Viewer() {
     setFileData((prevData) => ({
       ...prevData,
       tmpDatas: tmpData,
+      urn: tmpData?.data?.getOneFile?.apsUrnKey || '',
       originalname: tmpData?.data?.getOneFile?.originalname || ''
     }));
 
-    console.log("tmpData", tmpData);
-    console.log("data", data);
-
-    // Fetch file details using GraphQL query
   }
-
-
 
 
   //////  Downlaod file ////////////
@@ -133,7 +130,7 @@ export default function Viewer() {
               {isJSLoader ? <h1>
                 {/* Loading.... */}
                 <CircularProgress />
-              </h1> : <ViewerComponent urn={urn}></ViewerComponent>}
+              </h1> : <ViewerComponent urn={fileData?.urn || ""}></ViewerComponent>}
             </Box>
 
           </Box>

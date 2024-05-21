@@ -21,12 +21,12 @@ services:
         - 4200:4200
       environment:
         NODE_ENV: production
-        MONGO_URL: mongodb://mongo_db:27017
+        MONGO_URL: mongodb+srv://admin:123456@aA@atlascluster.nxofdmq.mongodb.net/?retryWrites=true&w=majority&appName=AtlasCluster
         DB_NAME: rof
         SERVER_URL: http://zenithive.co.uk:3000/
         SERVER_API: http://zenithive.co.uk:3000/api/
-        APS_CLIENT_ID : EbAv1ybr2Va7nowXrmnXPq3ymEhKMG5k
-        APS_CLIENT_SECRET : i8uk12vSGTjBMqAL
+        APS_CLIENT_ID : eG4diRxL3qCNbqYTGTlMWvAHVIE8u6PURMfcBakZUsSKyJCw
+        APS_CLIENT_SECRET : YGrPi2GGoUPtcUUQWql6iXVZNBCl9GypRmAVqbSN5xGcNQpyX92lgI7OeaU3y49d
         PDFTronWebViewerKey: demo:1715368856424:7fcdcf250300000000b8633dea5148478e0b8c60334c950fa36119aa99
       depends_on:
         - mongo_db
