@@ -1,6 +1,6 @@
 import { Col, Row, Tooltip } from '@nextui-org/react';
 import { GridOptions } from 'ag-grid-community';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { GET_FILES_BY_FOLDER_ID } from '../../api/file/queries';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
@@ -27,12 +27,21 @@ export const FilesListWrapper = ({ listRefresh, folderIdHook }: FilesListWrapper
    const [pageSize, setPageSize] = useState(10); //
    const [currentPage, setCurrentPage] = useState(1); //
    const [totalPages, setTotalPages] = useState(0);   //
+   const gridRef = useRef<AgGridReact>(null);
 
-   const { data, refetch } = useQuery(GET_FILES_BY_FOLDER_ID, {
+   const { data, loading, refetch } = useQuery(GET_FILES_BY_FOLDER_ID, {
       variables: { folderId: (folderIdHook.folderId || ""), pageSize, currentPage },///
       notifyOnNetworkStatusChange: true, ///
       fetchPolicy: "network-only" ///
    });
+
+   useEffect(() => {
+      if (loading) {
+         gridRef.current?.api?.showLoadingOverlay();
+      }else{
+         gridRef.current?.api?.hideOverlay();
+      }
+   }, [loading]);
 
    useEffect(() => {
       if (data?.getFileByFolderId) {
@@ -41,31 +50,23 @@ export const FilesListWrapper = ({ listRefresh, folderIdHook }: FilesListWrapper
    }, [data]);
 
    useEffect(() => {
-      console.log("folderIdHook.folderId", folderIdHook.folderId)
       refetch();
    }, [listRefresh, refetch, pageSize, currentPage]);
 
    useEffect(() => {
-      console.log("folderIdHook.folderId", folderIdHook.folderId)
-      // refetch();
       setCurrentPage(1);
    }, [ folderIdHook.folderId]);
 
    
 
    useEffect(() => {
-      console.log("pageSize:", pageSize);
-      console.log("currentPage:", currentPage);
       refetch({ variables: { pageSize, currentPage } });
    }, [pageSize, currentPage, refetch]);
-
-
 
 
    const handlePageSizeChange = (event: SelectChangeEvent<number>) => {
       const newSize = Number(event.target.value);
       setPageSize(newSize);
-      // setCurrentPage(1); // Reset current page when changing page size
    };
 
    const handlePageChange = (newPage: number) => {
@@ -190,7 +191,7 @@ export const FilesListWrapper = ({ listRefresh, folderIdHook }: FilesListWrapper
                rowData={data?.getFileByFolderId.files || []}
                columnDefs={colDefs}
                gridOptions={gridOptions}
-
+               ref={gridRef}
             />
          </Box>
 

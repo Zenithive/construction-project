@@ -105,7 +105,6 @@ export class RoleService {
         isDefaultRole:role.isDefaultRole
       }
     }, { new: true });
-    console.log("existingRole",existingRole)
     if (!existingRole) {
       throw new Error('User not found');
     }

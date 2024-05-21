@@ -1,7 +1,7 @@
 import { Divider, Modal, Text } from '@nextui-org/react';
 import React, { useEffect } from 'react';
 import * as Yup from 'yup';
-import { Box, Button, Grid, TextField } from '@mui/material';
+import { Box, Button, CircularProgress, Grid, TextField } from '@mui/material';
 import { FormikHelpers, useFormik } from 'formik';
 import { useMutation } from '@apollo/client';
 import { CREATE_ORGANISATION } from '../../api/organisation/mutations';
@@ -213,9 +213,9 @@ export const AddOrganisation = ({ setListRefresh, organizationData, setOrganizat
             </Modal.Body>
             <Divider css={{ my: '$5' }} />
             <Modal.Footer>
-               <Button disabled={loading} style={{ borderRadius: 10 }} variant="contained" type='submit' form="add-org-form">
+               {loading ? <CircularProgress size={20} /> : <Button disabled={loading} style={{ borderRadius: 10 }} variant="contained" type='submit' form="add-org-form">
                   {organizationData ? "Edit Organisation" : "Add Organisation"}
-               </Button>
+               </Button>}
             </Modal.Footer>
          </Modal>
       </>

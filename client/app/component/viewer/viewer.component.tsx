@@ -24,13 +24,13 @@ export default function ViewerComponent(props: ViewerCompoentProps)  {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [viewer, setViewer] = useState<any>(null)
   const [ accessToken, setAccessToken] = useState("")
-  const [ error, setError] = useState(false)
+  const [ error, setError] = useState({} as Error)
 
   const getAccessToken = ()=>{
     axios.get(`${CONFIG.server_api}aps/getApsForgeToken`).then(response => {
         setAccessToken(response.data.access_token);
-    },()=>{
-        setError(true);
+    },(error: Error)=>{
+        setError(error);
     });
   }
 
@@ -57,11 +57,8 @@ export default function ViewerComponent(props: ViewerCompoentProps)  {
         const viewer = new Autodesk.Viewing.GuiViewer3D(viewerRef.current, config);
         viewer.start();
         viewer.setTheme('light-theme');
-        // viewer
         viewer.resize();
 
-
-        // Load Document
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const onDocumentLoadSuccess = async (doc: any) => {
             await viewer.loadDocumentNode(doc, doc.getRoot().getDefaultGeometry());
@@ -85,14 +82,8 @@ export default function ViewerComponent(props: ViewerCompoentProps)  {
         }
 
         viewer.setLightPreset(0);
-        //if (registerExtensionsCallback) registerExtensionsCallback(viewer);
-
         setViewer(viewer);
-
         Autodesk.Viewing.Document.load('urn:' + urn, onDocumentLoadSuccess, onDocumentLoadFailure);
-
-
-
     });
 
 
@@ -111,8 +102,9 @@ export default function ViewerComponent(props: ViewerCompoentProps)  {
     <>
         <ToastMessage 
             severity="error"
-            openFlag={error ? true : false } 
-            message='Problem while loading the viewer. Please try again or contact support.'
+            title='Problem while loading the file'
+            openFlag={(error?.message || "") ? true : false } 
+            message={error?.message || ""}
           ></ToastMessage>
         <Box ref={viewerRef}></Box>
     </>

@@ -16,7 +16,7 @@ export class AuthGuard implements CanActivate {
     const loginInput = ctx.req.body.variables;
     const user: User| null  = await  this.userService.getUserByEmail(loginInput.email);
     if (!user) {
-        throw new Error('User not found');
+        throw new Error('User not found. Please try with different credentials or signup with this email.');
       }
     const isPasswordValid = await bcrypt.compare(loginInput.password, user.password);
 

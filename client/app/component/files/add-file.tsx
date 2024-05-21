@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import * as Yup from 'yup';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { UploadFileComponent } from './upload.file.component';
-import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material';
+import { Box, CircularProgress, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material';
 import { FormikHelpers, useFormik } from 'formik';
 import { toggleUploadModalInterface, FolderIdInterface } from '../../files/page';
 import { useAppSelector } from '../../reducers/hook.redux';
@@ -123,7 +123,8 @@ export const AddFile = ({ setListRefresh, toggleUploadModalHook, folderIdHook }:
             <ToastMessage 
                severity="error" 
                openFlag={error ? true : false } 
-               message='Problem while generating APS URN key of file.'
+               title='Problem while generating APS URN key.'
+               message={error?.message || ""}
             ></ToastMessage>
          </>
       );
@@ -194,16 +195,14 @@ export const AddFile = ({ setListRefresh, toggleUploadModalHook, folderIdHook }:
    const submitForm = async (values: FileSchemaArrayType, { resetForm, setSubmitting }: FormikHelpers<FileSchemaArrayType>) => {
       setSubmitting(true);
 
-
       const filesWithUserId = values.files.map(file => ({
          ...file,
-         userId: userId ?? '', // Ensure userId is added to each file object
+         userId: userId ?? '',
       }));
 
       try {
          const response = await axios.post(`${CONFIG.server_api}files/post`, filesWithUserId, {
             headers: { 'Content-Type': 'application/json' },
-
          });
 
          if (response.status === 201) {
@@ -220,8 +219,8 @@ export const AddFile = ({ setListRefresh, toggleUploadModalHook, folderIdHook }:
                }
             }
             setFileIdForURN(tmpFileIdsArray);
+            setFileData([]);
          }
-
       } catch (error) {
          console.error('Error saving files:', error);
       } finally {
@@ -369,19 +368,16 @@ export const AddFile = ({ setListRefresh, toggleUploadModalHook, folderIdHook }:
             </Modal.Body>
             <Divider css={{ my: '$5' }} />
             <Modal.Footer>
-               <Button
+               {formik.isSubmitting ? <CircularProgress size={20} /> : <Button
                   style={{ borderRadius: 10 }}
                   variant="contained"
                   type='submit'
                   form="save-file-form"
                >
                   Add File
-               </Button>
+               </Button>}
             </Modal.Footer>
          </Modal>
-
-
-
       </>
    );
 };

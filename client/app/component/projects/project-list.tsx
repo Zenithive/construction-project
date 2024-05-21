@@ -1,5 +1,5 @@
 import { Col, Row, Tooltip } from '@nextui-org/react';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { GET_PROJECTS } from '../../api/project/queries';
 import { useQuery } from '@apollo/client';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
@@ -38,6 +38,7 @@ interface DotPopoverProps {
 
 
 export const ProjectListWrapper = ({ listRefresh }: ProjectListWrapperProps) => {
+    const gridRef = useRef<AgGridReact>(null);
     const [pageSize, setPageSize] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
@@ -50,18 +51,24 @@ export const ProjectListWrapper = ({ listRefresh }: ProjectListWrapperProps) => 
 
     const userDetails: UserSchema = useAppSelector(selectUserSession);
 
-    const { data, refetch } = useQuery(GET_PROJECTS, {
+    const { data, refetch, loading } = useQuery(GET_PROJECTS, {
         variables: { pageSize, currentPage },
         notifyOnNetworkStatusChange: true,
         fetchPolicy: "network-only"
-
     });
+
+    useEffect(() => {
+        if (loading) {
+           gridRef.current?.api?.showLoadingOverlay();
+        }else{
+           gridRef.current?.api?.hideOverlay();
+        }
+     }, [loading]);
 
     useEffect(() => {
         if (data?.getProjects) {
             setTotalPages(data.getProjects.totalPages);
         }
-
     }, [data]);
 
 
@@ -79,7 +86,6 @@ export const ProjectListWrapper = ({ listRefresh }: ProjectListWrapperProps) => 
     const handlePageChange = (newPage: number) => {
         setCurrentPage(newPage);
     };
-
 
     const gridOptions: GridOptions = {
         // Other grid options...
@@ -277,6 +283,7 @@ export const ProjectListWrapper = ({ listRefresh }: ProjectListWrapperProps) => 
                     columnDefs={colDefs}
                     defaultColDef={defaultColDef}
                     gridOptions={gridOptions}
+                    ref={gridRef}
                 />
 
             </Box>

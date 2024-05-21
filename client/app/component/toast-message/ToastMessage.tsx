@@ -1,4 +1,4 @@
-import { Alert, AlertColor, Snackbar } from '@mui/material';
+import { Alert, AlertColor, AlertTitle, Snackbar } from '@mui/material';
 import { useEffect, useState } from 'react';
 
 /* eslint-disable-next-line */
@@ -6,6 +6,7 @@ export interface ToastMessageProps {
   message?: string;
   openFlag: boolean;
   severity: AlertColor;
+  title?: string;
 }
 
 export function ToastMessage(props: ToastMessageProps) {
@@ -19,6 +20,7 @@ export function ToastMessage(props: ToastMessageProps) {
   return (
     <Snackbar anchorOrigin={{ vertical: "top", horizontal: "right" }} open={ toggleOpen } autoHideDuration={3000} onClose={()=>{setToggleOpen(false)}}>
       <Alert severity={props.severity} sx={{ width: '100%' }}>
+        {props.title ? <AlertTitle>{props.title || ""}</AlertTitle> : ""}
         {props.message || "Hello World"}
       </Alert>
     </Snackbar>

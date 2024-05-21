@@ -134,8 +134,9 @@ export function AddRolesComponent(props: RolesComponentProps) {
           />
           <ToastMessage
             severity="error"
+            title="Problem while creating or updating role."
             openFlag={createError || updateError ? true : false}
-            message='Problem while creating or updating role.'
+            message={(createError || updateError)?.message || ""}
           />  
           <Grid container spacing={2}>
             <Grid item xs={3}>

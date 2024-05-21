@@ -161,13 +161,15 @@ export function PermissionComponent(props: PermissionComponentProps) {
           <ToastMessage
             severity="error"
             openFlag={error ? true : false}
-            message='Problem while fetching roles.'
+            title="Problem while fetching roles."
+            message={error?.message || ""}
           ></ToastMessage>
 
           <ToastMessage
             severity="error"
+            title="Problem while updating permission."
             openFlag={updatePermissionError ? true : false}
-            message='Problem while updating permission.'
+            message={updatePermissionError?.message || ""}
           ></ToastMessage>
         </Box>
         <Divider sx={{ my: '$5' }} />

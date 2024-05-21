@@ -176,7 +176,11 @@ export function RolesComponent(props: RolesComponentProps) {
               </IconButton>
             </Grid>
           </Grid>
-          <ToastMessage severity="error" openFlag={!!rolesError || !!usersError} message="Problem while fetching data." />
+          <ToastMessage 
+            severity="error" 
+            title="Problem while fetching roles data."
+            openFlag={!!rolesError || !!usersError} 
+            message={(rolesError || usersError)?.message || ""} />
         </Box>
         <Divider sx={{ my: '$5' }} />
 

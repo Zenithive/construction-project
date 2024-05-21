@@ -53,7 +53,7 @@ export default function Signup(props: SignupProps)  {
   const formSubmit = async (values: FormValues, { setSubmitting, resetForm }:any) => {
     setSubmitting(true);
 
-   await createUser({
+   const tmpData = await createUser({
       variables: {
         userId: "",
         email: values.email,
@@ -63,7 +63,7 @@ export default function Signup(props: SignupProps)  {
       }
     });
 
-    if(data?.createUser?.email){
+    if(tmpData.data?.createUser?.email){
       resetForm();
       router.push("/login");
     }
@@ -83,7 +83,7 @@ export default function Signup(props: SignupProps)  {
         <CssBaseline />
         <Box
           sx={{
-            borderRadius: "7px",
+            borderRadius: 3,
             marginTop: 8,
             display: "flex",
             flexDirection: "column",
@@ -102,13 +102,14 @@ export default function Signup(props: SignupProps)  {
 
           <ToastMessage 
             severity="error" 
+            title='Problem while signup.'
             openFlag={error ? true : false } 
-            message='Problem while signup. Please try again'
+            message={`Please try again. ${error?.message || ""}`}
           ></ToastMessage>
 
           <Box 
             component="div"
-            sx={{bgcolor: "text.secondary" , width: "90%", textAlign:"center", paddingY:"15px", marginTop: "-60px", borderRadius: "5px"}}>
+            sx={{bgcolor: "text.secondary" , width: "90%", textAlign:"center", paddingY:"15px", marginTop: "-60px", borderRadius: 3}}>
               
             <Typography component="h1" variant="h5" color={"#ffffff"}>
               Sign up
@@ -126,6 +127,7 @@ export default function Signup(props: SignupProps)  {
                   <TextField
                     autoComplete="false"
                     name="firstName"
+                    InputProps={{sx: {borderRadius: 3}}}
                     fullWidth
                     id="firstName"
                     label="First Name"
@@ -141,6 +143,7 @@ export default function Signup(props: SignupProps)  {
                   <TextField
                     fullWidth
                     id="lastName"
+                    InputProps={{sx: {borderRadius: 3}}}
                     label="Last Name"
                     name="lastName"
                     autoComplete="false"
@@ -156,6 +159,7 @@ export default function Signup(props: SignupProps)  {
                   <TextField
                     fullWidth
                     id="email"
+                    InputProps={{sx: {borderRadius: 3}}}
                     label="Email Address"
                     name="email"
                     autoComplete="false"
@@ -169,6 +173,7 @@ export default function Signup(props: SignupProps)  {
                 <Grid item xs={12}>
                   <TextField
                     fullWidth
+                    InputProps={{sx: {borderRadius: 3}}}
                     name="password"
                     label="Password"
                     type="password"
@@ -194,7 +199,7 @@ export default function Signup(props: SignupProps)  {
                 type="submit"
                 fullWidth
                 variant="contained"
-                sx={{ mt: 3, mb: 2 }}
+                sx={{ mt: 3, mb: 2, borderRadius: 3 }}
               >
                 Sign Up
               </Button>}

@@ -1,6 +1,6 @@
 import { Divider, Modal, Text } from '@nextui-org/react';
 import React, { useEffect } from 'react';
-import { Autocomplete, Box, Button, Grid, TextField    } from '@mui/material';
+import { Autocomplete, Box, Button, CircularProgress, Grid, TextField    } from '@mui/material';
 import { FormikHelpers, useFormik } from 'formik';
 import * as Yup from 'yup';
 import {  useMutation } from '@apollo/client';
@@ -195,7 +195,8 @@ export const AddUser = ({ setListRefresh, userData, setUSERDATA }: AddUserProps)
                <ToastMessage
                   severity="error"
                   openFlag={error ? true : false}
-                  message='Problem while creating user.'
+                  title='Problem while creating user.'
+                  message={error?.message || ""}
                ></ToastMessage>
             </Modal.Header>
             <Divider css={{ my: '$5' }} />
@@ -329,9 +330,9 @@ export const AddUser = ({ setListRefresh, userData, setUSERDATA }: AddUserProps)
             </Modal.Body>
             <Divider css={{ my: '$5' }} />
             <Modal.Footer>
-               <Button disabled={loading} style={{ borderRadius: 10 }} variant="contained" type='submit' form="add-user-form">
+               {loading ? <CircularProgress size={20} /> : <Button disabled={loading} style={{ borderRadius: 10 }} variant="contained" type='submit' form="add-user-form">
                   {userData ? "Edit User" : "Add User"}
-               </Button>
+               </Button>}
             </Modal.Footer>
          </Modal>
       </>

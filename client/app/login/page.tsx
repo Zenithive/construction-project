@@ -85,7 +85,7 @@ export default function Login(props: LoginProps) {
             flexDirection: "column",
             alignItems: "center",
             padding: 3,
-            borderRadius: "7px",
+            borderRadius: 3,
             boxShadow:3,
             bgcolor: "#ffffff"
           }}
@@ -99,12 +99,20 @@ export default function Login(props: LoginProps) {
           <ToastMessage 
             severity="error" 
             openFlag={error ? true : false } 
-            message='Problem while Login. Please try with diffetent credentials.'
+            title='Problem while Login'
+            message={error?.message || ""}
           ></ToastMessage>
           
           <Box 
             component="div"
-            sx={{bgcolor: "text.secondary" , width: "90%", textAlign:"center", paddingY:"15px", marginTop: "-60px", borderRadius: "5px"}}>
+            sx={{ 
+              bgcolor: "text.secondary", 
+              width: "90%", 
+              textAlign:"center", 
+              paddingY:"15px", 
+              marginTop: "-60px", 
+              borderRadius: 3
+            }}>
             <Typography component="h1" variant="h5" color={"#ffffff"}>
               Login
             </Typography>
@@ -124,6 +132,7 @@ export default function Login(props: LoginProps) {
                   id="email"
                   label="Email Address"
                   name="email"
+                  InputProps={{sx: {borderRadius: 3}}}
                   autoComplete="off"
                   value={formik.values.email}
                   onChange={formik.handleChange}
@@ -136,6 +145,7 @@ export default function Login(props: LoginProps) {
                 <TextField
                   required
                   fullWidth
+                  InputProps={{sx: {borderRadius: 3}}}
                   name="password"
                   label="Password"
                   type="password"
@@ -155,7 +165,7 @@ export default function Login(props: LoginProps) {
               fullWidth
               variant="contained"
               form="login-form"
-              sx={{ mt: 3, mb: 2 }}
+              sx={{ mt: 3, mb: 2, borderRadius: 3 }}
             >
               Login
             </Button>

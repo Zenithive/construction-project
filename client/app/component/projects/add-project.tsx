@@ -4,7 +4,7 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useMutation, useQuery } from '@apollo/client';
 import ToastMessage from '../toast-message/ToastMessage';
-import { Autocomplete, Box, Button, Grid, TextField } from '@mui/material';
+import { Autocomplete, Box, Button, CircularProgress, Grid, TextField } from '@mui/material';
 import { CREATE_PROJECT } from '../../api/project/mutations';
 import { UserSchema, selectUserSession } from '../../reducers/userReducer';
 import { useAppSelector } from '../../reducers/hook.redux';
@@ -145,7 +145,8 @@ export const AddProject = ({setListRefresh}:AddProjectProps) => {
                <ToastMessage 
                   severity="error" 
                   openFlag={error ? true : false } 
-                  message='Problem while creating project.'
+                  title='Problem while creating project.'
+                  message={error?.message || ""}
                ></ToastMessage>
             </Modal.Header>
             <Divider css={{my: '$5'}} />
@@ -268,9 +269,9 @@ export const AddProject = ({setListRefresh}:AddProjectProps) => {
             </Modal.Body>
             <Divider css={{my: '$5'}} />
             <Modal.Footer>
-               <Button disabled={loading} style={{borderRadius: 10}} variant="contained" type='submit' form="add-project-form">
+               {loading ? <CircularProgress size={20} /> : <Button disabled={loading} style={{borderRadius: 10}} variant="contained" type='submit' form="add-project-form">
                   Add Project
-               </Button>
+               </Button>}
             </Modal.Footer>
          </Modal>
       </>
