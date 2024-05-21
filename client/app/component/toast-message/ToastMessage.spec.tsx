@@ -4,7 +4,7 @@ import ToastMessage from './ToastMessage';
 
 describe('ToastMessage', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<ToastMessage />);
+    const { baseElement } = render(<ToastMessage openFlag={false} severity="error"/>);
     expect(baseElement).toBeTruthy();
   });
 });

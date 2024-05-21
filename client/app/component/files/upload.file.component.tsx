@@ -60,6 +60,7 @@ export const UploadFileComponent = (props: UploadFileProps) => {
          formik.resetForm();
          setUploading(false);
          setLoading(false);
+         setTotalUploadedFiles(0);
       }
    }, [totalUploadedFiles, selectedFiles]);
 

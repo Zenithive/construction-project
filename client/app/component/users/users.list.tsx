@@ -1,5 +1,5 @@
 import { Col, Row, Tooltip } from '@nextui-org/react';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useQuery } from '@apollo/client';
 import { GET_USERS } from '../../api/user/queries';
 import { Box} from '@mui/material';
@@ -22,59 +22,53 @@ export interface UserLiserWrapperProps {
 
 
 export const UserLiserWrapper = ({ listRefresh, setUSERDATA }: UserLiserWrapperProps) => {
+   const gridRef = useRef<AgGridReact>(null);
    const [pageSize, setPageSize] = useState(10);
    const [currentPage, setCurrentPage] = useState(1);
    const [totalPages, setTotalPages] = useState(0);
 
 
-   const { data, refetch } = useQuery(GET_USERS, {
+   const { data, refetch, loading } = useQuery(GET_USERS, {
       variables: { pageSize, currentPage },
       notifyOnNetworkStatusChange: true,
       fetchPolicy: "network-only"
 
    });
+
    useEffect(() => {
-      console.log("Data", data)
+      if (loading) {
+         gridRef.current?.api?.showLoadingOverlay();
+      }else{
+         gridRef.current?.api?.hideOverlay();
+      }
+   }, [loading]);
+
+   useEffect(() => {
       if (data?.getUsers) {
          setTotalPages(data.getUsers.totalPages);
       }
-      console.log("if", data?.getUsers);
-
    }, [data]);
 
 
    useEffect(() => {
-      console.log("pageSize:", pageSize);
-      console.log("currentPage:", currentPage);
       refetch({ variables: { pageSize, currentPage } });
-   }, [pageSize, currentPage, refetch]);
-
-   
+   }, [pageSize, currentPage, refetch]); 
 
    const handlePageSizeChange = (event: SelectChangeEvent<number>) => {
       const newSize = Number(event.target.value);
       setPageSize(newSize);
       setCurrentPage(1);
-
    };
-
 
    const handlePageChange = (newPage: number) => {
       setCurrentPage(newPage);
    };
 
-
-
-   // Define the deleteProject mutation function    **********  delete functionality
    const [deleteUser] = useMutation(DELETE_USER);
 
-   // Function to handle project deletion
    const handleDeleteProject = async (userId: string) => {
-      console.log("userId", userId)
       try {
-         // Execute the deleteProject mutation with the projectId as variable
          await deleteUser({ variables: { userId } });
-         // Refetch projects after deletion
          refetch();
       } catch (error) {
          console.error('Error deleting project:', error);
@@ -85,7 +79,6 @@ export const UserLiserWrapper = ({ listRefresh, setUSERDATA }: UserLiserWrapperP
    const handleEditUser = (datas: any) => {
       setUSERDATA(datas);
    }
-
 
    // eslint-disable-next-line @typescript-eslint/no-explicit-any
    const ActionRenderer = ({ value, data }: any) => (
@@ -134,7 +127,6 @@ export const UserLiserWrapper = ({ listRefresh, setUSERDATA }: UserLiserWrapperP
          field: 'name',
          sortable: true,
          filter: true,
-         // Use valueGetter to concatenate firstname and lastname into one field
          // eslint-disable-next-line @typescript-eslint/no-explicit-any
          valueGetter: (params: any) => {
             return `${params.data.firstName}` + ` ${params.data.lastName}`
@@ -162,7 +154,7 @@ export const UserLiserWrapper = ({ listRefresh, setUSERDATA }: UserLiserWrapperP
                defaultColDef={defaultColDef}
                domLayout="autoHeight"
                columnDefs={columnDefs}
-
+               ref={gridRef}
             />
          </Box>
          <Box style={{ display: 'flex', justifyContent: 'center', marginTop: 30 }}>

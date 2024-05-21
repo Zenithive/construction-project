@@ -83,10 +83,7 @@ export class FileUploadController {
     try {
       const file = await this.fileService.getFileByParams({revisionId: id});
       if (file && file.fileId) {
-        const filePath = join(
-          '/app/server',
-          file.fileName
-        ); 
+        const filePath = join(file.path); 
        
         const stat = fs.statSync(filePath);
         const fileContentType = this.fileService.getFileContentType(filePath);

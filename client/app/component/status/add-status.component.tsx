@@ -105,8 +105,9 @@ export function AddStatusComponent(props: AddStatusComponentProps) {
           />
           <ToastMessage
             severity="error"
+            title={`Problem while ${createError?.message ? "creating" : "updating"} status.`}
             openFlag={createError || updateError ? true : false}
-            message='Problem while creating or updating status.'
+            message={(createError || updateError)?.message || ""}
           />
           <Grid container spacing={2}>
             <Grid item xs={8}>

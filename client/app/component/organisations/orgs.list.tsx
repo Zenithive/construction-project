@@ -1,5 +1,5 @@
 import { Col, Row, Tooltip } from '@nextui-org/react';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { GET_ORGANISATIONS } from '../../api/organisation/queries';
 import { useQuery } from '@apollo/client';
 import { GridOptions } from 'ag-grid-community';
@@ -21,29 +21,34 @@ export interface OrgsListWrapperProps {
 
 
 export const OrgsListWrapper = ({ listRefresh, setOrganizationData }: OrgsListWrapperProps) => {
+   const gridRef = useRef<AgGridReact>(null);
    const [pageSize, setPageSize] = useState(10);
    const [currentPage, setCurrentPage] = useState(1);
    const [totalPages, setTotalPages] = useState(0);
 
-   const { data, refetch } = useQuery(GET_ORGANISATIONS, {
+   const { data, refetch, loading } = useQuery(GET_ORGANISATIONS, {
       variables: { pageSize, currentPage },
       notifyOnNetworkStatusChange: true,
       fetchPolicy: "network-only"
 
    });
+
    useEffect(() => {
-      console.log("Data", data)
+      if (loading) {
+         gridRef.current?.api?.showLoadingOverlay();
+      }else{
+         gridRef.current?.api?.hideOverlay();
+      }
+   }, [loading]);
+
+   useEffect(() => {
       if (data?.getAllOrg) {
          setTotalPages(data.getAllOrg.totalPages);
       }
-      console.log("if", data?.getAllOrg);
-
    }, [data]);
 
 
    useEffect(() => {
-      console.log("pageSize:", pageSize);
-      console.log("currentPage:", currentPage);
       refetch({ variables: { pageSize, currentPage } });
    }, [pageSize, currentPage, refetch]);
 
@@ -59,8 +64,6 @@ export const OrgsListWrapper = ({ listRefresh, setOrganizationData }: OrgsListWr
       setCurrentPage(newPage);
    };
 
-
-
    // fuction for deleting Org button 
    const [deleteOrganisation] = useMutation(DELETE_ORGANISATION);
 
@@ -74,12 +77,8 @@ export const OrgsListWrapper = ({ listRefresh, setOrganizationData }: OrgsListWr
       }
    }
 
-   //for edit Org
-   // const [visible, setVisible] = React.useState(false);
    // eslint-disable-next-line @typescript-eslint/no-explicit-any
    const handleEditOrg = (datas: any) => {
-      console.log(datas)
-      //setVisible(true);
       setOrganizationData(datas);
    };
    //for Dropdown  menu Grid
@@ -118,7 +117,6 @@ export const OrgsListWrapper = ({ listRefresh, setOrganizationData }: OrgsListWr
          </Col>
       </Row>
    );
-   console.log(data);
 
    const colDefs = [
       {
@@ -143,8 +141,6 @@ export const OrgsListWrapper = ({ listRefresh, setOrganizationData }: OrgsListWr
       }
    ];
 
-   console.log(colDefs)
-
    const defaultColDef = useMemo(() => {
       return {
          flex: 1,
@@ -167,6 +163,7 @@ export const OrgsListWrapper = ({ listRefresh, setOrganizationData }: OrgsListWr
                gridOptions={gridOptions}
                defaultColDef={defaultColDef}
                sideBar={'filters'}
+               ref={gridRef}
             />
          </Box>
          <Box style={{ display: 'flex', justifyContent: 'center', marginTop: 30 }}>
