@@ -21,8 +21,8 @@ services:
         - 4200:4200
       environment:
         NODE_ENV: production
-        MONGO_URL: mongodb+srv://admin:123456@aA@atlascluster.nxofdmq.mongodb.net/?retryWrites=true&w=majority&appName=AtlasCluster
-        DB_NAME: rof
+        MONGO_URL: mongodb+srv://admin:123456%40aA@atlascluster.nxofdmq.mongodb.net/construct_db?retryWrites=true&w=majority&appName=AtlasCluster
+        DB_NAME: construct_db
         SERVER_URL: http://zenithive.co.uk:3000/
         SERVER_API: http://zenithive.co.uk:3000/api/
         APS_CLIENT_ID : eG4diRxL3qCNbqYTGTlMWvAHVIE8u6PURMfcBakZUsSKyJCw
