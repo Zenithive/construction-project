@@ -21,7 +21,6 @@ export default function WebViewerComponent(props: ViewerCompoentProps) {
 
         const callView = async () => {
             try {
-                console.log("CONFIG.pdftron_web_viewer_key", CONFIG.pdftron_web_viewer_key)
                 const WebViewer = await import('@pdftron/webviewer');
                 // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
                 const docx: any = await WebViewer.default(

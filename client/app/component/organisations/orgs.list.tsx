@@ -148,7 +148,6 @@ export const OrgsListWrapper = ({ listRefresh, setOrganizationData }: OrgsListWr
          filter: true,
       };
    }, []);
-   console.log(defaultColDef)
 
    useEffect(() => {
       refetch();

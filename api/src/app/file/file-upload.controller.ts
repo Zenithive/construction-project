@@ -7,18 +7,15 @@ import { Response } from 'express';
 import * as fs from 'fs';
 import { join } from 'path';
 import { FileService } from './file.service';
-import { error } from 'console';
 
 @Controller('files')
 export class FileUploadController {
   constructor(private readonly fileService: FileService) { }
 
-  // ******** Upload request for Modal 1 ******** //
 
   @Post('upload')
   @UseInterceptors(FilesInterceptor('fileName', 10, multerOptions))
   uploadFiles(@UploadedFiles() files: Express.Multer.File[]) {
-    // console.log("fileName", files);
     // Process each file in the files array
     const uploadedFiles = files.map(file => ({
       originalName: file.originalname,
@@ -30,7 +27,6 @@ export class FileUploadController {
     return uploadedFiles;
   }
 
-  // ******** Post request for Modal 2 ******** //
 
   @Post('post')
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -67,7 +63,7 @@ export class FileUploadController {
 
         const fileStream = fs.createReadStream(filePath);
         fileStream.pipe(response);
-      } else { console.log(error); }
+      } else { console.log("File not found"); }
 
     } catch (error) {
       console.error('Error downloading file:', error);
@@ -96,7 +92,7 @@ export class FileUploadController {
         const fileStream = fs.createReadStream(filePath);
         fileStream.pipe(response);
       } else {
-        console.log(error);
+        console.log("File not found.");
       }
     } catch (error) {
       console.error('Error downloading file:', error);

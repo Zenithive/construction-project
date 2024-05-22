@@ -17,8 +17,6 @@ export function RoleUsersList(props: RoleUsersListProps) {
   const [userListWithName, setUserListWithName] = useState<Array<UserTypes>>([]);
   
   useEffect(() => {
-    console.log("props.roleUsers", props.roleUsers);
-    console.log("props.allUsers", props.allUsers);
     const filteredUserList = [];
     const filteredUser=props.roleUsers
     for (let index = 0; index < props.allUsers.length; index++) {
@@ -28,7 +26,6 @@ export function RoleUsersList(props: RoleUsersListProps) {
       }
     }
 
-    console.log("filteredUserList", filteredUserList)
     setUserListWithName(filteredUserList);
   }, [props.roleUsers, props.allUsers]);
 

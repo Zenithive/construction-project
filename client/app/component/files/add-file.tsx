@@ -94,7 +94,7 @@ export const AddFile = ({ setListRefresh, toggleUploadModalHook, folderIdHook }:
    const [visible, setVisible] = React.useState(false);
    const [isUploadFileOpen, setIsUploadFileOpen] = useState(false);
    const [fileData, setFileData] = useState([] as Array<Array<FileMetadataType>>);
-   const [allFilesUploaded, setAllFilesUploaded] = useState(false); // Flag for all files uploaded
+   const [allFilesUploaded, setAllFilesUploaded] = useState(false);
    const openFileDataModal = () => setVisible(true);
    const fileUploadDialogOpen = () => setIsUploadFileOpen(true);
    const [fileIdForURN, setFileIdForURN] = React.useState<Array<string>>([]);
@@ -132,8 +132,9 @@ export const AddFile = ({ setListRefresh, toggleUploadModalHook, folderIdHook }:
 
 
    const closeHandler = () => {
+      setIsUploadFileOpen(false);
+      toggleUploadModalHook.setIsUploadModalOpen(false);
       setVisible(false);
-      // formik.resetForm(); // remove 
    };
 
    useEffect(() => {
@@ -172,10 +173,7 @@ export const AddFile = ({ setListRefresh, toggleUploadModalHook, folderIdHook }:
 
       for (let index = 0; index < fileData.length; index++) {
          const element = fileData[index][0];
-         // const cleanFileName = stripTimestamp(element.fileName);
          const cleanFileName = stripTimestamp(element.fileName).replace(/(\.[^.]+)\1$/, '$1');
-         console.log("element", element)
-         // formik.setFieldValue(`files.${index}.fileName`, element.fileName);
          formik.setFieldValue(`files.${index}.fileName`, cleanFileName);
          formik.setFieldValue(`files.${index}.originalName`, element.originalName);
          formik.setFieldValue(`files.${index}.orginatorId`, "");
@@ -191,7 +189,6 @@ export const AddFile = ({ setListRefresh, toggleUploadModalHook, folderIdHook }:
 
 
    const userId = useAppSelector((state: RootState) => state.user.user.userId);
-   // console.log("userId", userId)
    const submitForm = async (values: FileSchemaArrayType, { resetForm, setSubmitting }: FormikHelpers<FileSchemaArrayType>) => {
       setSubmitting(true);
 
@@ -241,9 +238,7 @@ export const AddFile = ({ setListRefresh, toggleUploadModalHook, folderIdHook }:
             Upload file
          </Button>
 
-         <UploadFileComponent closeSet={() => {
-            setIsUploadFileOpen(false);
-            toggleUploadModalHook.setIsUploadModalOpen(false);
+         <UploadFileComponent closeSet={() => {            
             closeHandler()
          }} open={isUploadFileOpen} fileSet={setFileData}
             setAllFilesUploaded={setAllFilesUploaded}
