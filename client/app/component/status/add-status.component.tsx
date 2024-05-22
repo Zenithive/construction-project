@@ -49,10 +49,7 @@ export function AddStatusComponent(props: AddStatusComponentProps) {
   const addOrUpdateStatus = async (values: StatusFormValues, { setSubmitting, resetForm }: FormikHelpers<StatusFormValues>) => {
     setSubmitting(true);
     try {
-      // console.log("orgId",props.orgId);
-      // console.log("userId",props.userId);
       if (props.statusDetails) {
-        console.log("props.statusDetails",props.statusDetails);
         await editStatus({
           variables: {
             statusId: props.statusDetails.statusId,
@@ -63,7 +60,6 @@ export function AddStatusComponent(props: AddStatusComponentProps) {
           },
         });
       } else {
-        console.log("props.orgId",props.orgId);
         await createNewStatus({
           variables: {
             statusId: "",

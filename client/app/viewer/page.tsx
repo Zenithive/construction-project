@@ -44,7 +44,6 @@ export default function Viewer() {
 
     if (revisionId) {
       //setUrn(urnId);
-      console.log("urnId", revisionId)
       setRevisionId(revisionId);
       GetSingleFile(revisionId);
     }

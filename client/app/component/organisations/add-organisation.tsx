@@ -40,7 +40,6 @@ export const AddOrganisation = ({ setListRefresh, organizationData, setOrganizat
 
 
    useEffect(() => {
-      console.log(organizationData)
       if (organizationData) {
          formik.setValues(organizationData);
          handler();

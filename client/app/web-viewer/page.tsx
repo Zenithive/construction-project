@@ -28,7 +28,6 @@ export default function WebViewer() {
 
     if (revId && !revisionId) {
       setRevisionId(revId);
-      console.log("revId", revId)
       GetSingleFile(revId);
     }
   }, [revisionId])

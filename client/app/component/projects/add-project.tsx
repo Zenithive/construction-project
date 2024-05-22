@@ -10,6 +10,7 @@ import { UserSchema, selectUserSession } from '../../reducers/userReducer';
 import { useAppSelector } from '../../reducers/hook.redux';
 import { GET_ALL_ORG } from '../../api/organisation/queries';
 import { OrganisationTypes } from '../organisations/add-organisation';
+import pubsub from '../../services/pubsub.service';
 
 
 export interface ProjectTypes {
@@ -105,6 +106,7 @@ export const AddProject = ({setListRefresh}:AddProjectProps) => {
          resetForm();
          closeHandler();
          setListRefresh((flag:boolean)=>!flag);
+         pubsub.publish('ProjectCreated', { message: 'A new Project Created' });
          //dispatch(addUser({token : token}));
          //router.push("/dashboard");
       }
@@ -224,45 +226,27 @@ export const AddProject = ({setListRefresh}:AddProjectProps) => {
                      />
                   </Grid>
                   <Grid item xs={12}>
-                     {/* <TextField
-                        required
-                        fullWidth
-                        name="orgName"
-                        InputProps={{sx: {borderRadius: 3}}}
-                        label="Organisation Name"
-                        id="orgName"
-                        autoComplete="orgName"
-                        value={formik.values.orgName}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        error={formik.touched.orgName && Boolean(formik.errors.orgName)}
-                        helperText={formik.touched.orgName && formik.errors.orgName}
-                     /> */}
-
-                        {orgListKeyPair.length ? (
-                           <Autocomplete
-                              disablePortal
-                              onChange={(e, value) => {formik.setFieldValue("orgId", value?.key ? value.key : "");formik.setFieldValue("orgName", value?.value ? value.value : "")}}
-                              getOptionLabel={(option) => option.value}
-                              value={orgListKeyPair.find((org) => org.key === formik.values.orgId) || null}
-                              includeInputInList
-                              options={orgListKeyPair || []}
-                              renderInput={(params) => (
-                              <TextField
-                                 {...params}
-                                 id='orgId'
-                                 InputProps={{...params.InputProps,sx: {borderRadius: 3}}}
-                                 name="orgId"
-                                 value={formik.values.orgId}
-                                 label="Organisation"
-                                 error={formik.touched.orgId && Boolean(formik.errors.orgId)}
-                                 helperText={formik.touched.orgId && formik.errors.orgId}
-                              />
-                              )}
-                           />
-                        ) : (
-                           ""
+                     <Autocomplete
+                        disablePortal
+                        noOptionsText={'There is no organiastion to select. Please create a new organisation or contact admi.'}
+                        onChange={(e, value) => {formik.setFieldValue("orgId", value?.key ? value.key : "");formik.setFieldValue("orgName", value?.value ? value.value : "")}}
+                        getOptionLabel={(option) => option.value}
+                        value={orgListKeyPair.find((org) => org.key === formik.values.orgId) || null}
+                        includeInputInList
+                        options={orgListKeyPair || []}
+                        renderInput={(params) => (
+                        <TextField
+                           {...params}
+                           id='orgId'
+                           InputProps={{...params.InputProps,sx: {borderRadius: 3}}}
+                           name="orgId"
+                           value={formik.values.orgId}
+                           label="Organisation"
+                           error={formik.touched.orgId && Boolean(formik.errors.orgId)}
+                           helperText={formik.touched.orgId && formik.errors.orgId}
+                        />
                         )}
+                     />
                   </Grid>               
                </Grid>
           </Box>

@@ -26,8 +26,6 @@ export class FileResolver {
   async getFileByFolderId(
     @Args('input') paginationInputF: PaginationInputF,
   ) {
-    // console.log("PaginationInputF", PaginationInputF)
-
     return this.fileService.getFileByFolderId(paginationInputF);
   }
 
@@ -37,8 +35,6 @@ export class FileResolver {
   async uploadFile(@Args('input') fileObject: UploadFileInput) {
     fileObject.fileId = uuidv4();
     fileObject.revisionId = uuidv4();
-    //fileObject.folderId = folderId;  
-    console.log("fileObject", fileObject)
     return this.fileService.uploadFile(fileObject);
   }
 

@@ -191,7 +191,6 @@ export const FolderTree = ({toggleUploadModalHook, folderIdHook}: FolderTreeInte
 
         const parentFolderId = parentFolder.id || "-1";
         const addFolderSubmit = async (values: FolderNameForm,{ setSubmitting, resetForm }:FormikHelpers<FolderNameForm>) => {
-            console.log("values", values)
             const folderRespond = await createNewFolder({
                 variables: {
                     folderName: values.folderName,
@@ -265,12 +264,10 @@ export const FolderTree = ({toggleUploadModalHook, folderIdHook}: FolderTreeInte
     }
 
     const handleTreeViewEvent = (event:React.MouseEvent<HTMLUListElement>)=>{
-        // console.log("folderId", nodeIds);
-        // folderIdHook.setFolderId(nodeIds);
+        
     }
 
     const handleTreeViewEvent2 = (event: React.SyntheticEvent<Element, Event>, nodeIds: string)=>{
-        console.log("nodeIds", nodeIds)
         if(isNaN(Number(nodeIds))){
             folderIdHook.setFolderId(nodeIds);             
         }

@@ -56,11 +56,9 @@ export const UploadFileComponent = (props: UploadFileProps) => {
       if (selectedFiles.length > 0 && totalUploadedFiles === selectedFiles.length) {
          // If all files are uploaded, set the flag to true
          props.setAllFilesUploaded(true);
-         closeHandler(false);
+         closeHandler();
          formik.resetForm();
-         setUploading(false);
-         setLoading(false);
-         setTotalUploadedFiles(0);
+        
       }
    }, [totalUploadedFiles, selectedFiles]);
 
@@ -71,15 +69,20 @@ export const UploadFileComponent = (props: UploadFileProps) => {
          formik.resetForm();
          setSelectedFiles([]);
          setFileNames([]);
-         setVisible(props.open)
+         setVisible(props.open);
+         props.setAllFilesUploaded(false);
       }
    }, [props.open]);
 
 
 
-   const closeHandler = (resetFileFlag: boolean) => {
+   const closeHandler = () => {
       setVisible(false);
       props.closeSet(false)
+      setUploading(false);
+      setLoading(false);
+      setTotalUploadedFiles(0);
+      setUploadProgress(0);
       // resetFileFlag && props.fileSet("");
    };
 
@@ -110,7 +113,6 @@ export const UploadFileComponent = (props: UploadFileProps) => {
                tmpArray.push(response.data);
                props.fileSet(tmpArray);
                setTotalUploadedFiles(prevState => prevState + 1); // Increment totalUploadedFiles by 1
-               closeHandler(true)
 
             });
 
@@ -159,7 +161,7 @@ export const UploadFileComponent = (props: UploadFileProps) => {
             aria-labelledby="modal-title"
             width="600px"
             open={visible}
-            onClose={closeHandler.bind(this, true)}
+            onClose={closeHandler.bind(this)}
          >
             <Modal.Header css={{ justifyContent: 'start' }}>
                <Text id="modal-title" h4>

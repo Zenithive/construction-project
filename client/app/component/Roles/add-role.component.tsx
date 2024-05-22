@@ -49,7 +49,6 @@ export function AddRolesComponent(props: RolesComponentProps) {
   const [selectedRoleUsers, setSelectedRoleUsers] = useState<string[]>([]);
 
   useEffect(() => {
-    console.log("props.roleDetails", props.roleDetails)
     if (props.roleDetails && props.roleDetails.users) {
       setSelectedRoleUsers(props.roleDetails.users);
     } else {

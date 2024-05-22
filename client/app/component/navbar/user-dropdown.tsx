@@ -45,7 +45,6 @@ export const UserDropdown = () => {
          <Dropdown.Menu
             aria-label="User menu actions"
             onAction={actionHandler}
-            //onAction={(actionKey) => console.log({actionKey})}
          >
             <Dropdown.Item key="profile" css={{height: '$18'}}>
                <Text b color="inherit" css={{d: 'flex'}}>

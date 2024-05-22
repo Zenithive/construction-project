@@ -137,7 +137,6 @@ export function RolesComponent(props: RolesComponentProps) {
   
   const handleDeleteRole = async (roleId: string, roleName: string) => {
     if (roleName.toLowerCase() === 'admin') {
-      console.log('Cannot delete admin role.');
       return;
     }
     try {

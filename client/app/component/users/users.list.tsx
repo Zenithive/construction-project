@@ -138,13 +138,9 @@ export const UserLiserWrapper = ({ listRefresh, setUSERDATA }: UserLiserWrapperP
       { headerName: '', field: 'icons', sortable: true, filter: false, cellRenderer: ActionRenderer },
    ];
 
-   console.log(data);
-
    useEffect(() => {
       refetch();
    }, [listRefresh, refetch]);
-
-
 
    return (
       <Box>

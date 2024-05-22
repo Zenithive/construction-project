@@ -57,7 +57,6 @@ export default function Login(props: LoginProps) {
         const { email, firstName, lastName, userId} = res.data.loginUser.userObj;
         dispatch(addUser({ token, email, firstName, lastName, userId}));
         const projId = res.data?.loginUser?.userObj?.projId; 
-        console.log("projId login",projId)
         if(projId){
           dispatch(removeproject(projId))
         }
