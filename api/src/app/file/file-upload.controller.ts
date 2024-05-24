@@ -49,10 +49,7 @@ export class FileUploadController {
     try {
       const file = await this.fileService.getFileByParams({revisionId});
       if (file && file.fileId) {
-        const filePath = join(
-          '/app/server',
-          file.fileName
-        ); // Path to your uploaded files
+        const filePath = join(file.path); // Path to your uploaded files
         const stat = fs.statSync(filePath);
 
         response.writeHead(200, {
